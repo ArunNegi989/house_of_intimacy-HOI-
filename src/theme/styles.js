@@ -1,4 +1,5 @@
 import { mode } from "@chakra-ui/theme-tools";
+
 export const globalStyles = {
   colors: {
     brand: {
@@ -78,11 +79,17 @@ export const globalStyles = {
       100: "#FAFCFE",
     },
   },
+
   styles: {
     global: (props) => ({
       body: {
         overflowX: "hidden",
-        bg: mode("secondaryGray.300", "navy.900")(props),
+        // 🌞 light  | 🌙 dark (baby pink gradient)
+        bg: mode(
+          "secondaryGray.300",
+          'navy.800'
+        )(props),
+        color: mode("navy.900", "#ffffffff")(props),
         fontFamily: "DM Sans",
         letterSpacing: "-0.5px",
       },

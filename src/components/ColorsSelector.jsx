@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import styles from "../assets/styles/ColorsSelector.module.css"; // adjust path if needed
+import styles from "../assets/styles/ColorsSelector.module.css";
+import { useColorModeValue } from "@chakra-ui/react";
 
 const defaultColors = [
   { id: "blush", name: "BLUSH RUSH", hex: "#ff6fb6" },
@@ -17,6 +18,16 @@ const defaultColors = [
 const ColorsSelector = ({ items = defaultColors, onChange }) => {
   const [selected, setSelected] = useState(items[0]?.id ?? null);
 
+  // 🎨 Chakra color-mode aware values
+  const sectionBg = useColorModeValue("#f9fafb", 'linear-gradient(135deg, #ffdeefff 0%, #ffcbe4ff 50%, #ffd2e6ff 100%)'); // light / dark bg
+  const titleColor = useColorModeValue("#0f172a", "#090909ff");
+  const labelColor = useColorModeValue("#111827", "#e5e7eb");
+  const pillBg = useColorModeValue("#ffffff", "rgba(83, 88, 100, 0.85)");
+  const pillBorder = useColorModeValue("#e5e7eb", "#78808cff");
+  const pillSelectedBg = useColorModeValue("#0f172a", "#f9fafb");
+  const pillSelectedText = useColorModeValue("#f9fafb", "#020617");
+  const dotBorder = useColorModeValue("#e5e7eb", "#858d9aff");
+
   const handleSelect = (id) => {
     setSelected(id);
     if (typeof onChange === "function") onChange(id);
@@ -29,19 +40,28 @@ const ColorsSelector = ({ items = defaultColors, onChange }) => {
     } else if (e.key === "ArrowRight") {
       e.preventDefault();
       const next = items[(idx + 1) % items.length];
-      document.getElementById(`${styles["pill-"]}${next.id}`)?.focus();
+      document.getElementById(`pill-${next.id}`)?.focus();
     } else if (e.key === "ArrowLeft") {
       e.preventDefault();
       const prev = items[(idx - 1 + items.length) % items.length];
-      document.getElementById(`${styles["pill-"]}${prev.id}`)?.focus();
+      document.getElementById(`pill-${prev.id}`)?.focus();
     }
   };
 
   return (
-    <section className={styles["colors-section"]} aria-label="Color selector">
+    <section
+      className={styles["colors-section"]}
+      aria-label="Color selector"
+      style={{ background: sectionBg, color: labelColor }}
+    >
       <div className={styles["colors-container"]}>
         <div className={styles["colors-left"]}>
-          <h2 className={styles["colors-title"]}>Your Color, Your Mood</h2>
+          <h2
+            className={styles["colors-title"]}
+            style={{ color: titleColor }}
+          >
+            Your Color, Your Mood
+          </h2>
         </div>
 
         <div
@@ -51,29 +71,47 @@ const ColorsSelector = ({ items = defaultColors, onChange }) => {
         >
           {items.map((c, idx) => {
             const isSelected = selected === c.id;
-            // id needs to be predictable but not collide globally; compose with module-safe prefix
             const pillId = `pill-${c.id}`;
+
             return (
               <button
                 key={c.id}
                 id={pillId}
                 role="listitem"
                 type="button"
-                className={`${styles["color-pill"]} ${isSelected ? styles.selected : ""}`}
+                className={`${styles["color-pill"]} ${
+                  isSelected ? styles.selected : ""
+                }`}
+                style={{
+                  background: isSelected ? pillSelectedBg : pillBg,
+                  borderColor: pillBorder,
+                  color: isSelected ? pillSelectedText : labelColor,
+                }}
                 aria-pressed={isSelected}
                 onClick={() => handleSelect(c.id)}
                 onKeyDown={(e) => handleKeyDown(e, c.id, idx)}
               >
                 {c.hex === "pattern" ? (
-                  <span className={`${styles.dot} ${styles["dot-pattern"]}`} aria-hidden="true" />
+                  <span
+                    className={`${styles.dot} ${styles["dot-pattern"]}`}
+                    aria-hidden="true"
+                    style={{
+                      borderColor: dotBorder,
+                    }}
+                  />
                 ) : (
                   <span
                     className={styles.dot}
-                    style={{ background: c.hex }}
+                    style={{
+                      background: c.hex,
+                      borderColor: dotBorder,
+                    }}
                     aria-hidden="true"
                   />
                 )}
-                <span className={styles.label}>{c.name}</span>
+                <span className={styles.label}>
+                  {c.name}
+                </span>
               </button>
             );
           })}

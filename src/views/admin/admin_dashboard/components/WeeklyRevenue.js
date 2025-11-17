@@ -21,9 +21,10 @@ export default function WeeklyRevenue(props) {
   const { ...rest } = props;
 
   // Chakra Color Mode
-  const textColor = useColorModeValue("secondaryGray.900", "white");
-  const iconColor = useColorModeValue("brand.500", "white");
-  const bgButton = useColorModeValue("secondaryGray.300", "whiteAlpha.100");
+  const textColor = useColorModeValue("secondaryGray.900", "blackAlpha.900");
+  const cardBg = useColorModeValue("white",  'linear-gradient(135deg, #ffdeefff 0%, #ffcbe4ff 50%, #ffd2e6ff 100%)');
+  const iconColor = useColorModeValue("brand.500", "blackAlpha.500");
+  const bgButton = useColorModeValue("secondaryGray.300", "blackAlpha.100");
   const bgHover = useColorModeValue(
     { bg: "secondaryGray.400" },
     { bg: "whiteAlpha.50" }
@@ -32,34 +33,43 @@ export default function WeeklyRevenue(props) {
     { bg: "secondaryGray.300" },
     { bg: "whiteAlpha.100" }
   );
+
   return (
-    <Card align='center' direction='column' w='100%' {...rest}>
-      <Flex align='center' w='100%' px='15px' py='10px'>
+    <Card
+      align="center"
+      direction="column"
+      w="100%"
+      bg={cardBg}              // 🔹 card background now adapts
+      {...rest}
+    >
+      <Flex align="center" w="100%" px="15px" py="10px">
         <Text
-          me='auto'
+          me="auto"
           color={textColor}
-          fontSize='xl'
-          fontWeight='700'
-          lineHeight='100%'>
+          fontSize="xl"
+          fontWeight="700"
+          lineHeight="100%"
+        >
           Weekly Revenue
         </Text>
+
         <Button
-          align='center'
-          justifyContent='center'
+          align="center"
+          justifyContent="center"
           bg={bgButton}
           _hover={bgHover}
           _focus={bgFocus}
           _active={bgFocus}
-          w='37px'
-          h='37px'
-          lineHeight='100%'
-          borderRadius='10px'
-          {...rest}>
-          <Icon as={MdBarChart} color={iconColor} w='24px' h='24px' />
+          w="37px"
+          h="37px"
+          lineHeight="100%"
+          borderRadius="10px"
+        >
+          <Icon as={MdBarChart} color={iconColor} w="24px" h="24px" />
         </Button>
       </Flex>
 
-      <Box h='240px' mt='auto'>
+      <Box h="240px" mt="auto">
         <BarChart
           chartData={barChartDataConsumption}
           chartOptions={barChartOptionsConsumption}

@@ -1,4 +1,9 @@
 /* ===== Base footer wrapper ===== */
+.footerContainer {
+  max-width: 1560px;
+  padding: 0 ;
+  margin: 20px auto;
+}
 .site-footer {
   width: 100%;
   background: #f2fbfa;
@@ -60,6 +65,8 @@
 /* newsletter */
 .newsletter .form-control {
   min-width: 150px;
+ 
+  
 }
 
 .subscribe-btn {

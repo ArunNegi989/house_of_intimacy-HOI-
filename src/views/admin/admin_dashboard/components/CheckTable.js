@@ -4,6 +4,7 @@ import {
   Flex,
   Box,
   Table,
+  Checkbox,
   Tbody,
   Td,
   Text,
@@ -23,18 +24,24 @@ import {
 } from '@tanstack/react-table';
 
 // Custom components
-import Card from '../../../../components/Dashboard/card/Card';
+import Card from '../.../../../../../components/Dashboard/card/Card';
 import Menu from '../../../../components/Dashboard/menu/MainMenu';
 
 const columnHelper = createColumnHelper();
 
-// const columns = columnsDataCheck;
-export default function ColumnTable(props) {
+export default function CheckTable(props) {
   const { tableData } = props;
   const [sorting, setSorting] = React.useState([]);
-  const textColor = useColorModeValue('secondaryGray.900', 'white');
-  const borderColor = useColorModeValue('gray.200', 'whiteAlpha.100');
+
+  // 🔹 Light/Dark colors
+  const textColor = useColorModeValue('secondaryGray.900', 'blackAlpha.900');
+  const textColorSecondary = useColorModeValue('gray.400', 'blackAlpha.900');
+  const borderColor = useColorModeValue('gray.200', 'blackAlpha.900');
+  const tableColor = useColorModeValue('gray.500', 'blackAlpha.900');
+  const cardBg = useColorModeValue('white',  'linear-gradient(135deg, #ffdeefff 0%, #ffcbe4ff 50%, #ffd2e6ff 100%)');
+
   let defaultData = tableData;
+
   const columns = [
     columnHelper.accessor('name', {
       id: 'name',
@@ -43,15 +50,20 @@ export default function ColumnTable(props) {
           justifyContent="space-between"
           align="center"
           fontSize={{ sm: '10px', lg: '12px' }}
-          color="gray.400"
+          color={textColorSecondary}
         >
           NAME
         </Text>
       ),
       cell: (info) => (
         <Flex align="center">
+          <Checkbox
+            defaultChecked={info.getValue()[1]}
+            colorScheme="brandScheme"
+            me="10px"
+          />
           <Text color={textColor} fontSize="sm" fontWeight="700">
-            {info.getValue()}
+            {info.getValue()[0]}
           </Text>
         </Flex>
       ),
@@ -63,7 +75,7 @@ export default function ColumnTable(props) {
           justifyContent="space-between"
           align="center"
           fontSize={{ sm: '10px', lg: '12px' }}
-          color="gray.400"
+          color={textColorSecondary}
         >
           PROGRESS
         </Text>
@@ -81,7 +93,7 @@ export default function ColumnTable(props) {
           justifyContent="space-between"
           align="center"
           fontSize={{ sm: '10px', lg: '12px' }}
-          color="gray.400"
+          color={textColorSecondary}
         >
           QUANTITY
         </Text>
@@ -99,7 +111,7 @@ export default function ColumnTable(props) {
           justifyContent="space-between"
           align="center"
           fontSize={{ sm: '10px', lg: '12px' }}
-          color="gray.400"
+          color={textColorSecondary}
         >
           DATE
         </Text>
@@ -111,7 +123,9 @@ export default function ColumnTable(props) {
       ),
     }),
   ];
+
   const [data, setData] = React.useState(() => [...defaultData]);
+
   const table = useReactTable({
     data,
     columns,
@@ -123,27 +137,33 @@ export default function ColumnTable(props) {
     getSortedRowModel: getSortedRowModel(),
     debugTable: true,
   });
+
   return (
     <Card
       flexDirection="column"
       w="100%"
       px="0px"
       overflowX={{ sm: 'scroll', lg: 'hidden' }}
+      bg={cardBg}              // 🔹 card background changes with mode
     >
       <Flex px="25px" mb="8px" justifyContent="space-between" align="center">
         <Text
           color={textColor}
           fontSize="22px"
-          mb="4px"
           fontWeight="700"
           lineHeight="100%"
         >
-          4-Columns Table
+          Check Table
         </Text>
         <Menu />
       </Flex>
       <Box>
-        <Table variant="simple" color="gray.500" mb="24px" mt="12px">
+        <Table
+          variant="simple"
+          color={tableColor}     // 🔹 table text color
+          mb="24px"
+          mt="12px"
+        >
           <Thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <Tr key={headerGroup.id}>
@@ -153,7 +173,7 @@ export default function ColumnTable(props) {
                       key={header.id}
                       colSpan={header.colSpan}
                       pe="10px"
-                      borderColor={borderColor}
+                      borderColor={borderColor}  // 🔹 header border color
                       cursor="pointer"
                       onClick={header.column.getToggleSortingHandler()}
                     >
@@ -161,7 +181,7 @@ export default function ColumnTable(props) {
                         justifyContent="space-between"
                         align="center"
                         fontSize={{ sm: '10px', lg: '12px' }}
-                        color="gray.400"
+                        color={textColorSecondary}
                       >
                         {flexRender(
                           header.column.columnDef.header,
@@ -181,7 +201,7 @@ export default function ColumnTable(props) {
           <Tbody>
             {table
               .getRowModel()
-              .rows.slice(0, 11)
+              .rows.slice(0, 5)
               .map((row) => {
                 return (
                   <Tr key={row.id}>
@@ -191,7 +211,7 @@ export default function ColumnTable(props) {
                           key={cell.id}
                           fontSize={{ sm: '14px' }}
                           minW={{ sm: '150px', md: '200px', lg: 'auto' }}
-                          borderColor="transparent"
+                          borderColor={borderColor} // 🔹 row border color
                         >
                           {flexRender(
                             cell.column.columnDef.cell,

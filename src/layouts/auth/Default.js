@@ -29,7 +29,7 @@ function AuthIllustration(props) {
         justifyContent='start'
         direction='column'>
         <NavLink
-          to='/admin'
+          to='/'
           style={() => ({
             width: "fit-content",
             marginTop: "40px",
@@ -44,10 +44,10 @@ function AuthIllustration(props) {
               me='12px'
               h='13px'
               w='8px'
-              color='secondaryGray.600'
+              color='black'
             />
-            <Text ms='0px' fontSize='sm' color='secondaryGray.600'>
-              Back to Simmmple
+            <Text ms='0px' fontSize='sm' color='black' className="mt-3">
+              Back to House Of Intimacy Home Page
             </Text>
           </Flex>
         </NavLink>
