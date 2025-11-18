@@ -43,20 +43,41 @@ function SignIn() {
   const toast = useToast();
   const navigate = useNavigate();
 
-  // React Hook Form
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm();
 
-  // Submit Handler (AJAX + Keep me logged in)
   const onSubmit = async (data) => {
     try {
-      // separate rememberMe from login payload
       const { rememberMe, ...loginPayload } = data;
 
       const res = await axios.post(`${baseUrl}/auth/login`, loginPayload);
+
+      console.log("LOGIN RESPONSE:", res.data); // 👈 DEBUG
+
+      const { token, user } = res.data || {};
+
+      if (!token || !user) {
+        throw new Error("Invalid response from server");
+      }
+
+      // Token store
+      if (rememberMe) {
+        localStorage.setItem("authToken", token);
+      } else {
+        sessionStorage.setItem("authToken", token);
+      }
+
+      // User info
+      if (user.name) {
+        localStorage.setItem("userName", user.name);
+      }
+
+      if (user.role) {
+        localStorage.setItem("userRole", user.role);
+      }
 
       toast({
         title: "Login Successful",
@@ -64,20 +85,23 @@ function SignIn() {
         duration: 2000,
       });
 
-      // 🔐 KEEP ME LOGGED IN LOGIC
-      if (rememberMe) {
-        // stays even after browser restart
-        localStorage.setItem("authToken", res.data.token);
-      } else {
-        // only for current tab / session
-        sessionStorage.setItem("authToken", res.data.token);
-      }
+      // ✅ SAFE ROLE CHECK
+      const normalizedRole = (user.role || "").toLowerCase().trim();
+      const isAdmin = normalizedRole === "admin";
 
-      navigate("/admin");
+      if (isAdmin) {
+        // Admin → dashboard
+        navigate("/admin/admin_dashboard", { replace: true });
+      } else {
+        // Normal user → home
+        navigate("/", { replace: true });
+      }
     } catch (err) {
+      console.error(err);
       toast({
         title: "Login Failed",
-        description: err.response?.data?.message || "Invalid credentials",
+        description:
+          err.response?.data?.message || "Invalid credentials",
         status: "error",
         duration: 3000,
       });
@@ -127,7 +151,6 @@ function SignIn() {
             <HSeparator />
           </Flex>
 
-          {/* Form */}
           <form onSubmit={handleSubmit(onSubmit)}>
             <FormControl mb="20px">
               <FormLabel color={textColor} fontSize="sm">
@@ -189,7 +212,6 @@ function SignIn() {
             </FormControl>
 
             <Flex justifyContent="space-between" mb="24px" align="center">
-              {/* 🔥 Keep me logged in is now connected to useForm */}
               <Checkbox
                 colorScheme="brandScheme"
                 {...register("rememberMe")}
@@ -204,7 +226,6 @@ function SignIn() {
               </NavLink>
             </Flex>
 
-            {/* Submit button */}
             <Button
               type="submit"
               w="100%"

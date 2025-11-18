@@ -368,3 +368,70 @@
 /* shared state classes */
 .is-open {}
 .is-active {}
+
+/* Parent wrapper */
+.nav__user {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+/* Button style */
+.nav__user-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 6px 8px;
+}
+
+.nav__user-btn:hover .nav__user-name {
+  color: #000;
+}
+
+/* Dropdown menu */
+.nav__user-menu {
+  position: absolute;
+  top: 120%;
+  right: 0;
+  width: 180px;
+  background: #ffffff;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 8px 0;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: all 0.25s ease;
+  z-index: 999;
+}
+
+.nav__user-menu.is-open {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0px);
+}
+
+/* Links inside dropdown */
+.nav__user-menu-item {
+  width: 100%;
+  display: block;
+  padding: 10px 14px;
+  color: #111;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  text-align: left;
+}
+
+.nav__user-menu-item:hover {
+  background: #f3f4f6;
+}

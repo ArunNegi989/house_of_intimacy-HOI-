@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from '../assets/styles/Header.module.css';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import logoDark from '../assets/images/logo.png';
 import logoLight from '../assets/images/logo.png';
 
@@ -16,12 +16,7 @@ const Caret = () => (
 );
 
 const IconSearch = () => (
-  <svg
-    width="20"
-    height="20"
-    viewBox="0 0 24 24"
-    aria-hidden="true"
-  >
+  <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
     <circle
       cx="11"
       cy="11"
@@ -98,7 +93,19 @@ const IconClose = () => (
 export default function Header() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const firstLinkRef = useRef(null);
+  const userMenuRef = useRef(null);
+  const navigate = useNavigate();
+
+  // ====== AUTH INFO FROM STORAGE ======
+  const token =
+    localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+  const isAuthenticated = !!token;
+  const storedName = localStorage.getItem('userName');
+  const userName = isAuthenticated
+    ? storedName || 'My Account'
+    : 'Login / Signup';
 
   // lock background scroll while drawer is open
   useEffect(() => {
@@ -119,21 +126,20 @@ export default function Header() {
 
   // close with ESC
   useEffect(() => {
-    const onKey = (e) => e.key === 'Escape' && setOpen(false);
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        setUserMenuOpen(false);
+      }
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // focus first link when opening
+  // focus first link when opening drawer
   useEffect(() => {
     if (open && firstLinkRef.current) firstLinkRef.current.focus();
   }, [open]);
-
-  // Helper to close when drawer link clicked
-  const closeAnd = (fn) => (e) => {
-    if (typeof fn === 'function') fn(e);
-    setOpen(false);
-  };
 
   // Observe hero section or fallback to scrollY
   useEffect(() => {
@@ -146,7 +152,7 @@ export default function Header() {
             setScrolled(!entry.isIntersecting);
           });
         },
-        { root: null, threshold: 0.01 }
+        { root: null, threshold: 0.01 },
       );
       io.observe(hero);
       return () => io.disconnect();
@@ -157,6 +163,30 @@ export default function Header() {
       return () => window.removeEventListener('scroll', onScroll);
     }
   }, []);
+
+  // Close user menu on outside click
+  useEffect(() => {
+    const handleClick = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  const closeAnd = (fn) => (e) => {
+    if (typeof fn === 'function') fn(e);
+    setOpen(false);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userName');
+    sessionStorage.removeItem('authToken');
+    setUserMenuOpen(false);
+    navigate('/login');
+  };
 
   const logoSrc = scrolled ? logoDark : logoLight || logoDark;
 
@@ -268,9 +298,78 @@ export default function Header() {
           <a href="#search" className={styles.nav__action}>
             <IconSearch /> <span>SEARCH</span>
           </a>
-          <a href="#account" className={styles.nav__action}>
-            <IconUser /> <span>ACCOUNT</span>
-          </a>
+
+          {/* ==== SINGLE USER DROPDOWN (Login/Signup OR Account) ==== */}
+          <div
+  className={styles.nav__user}
+  ref={userMenuRef}
+  onMouseEnter={() => setUserMenuOpen(true)}
+  onMouseLeave={() => setUserMenuOpen(false)}
+>
+  <button
+    type="button"
+    className={styles["nav__user-btn"]}
+    onClick={() => setUserMenuOpen((o) => !o)}
+  >
+    <IconUser />
+    <span className={styles["nav__user-name"]}>{userName}</span>
+    <Caret />
+  </button>
+
+  <div
+    className={`${styles["nav__user-menu"]} ${
+      userMenuOpen ? styles["is-open"] : ""
+    }`}
+  >
+    {!isAuthenticated ? (
+      <>
+        <Link
+          to="/login"
+          className={styles["nav__user-menu-item"]}
+          onClick={() => setUserMenuOpen(false)}
+        >
+          Login
+        </Link>
+
+        <Link
+          to="/auth/create_new_user"
+          className={styles["nav__user-menu-item"]}
+          onClick={() => setUserMenuOpen(false)}
+        >
+          Sign up
+        </Link>
+      </>
+    ) : (
+      <>
+        <Link
+          to="/account/profile"
+          className={styles["nav__user-menu-item"]}
+          onClick={() => setUserMenuOpen(false)}
+        >
+          My Profile
+        </Link>
+
+        <Link
+          to="/account/orders"
+          className={styles["nav__user-menu-item"]}
+          onClick={() => setUserMenuOpen(false)}
+        >
+          My Orders
+        </Link>
+
+        <button
+          type="button"
+          className={styles["nav__user-menu-item"]}
+          onClick={handleLogout}
+        >
+          Logout
+        </button>
+      </>
+    )}
+  </div>
+</div>
+
+
           <a href="#cart" className={styles.nav__action}>
             <IconCart /> <span>CART</span>
           </a>
@@ -300,12 +399,10 @@ export default function Header() {
         tabIndex={open ? 0 : -1}
       />
 
-      {/* Right drawer */}
+      {/* Right drawer (mobile) */}
       <aside
         id="mobile-drawer"
-        className={`${styles['nav__drawer']} ${
-          open ? styles['is-open'] : ''
-        }`}
+        className={`${styles['nav__drawer']} ${open ? styles['is-open'] : ''}`}
         role="dialog"
         aria-modal="true"
         aria-label="Mobile menu"
@@ -354,9 +451,7 @@ export default function Header() {
           </a>
           <a
             href="#features"
-            className={`${styles['nav__drawer-link']} ${
-              styles['is-active']
-            }`}
+            className={`${styles['nav__drawer-link']} ${styles['is-active']}`}
             onClick={closeAnd()}
           >
             FEATURES
@@ -371,13 +466,51 @@ export default function Header() {
           >
             <IconSearch /> <span>SEARCH</span>
           </a>
-          <a
-            href="#account"
-            className={styles['nav__drawer-link']}
-            onClick={closeAnd()}
-          >
-            <IconUser /> <span>ACCOUNT</span>
-          </a>
+
+          {/* Mobile: same logic as desktop → Login/Signup OR Account items */}
+          {!isAuthenticated ? (
+            <>
+              <Link
+                to="/login"
+                className={styles['nav__drawer-link']}
+                onClick={closeAnd()}
+              >
+                <IconUser /> <span>Login</span>
+              </Link>
+              <Link
+                to="/auth/create_new_user"
+                className={styles['nav__drawer-link']}
+                onClick={closeAnd()}
+              >
+                <span>Sign up</span>
+              </Link>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/account/profile"
+                className={styles['nav__drawer-link']}
+                onClick={closeAnd()}
+              >
+                My Profile
+              </Link>
+              <Link
+                to="/account/orders"
+                className={styles['nav__drawer-link']}
+                onClick={closeAnd()}
+              >
+                My Orders
+              </Link>
+              <button
+                type="button"
+                className={styles['nav__drawer-link']}
+                onClick={closeAnd(handleLogout)}
+              >
+                Logout
+              </button>
+            </>
+          )}
+
           <a
             href="#cart"
             className={styles['nav__drawer-link']}
