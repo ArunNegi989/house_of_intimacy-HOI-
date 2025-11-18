@@ -23,6 +23,8 @@ import PublicRoute from 'components/PublicRoute';
 
 // 👉 NEW IMPORT
 import AdminRoute from 'routes/AdminRoute';
+import ProfilePage from 'views/account/ProfilePage';
+import OrdersPage from 'views/account/OrdersPage';
 
 export default function Main() {
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
@@ -86,6 +88,24 @@ export default function Main() {
                 </PublicRoute>
               }
             />
+
+            <Route
+  path="/account/profile"
+  element={
+    <ProtectedRoute>
+      <ProfilePage />
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/account/orders"
+  element={
+    <ProtectedRoute>
+      <OrdersPage />
+    </ProtectedRoute>
+  }
+/>
 
             {/* HOME PAGE (public) */}
             <Route path="/" element={<Home />} />
