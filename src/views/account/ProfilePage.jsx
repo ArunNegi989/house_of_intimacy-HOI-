@@ -36,7 +36,7 @@ export default function ProfilePage() {
 
     const fetchProfile = async () => {
       try {
-        const res = await axios.get(`${baseUrl}/auth/userdata`, {
+        const res = await axios.get(`${baseUrl}/users/userdata`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
