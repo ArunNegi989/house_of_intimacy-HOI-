@@ -25,6 +25,7 @@ import PublicRoute from 'components/PublicRoute';
 import AdminRoute from 'routes/AdminRoute';
 import ProfilePage from 'views/account/ProfilePage';
 import OrdersPage from 'views/account/OrdersPage';
+import VerifyEmail from 'views/auth/VerifyEmail';
 
 export default function Main() {
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
@@ -53,63 +54,72 @@ export default function Main() {
 
         <div style={{ flex: 1 }}>
           <Routes>
-            {/* Auth layout (register, forgot, etc) */}
-            <Route path="auth/*" element={<AuthLayout />} />
+  {/* Auth layout (register, forgot, etc) */}
+  <Route path="auth/*" element={<AuthLayout />} />
 
-            {/* 🔐 ADMIN LAYOUT – now uses AdminRoute */}
-            <Route
-              path="admin/*"
-              element={
-                <AdminRoute>
-                  <AdminLayout
-                    theme={currentTheme}
-                    setTheme={setCurrentTheme}
-                  />
-                </AdminRoute>
-              }
-            />
+  {/* 🔐 ADMIN LAYOUT – now uses AdminRoute */}
+  <Route
+    path="admin/*"
+    element={
+      <AdminRoute>
+        <AdminLayout theme={currentTheme} setTheme={setCurrentTheme} />
+      </AdminRoute>
+    }
+  />
 
-            {/* Login */}
-            <Route
-              path="/login"
-              element={
-                <PublicRoute>
-                  <SignIn />
-                </PublicRoute>
-              }
-            />
+  {/* Login */}
+  <Route
+    path="/login"
+    element={
+      <PublicRoute>
+        <SignIn />
+      </PublicRoute>
+    }
+  />
 
-            {/* Register */}
-            <Route
-              path="/auth/create_new_user"
-              element={
-                <PublicRoute>
-                  <CreateNewUser />
-                </PublicRoute>
-              }
-            />
+  {/* Register */}
+  <Route
+    path="/auth/create_new_user"
+    element={
+      <PublicRoute>
+        <CreateNewUser />
+      </PublicRoute>
+    }
+  />
 
-            <Route
-  path="/account/profile"
-  element={
-    <ProtectedRoute>
-      <ProfilePage />
-    </ProtectedRoute>
-  }
-/>
+  {/* ✅ NEW: Verify Email (OTP) */}
+  <Route
+    path="/auth/verify-email"
+    element={
+      <PublicRoute>
+        <VerifyEmail />
+      </PublicRoute>
+    }
+  />
 
-<Route
-  path="/account/orders"
-  element={
-    <ProtectedRoute>
-      <OrdersPage />
-    </ProtectedRoute>
-  }
-/>
+  {/* Account pages (protected) */}
+  <Route
+    path="/account/profile"
+    element={
+      <ProtectedRoute>
+        <ProfilePage />
+      </ProtectedRoute>
+    }
+  />
 
-            {/* HOME PAGE (public) */}
-            <Route path="/" element={<Home />} />
-          </Routes>
+  <Route
+    path="/account/orders"
+    element={
+      <ProtectedRoute>
+        <OrdersPage />
+      </ProtectedRoute>
+    }
+  />
+
+  {/* HOME PAGE (public) */}
+  <Route path="/" element={<Home />} />
+</Routes>
+
         </div>
 
         <FixedPlugin />

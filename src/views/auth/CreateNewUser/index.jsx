@@ -53,29 +53,32 @@ function SignUp() {
 
   const passwordValue = watch("password");
 
-  const onSubmit = async (data) => {
-    try {
-      const { confirmPassword, ...payload } = data;
+ const onSubmit = async (data) => {
+  try {
+    const { confirmPassword, ...payload } = data;
 
-      await axios.post(`${baseUrl}/auth/register`, payload);
+    // 1) Call API to send OTP
+    const res = await axios.post(`${baseUrl}/auth/register/send-otp`, payload);
 
-      toast({
-        title: "Account created",
-        description: "You can now log in with your credentials.",
-        status: "success",
-        duration: 3000,
-      });
+    toast({
+      title: "OTP sent",
+      description: res.data?.message || "Check your email for the code.",
+      status: "success",
+      duration: 3000,
+    });
 
-      navigate("/login");
-    } catch (err) {
-      toast({
-        title: "Registration failed",
-        description: err.response?.data?.message || "Something went wrong",
-        status: "error",
-        duration: 3000,
-      });
-    }
-  };
+    // 2) Go to OTP verify page and pass email
+    navigate("/auth/verify-email", { state: { email: payload.email } });
+  } catch (err) {
+    toast({
+      title: "Registration failed",
+      description: err.response?.data?.message || "Something went wrong",
+      status: "error",
+      duration: 3000,
+    });
+  }
+};
+
 
   return (
     <DefaultAuth illustrationBackground={illustration} image={illustration}>
