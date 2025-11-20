@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Box,
   Heading,
@@ -10,20 +10,20 @@ import {
   Td,
   Badge,
   Text,
-} from "@chakra-ui/react";
+} from '@chakra-ui/react';
 
 const dummyOrders = [
   {
-    id: "ORD-1001",
-    date: "2025-11-18",
-    total: "₹3,499",
-    status: "Delivered",
+    id: 'ORD-1001',
+    date: '2025-11-18',
+    total: '₹3,499',
+    status: 'Delivered',
   },
   {
-    id: "ORD-1002",
-    date: "2025-11-19",
-    total: "₹1,899",
-    status: "Processing",
+    id: 'ORD-1002',
+    date: '2025-11-19',
+    total: '₹1,899',
+    status: 'Processing',
   },
 ];
 
@@ -55,11 +55,11 @@ export default function OrdersPage() {
                 <Td>
                   <Badge
                     colorScheme={
-                      order.status === "Delivered"
-                        ? "green"
-                        : order.status === "Processing"
-                        ? "orange"
-                        : "gray"
+                      order.status === 'Delivered'
+                        ? 'green'
+                        : order.status === 'Processing'
+                        ? 'orange'
+                        : 'gray'
                     }
                   >
                     {order.status}

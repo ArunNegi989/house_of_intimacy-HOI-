@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Flex,
@@ -15,12 +15,12 @@ import {
   SimpleGrid,
   Icon,
   useColorModeValue,
-} from "@chakra-ui/react";
-import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { FiMail, FiPhone, FiMapPin, FiUser } from "react-icons/fi";
+} from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { FiMail, FiPhone, FiMapPin, FiUser } from 'react-icons/fi';
 
-const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
 
 export default function ProfilePage() {
   const [user, setUser] = useState(null);
@@ -30,20 +30,19 @@ export default function ProfilePage() {
   const navigate = useNavigate();
 
   // 🎨 Colors (ALL HOOKS MUST BE HERE — TOP LEVEL ONLY)
-  const pageBg = useColorModeValue("gray.50", "gray.900");
-  const cardBg = useColorModeValue("white", "gray.800");
-  const labelColor = useColorModeValue("gray.500", "gray.400");
-  const valueColor = useColorModeValue("gray.900", "whiteAlpha.900");
-  const accent = useColorModeValue("pink.500", "pink.300");
-  const cardBorderColor = useColorModeValue("gray.100", "whiteAlpha.200");
+  const pageBg = useColorModeValue('gray.50', 'gray.900');
+  const cardBg = useColorModeValue('white', 'gray.800');
+  const labelColor = useColorModeValue('gray.500', 'gray.400');
+  const valueColor = useColorModeValue('gray.900', 'whiteAlpha.900');
+  const accent = useColorModeValue('pink.500', 'pink.300');
+  const cardBorderColor = useColorModeValue('gray.100', 'whiteAlpha.200');
 
   useEffect(() => {
     const token =
-      localStorage.getItem("authToken") ||
-      sessionStorage.getItem("authToken");
+      localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
 
     if (!token) {
-      navigate("/login");
+      navigate('/login');
       return;
     }
 
@@ -57,27 +56,26 @@ export default function ProfilePage() {
 
         setUser(res.data.user);
       } catch (err) {
-        console.error("Profile load error:", err);
+        console.error('Profile load error:', err);
 
         if (err.response?.status === 401) {
-          localStorage.removeItem("authToken");
-          sessionStorage.removeItem("authToken");
-          localStorage.removeItem("userName");
+          localStorage.removeItem('authToken');
+          sessionStorage.removeItem('authToken');
+          localStorage.removeItem('userName');
 
           toast({
-            title: "Session expired",
-            description: "Please log in again.",
-            status: "warning",
+            title: 'Session expired',
+            description: 'Please log in again.',
+            status: 'warning',
             duration: 3000,
           });
 
-          navigate("/login");
+          navigate('/login');
         } else {
           toast({
-            title: "Failed to load profile",
-            description:
-              err.response?.data?.message || "Something went wrong.",
-            status: "error",
+            title: 'Failed to load profile',
+            description: err.response?.data?.message || 'Something went wrong.',
+            status: 'error',
             duration: 3000,
           });
         }
@@ -118,18 +116,17 @@ export default function ProfilePage() {
   }
 
   return (
-  <Box
-    bg={pageBg}
-   
-    pt={{ base: "90px", md: "180px" }} // header ki height ke hisaab se
-    pb={10}
-    px={{ base: 4, md: 6 }}
-  >
+    <Box
+      bg={pageBg}
+      pt={{ base: '90px', md: '180px' }} // header ki height ke hisaab se
+      pb={10}
+      px={{ base: 4, md: 6 }}
+    >
       <Box maxW="1200px" mx="auto">
         {/* Page heading */}
         <Flex justify="space-between" align="center" mb={6}>
           <Box>
-            <Heading fontSize={{ base: "2xl", md: "3xl" }}>My Profile</Heading>
+            <Heading fontSize={{ base: '2xl', md: '3xl' }}>My Profile</Heading>
             <Text color="gray.500" mt={1}>
               Manage your personal information and account details.
             </Text>
@@ -143,7 +140,7 @@ export default function ProfilePage() {
           boxShadow="xl"
           overflow="hidden"
           borderWidth="1px"
-          borderColor={cardBorderColor}   
+          borderColor={cardBorderColor}
         >
           {/* Top Banner */}
           <Box
@@ -152,8 +149,8 @@ export default function ProfilePage() {
             py={6}
           >
             <Flex
-              direction={{ base: "column", md: "row" }}
-              align={{ base: "flex-start", md: "center" }}
+              direction={{ base: 'column', md: 'row' }}
+              align={{ base: 'flex-start', md: 'center' }}
               gap={5}
             >
               <Avatar
@@ -168,12 +165,12 @@ export default function ProfilePage() {
 
               <Box color="white">
                 <Flex
-                  align={{ base: "flex-start", md: "center" }}
+                  align={{ base: 'flex-start', md: 'center' }}
                   gap={3}
                   mb={1}
-                  direction={{ base: "column", md: "row" }}
+                  direction={{ base: 'column', md: 'row' }}
                 >
-                  <Heading fontSize={{ base: "xl", md: "2xl" }}>
+                  <Heading fontSize={{ base: 'xl', md: '2xl' }}>
                     {user.name}
                   </Heading>
 
@@ -193,7 +190,7 @@ export default function ProfilePage() {
                 </Flex>
 
                 <Flex
-                  direction={{ base: "column", sm: "row" }}
+                  direction={{ base: 'column', sm: 'row' }}
                   gap={{ base: 1, sm: 4 }}
                   fontSize="sm"
                   opacity={0.9}
@@ -219,7 +216,12 @@ export default function ProfilePage() {
             {/* Info grid */}
             <SimpleGrid columns={{ base: 1, md: 2 }} spacing={6}>
               <Box>
-                <Text fontSize="xs" textTransform="uppercase" color={labelColor} mb={1}>
+                <Text
+                  fontSize="xs"
+                  textTransform="uppercase"
+                  color={labelColor}
+                  mb={1}
+                >
                   Full Name
                 </Text>
                 <Flex align="center" gap={2}>
@@ -231,7 +233,11 @@ export default function ProfilePage() {
               </Box>
 
               <Box>
-                <Text fontSize="xs" textTransform="uppercase" color={labelColor} >
+                <Text
+                  fontSize="xs"
+                  textTransform="uppercase"
+                  color={labelColor}
+                >
                   Email
                 </Text>
                 <Flex align="center" gap={2}>
@@ -243,25 +249,35 @@ export default function ProfilePage() {
               </Box>
 
               <Box>
-                <Text fontSize="xs" textTransform="uppercase" color={labelColor} mb={1}>
+                <Text
+                  fontSize="xs"
+                  textTransform="uppercase"
+                  color={labelColor}
+                  mb={1}
+                >
                   Phone
                 </Text>
                 <Flex align="center" gap={2}>
                   <Icon as={FiPhone} color={accent} />
                   <Text fontWeight="500" color={valueColor}>
-                    {user.phone || "Not added yet"}
+                    {user.phone || 'Not added yet'}
                   </Text>
                 </Flex>
               </Box>
 
               <Box>
-                <Text fontSize="xs" textTransform="uppercase" color={labelColor} mb={1}>
+                <Text
+                  fontSize="xs"
+                  textTransform="uppercase"
+                  color={labelColor}
+                  mb={1}
+                >
                   Address
                 </Text>
                 <Flex align="flex-start" gap={2}>
                   <Icon as={FiMapPin} mt={0.5} color={accent} />
                   <Text fontWeight="500" color={valueColor}>
-                    {user.address || "Not added yet"}
+                    {user.address || 'Not added yet'}
                   </Text>
                 </Flex>
               </Box>
@@ -271,9 +287,9 @@ export default function ProfilePage() {
 
             {/* Actions */}
             <Flex
-              direction={{ base: "column", sm: "row" }}
+              direction={{ base: 'column', sm: 'row' }}
               justify="space-between"
-              align={{ base: "stretch", sm: "center" }}
+              align={{ base: 'stretch', sm: 'center' }}
               gap={3}
             >
               <Text fontSize="sm" color="gray.500">
@@ -286,7 +302,7 @@ export default function ProfilePage() {
                 borderRadius="full"
                 px={6}
                 bg={accent}
-                _hover={{ bg: "pink.600" }}
+                _hover={{ bg: 'pink.600' }}
                 color="white"
                 fontWeight="600"
                 fontSize="sm"
