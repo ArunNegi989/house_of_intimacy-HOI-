@@ -118,8 +118,14 @@ export default function ProfilePage() {
   }
 
   return (
-    <Box bg={pageBg} minH="100vh" py={10} px={{ base: 4, md: 6 }}>
-      <Box maxW="900px" mx="auto">
+  <Box
+    bg={pageBg}
+   
+    pt={{ base: "90px", md: "180px" }} // header ki height ke hisaab se
+    pb={10}
+    px={{ base: 4, md: 6 }}
+  >
+      <Box maxW="1200px" mx="auto">
         {/* Page heading */}
         <Flex justify="space-between" align="center" mb={6}>
           <Box>
