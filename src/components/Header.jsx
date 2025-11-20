@@ -103,9 +103,8 @@ export default function Header() {
   // scrolled: true = solid, false = transparent
   const [scrolled, setScrolled] = useState(() => !isHomePage);
 
-  // ====== AUTH INFO FROM STORAGE ======
-  const token =
-    localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
+  // ====== AUTH INFO FROM STORAGE (ONLY localStorage) ======
+  const token = localStorage.getItem("authToken");
   const isAuthenticated = !!token;
   const storedName = localStorage.getItem("userName");
   const userName = isAuthenticated
@@ -196,7 +195,7 @@ export default function Header() {
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userName");
-    sessionStorage.removeItem("authToken");
+    localStorage.removeItem("userRole");
     setUserMenuOpen(false);
     navigate("/login");
   };
@@ -483,7 +482,6 @@ export default function Header() {
             <IconSearch /> <span>SEARCH</span>
           </a>
 
-          {/* Mobile auth section */}
           {!isAuthenticated ? (
             <>
               <Link

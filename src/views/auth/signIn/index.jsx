@@ -36,7 +36,6 @@ function SignIn() {
   const textColorDetails = useColorModeValue("gray.600", "black");
   const textColorBrand = useColorModeValue("brand.500", "black");
   const brandStars = useColorModeValue("brand.500", "brand.300");
-
   const inputTextColor = useColorModeValue("navy.700", "white");
 
   const [show, setShow] = React.useState(false);
@@ -51,12 +50,12 @@ function SignIn() {
 
   const onSubmit = async (data) => {
     try {
+      // rememberMe aayega, but abhi hum token storage ke liye use nahi kar rahe
       const { rememberMe, ...loginPayload } = data;
 
-     const res = await axios.post(`${baseUrl}/auth/login`, loginPayload);
+      const res = await axios.post(`${baseUrl}/auth/login`, loginPayload);
 
-
-      console.log("LOGIN RESPONSE:", res.data); // 👈 DEBUG
+      console.log("LOGIN RESPONSE:", res.data);
 
       const { token, user } = res.data || {};
 
@@ -64,14 +63,9 @@ function SignIn() {
         throw new Error("Invalid response from server");
       }
 
-      // Token store
-      if (rememberMe) {
-        localStorage.setItem("authToken", token);
-      } else {
-        sessionStorage.setItem("authToken", token);
-      }
+      // 🔐 ALWAYS use localStorage → new tab me bhi login rahega
+      localStorage.setItem("authToken", token);
 
-      // User info
       if (user.name) {
         localStorage.setItem("userName", user.name);
       }
@@ -80,29 +74,28 @@ function SignIn() {
         localStorage.setItem("userRole", user.role);
       }
 
+      // (Optional) rememberMe ko bhi save kar sakte ho agar aage use karna ho
+      localStorage.setItem("rememberMe", rememberMe ? "1" : "0");
+
       toast({
         title: "Login Successful",
         status: "success",
         duration: 2000,
       });
 
-      // ✅ SAFE ROLE CHECK
       const normalizedRole = (user.role || "").toLowerCase().trim();
       const isAdmin = normalizedRole === "admin";
 
       if (isAdmin) {
-        // Admin → dashboard
         navigate("/admin/admin_dashboard", { replace: true });
       } else {
-        // Normal user → home
         navigate("/", { replace: true });
       }
     } catch (err) {
       console.error(err);
       toast({
         title: "Login Failed",
-        description:
-          err.response?.data?.message || "Invalid credentials",
+        description: err.response?.data?.message || "Invalid credentials",
         status: "error",
         duration: 3000,
       });

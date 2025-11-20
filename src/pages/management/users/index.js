@@ -153,15 +153,14 @@ const Users = () => {
   };
 
   return (
-    <Box
-      bg={pageBg}
-      minH="100vh"
-      px={{ base: 5, md: 8 }}
-      py={{ base: 10, md: 12 }}
-    >
-      <Heading fontSize={{ base: '2xl', md: '3xl' }} mb={6}>
-        Users
-      </Heading>
+     <Box
+        bg={pageBg}
+       
+        pt={{ base: "90px", md: "80px" }} // header ki height ke hisaab se
+        pb={10}
+        px={{ base: 4, md: 6 }}
+      >
+     
 
       {loading ? (
         <Flex justify="center" mt={10}>

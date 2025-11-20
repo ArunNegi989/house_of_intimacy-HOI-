@@ -231,7 +231,7 @@ export default function ProfilePage() {
               </Box>
 
               <Box>
-                <Text fontSize="xs" textTransform="uppercase" color={labelColor} mb={1}>
+                <Text fontSize="xs" textTransform="uppercase" color={labelColor} >
                   Email
                 </Text>
                 <Flex align="center" gap={2}>
