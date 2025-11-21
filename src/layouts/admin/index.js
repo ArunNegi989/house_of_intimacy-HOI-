@@ -156,6 +156,7 @@ export default function Dashboard(props) {
                     path="/"
                     element={<Navigate to="/admin/admin_dashboard" replace />}
                   />
+                  
                 </Routes>
               </Box>
             ) : null}

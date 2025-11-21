@@ -1,4 +1,5 @@
-import React from "react";
+// src/views/auth/signIn.jsx
+import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   Box,
@@ -21,7 +22,7 @@ import { useForm } from "react-hook-form";
 import { HSeparator } from "../../../components/Dashboard/separator/Separator";
 import DefaultAuth from "layouts/auth/Default";
 
-import illustration from "assets/img/auth/auth.webp";
+import illustration from "../../../assets/img/auth/auth.webp";
 import { FcGoogle } from "react-icons/fc";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
@@ -31,74 +32,83 @@ import axios from "axios";
 const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
 
 function SignIn() {
-  const textColor = useColorModeValue("navy.700", "black");
-  const textColorSecondary = useColorModeValue("gray.500", "black");
-  const textColorDetails = useColorModeValue("gray.600", "black");
-  const textColorBrand = useColorModeValue("brand.500", "black");
-  const brandStars = useColorModeValue("brand.500", "brand.300");
-  const inputTextColor = useColorModeValue("navy.700", "white");
+  const textColor = useColorModeValue("navy.700", "white");
+  const textColorSecondary = useColorModeValue("gray.500", "gray.400");
+  const textColorDetails = useColorModeValue("gray.400", "gray.400");
 
-  const [show, setShow] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const toast = useToast();
   const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors },
   } = useForm();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (values) => {
+    setIsSubmitting(true);
+
     try {
-      // rememberMe aayega, but abhi hum token storage ke liye use nahi kar rahe
-      const { rememberMe, ...loginPayload } = data;
+      const res = await axios.post(`${baseUrl}/auth/login`, {
+        email: values.email,
+        password: values.password,
+      });
 
-      const res = await axios.post(`${baseUrl}/auth/login`, loginPayload);
-
-      console.log("LOGIN RESPONSE:", res.data);
-
+      // EXPECTED RESPONSE:
+      // { success: true, token: "...", user: { name, email, role } }
       const { token, user } = res.data || {};
 
       if (!token || !user) {
         throw new Error("Invalid response from server");
       }
 
-      // 🔐 ALWAYS use localStorage → new tab me bhi login rahega
-      localStorage.setItem("authToken", token);
+      // ⚡ Keep me logged in → localStorage, otherwise sessionStorage
+      const storage = values.rememberMe ? localStorage : sessionStorage;
 
-      if (user.name) {
-        localStorage.setItem("userName", user.name);
-      }
-
-      if (user.role) {
-        localStorage.setItem("userRole", user.role);
-      }
-
-      // (Optional) rememberMe ko bhi save kar sakte ho agar aage use karna ho
-      localStorage.setItem("rememberMe", rememberMe ? "1" : "0");
+      storage.setItem("authToken", token);
+      storage.setItem("userRole", (user.role || "user").toLowerCase());
+      storage.setItem("userName", user.name || "");
+      storage.setItem("userEmail", user.email || "");
 
       toast({
-        title: "Login Successful",
+        title: "Login successful",
+        description:
+          user.role && user.role.toLowerCase() === "admin"
+            ? "Welcome, Admin!"
+            : "Welcome back!",
         status: "success",
-        duration: 2000,
+        duration: 3000,
+        isClosable: true,
       });
 
-      const normalizedRole = (user.role || "").toLowerCase().trim();
-      const isAdmin = normalizedRole === "admin";
+      // 🧭 Redirect based on role
+      const role = (user.role || "").toLowerCase().trim();
 
-      if (isAdmin) {
-        navigate("/admin/admin_dashboard", { replace: true });
+      if (role === "admin") {
+        navigate("/admin/admin_dashboard");
       } else {
-        navigate("/", { replace: true });
+        navigate("/");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Login error:", err);
+
+      const msg =
+        err.response?.data?.message ||
+        err.message ||
+        "Something went wrong while logging in.";
+
       toast({
-        title: "Login Failed",
-        description: err.response?.data?.message || "Invalid credentials",
+        title: "Login failed",
+        description: msg,
         status: "error",
-        duration: 3000,
+        duration: 4000,
+        isClosable: true,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -110,135 +120,178 @@ function SignIn() {
         mx={{ base: "auto", lg: "0px" }}
         me="auto"
         h="100%"
-        alignItems="start"
+        alignItems="center"
         justifyContent="center"
+        mb={{ base: "30px", md: "60px" }}
         px={{ base: "25px", md: "0px" }}
-        mt={{ base: "40px", md: "0vh" }}
+        mt={{ base: "40px", md: "14vh" }}
         flexDirection="column"
       >
         <Box me="auto">
           <Heading color={textColor} fontSize="36px" mb="10px">
-            Sign In
+            Welcome Back
           </Heading>
-          <Text mb="36px" color={textColorSecondary} fontWeight="400">
+          <Text
+            mb="36px"
+            ms="4px"
+            color={textColorSecondary}
+            fontWeight="400"
+            fontSize="md"
+          >
             Enter your email and password to sign in!
           </Text>
         </Box>
 
-        <Flex direction="column" w={{ base: "100%", md: "420px" }} maxW="100%">
+        <Flex
+          zIndex="2"
+          direction="column"
+          w={{ base: "100%", md: "420px" }}
+          maxW="100%"
+          background="transparent"
+          borderRadius="15px"
+          mx={{ base: "auto", lg: "unset" }}
+          me="auto"
+          mb={{ base: "20px", md: "auto" }}
+        >
+          {/* Google Button (Optional) */}
           <Button
+            fontSize="sm"
             mb="26px"
+            py="15px"
             h="50px"
             borderRadius="16px"
-            bg="gray.300"
-            color="black"
+            bg="white"
+            color="gray.600"
+            fontWeight="500"
+            _hover={{ bg: "gray.100" }}
+            leftIcon={<Icon as={FcGoogle} w="20px" h="20px" />}
           >
-            <Icon as={FcGoogle} w="20px" h="20px" me="10px" />
             Sign in with Google
           </Button>
 
-          <Flex align="center" mb="25px">
-            <HSeparator />
-            <Text color="gray.400" mx="14px">
-              or
-            </Text>
-            <HSeparator />
-          </Flex>
+          <HSeparator mb="26px" />
 
+          {/* FORM */}
           <form onSubmit={handleSubmit(onSubmit)}>
-            <FormControl mb="20px">
-              <FormLabel color={textColor} fontSize="sm">
-                Email <Text as="span" color={brandStars}>*</Text>
+            {/* EMAIL */}
+            <FormControl mb="24px" isInvalid={errors.email}>
+              <FormLabel
+                display="flex"
+                ms="4px"
+                fontSize="sm"
+                fontWeight="500"
+                color={textColor}
+                mb="8px"
+              >
+                Email<Text color="brand.500">*</Text>
               </FormLabel>
-
               <Input
                 type="email"
                 placeholder="mail@example.com"
-                variant="auth"
-                color={inputTextColor}
                 {...register("email", {
                   required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Invalid email address",
+                  },
                 })}
               />
-
               {errors.email && (
-                <Text color="red.400" fontSize="xs" mt="1">
+                <Text color="red.400" fontSize="xs" mt={1}>
                   {errors.email.message}
                 </Text>
               )}
             </FormControl>
 
-            <FormControl mb="24px">
-              <FormLabel color={textColor} fontSize="sm">
-                Password <Text as="span" color={brandStars}>*</Text>
+            {/* PASSWORD */}
+            <FormControl mb="24px" isInvalid={errors.password}>
+              <FormLabel
+                ms="4px"
+                fontSize="sm"
+                fontWeight="500"
+                color={textColor}
+                display="flex"
+              >
+                Password<Text color="brand.500">*</Text>
               </FormLabel>
-
               <InputGroup>
                 <Input
-                  type={show ? "text" : "password"}
-                  placeholder="Min. 8 characters"
-                  variant="auth"
-                  color={inputTextColor}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Min. 6 characters"
                   {...register("password", {
                     required: "Password is required",
                     minLength: {
-                      value: 8,
-                      message: "Password must be at least 8 characters",
+                      value: 6,
+                      message: "Password must be at least 6 characters",
                     },
                   })}
                 />
-
-                <InputRightElement>
+                <InputRightElement
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  cursor="pointer"
+                >
                   <Icon
-                    as={show ? RiEyeCloseLine : MdOutlineRemoveRedEye}
-                    onClick={() => setShow(!show)}
-                    cursor="pointer"
-                    color={textColorSecondary}
+                    as={showPassword ? RiEyeCloseLine : MdOutlineRemoveRedEye}
                   />
                 </InputRightElement>
               </InputGroup>
-
               {errors.password && (
-                <Text color="red.400" fontSize="xs" mt="1">
+                <Text color="red.400" fontSize="xs" mt={1}>
                   {errors.password.message}
                 </Text>
               )}
             </FormControl>
 
-            <Flex justifyContent="space-between" mb="24px" align="center">
+            {/* REMEMBER ME + FORGOT */}
+            <Flex justifyContent="space-between" align="center" mb="24px">
               <Checkbox
-                colorScheme="brandScheme"
+                colorScheme="brand"
                 {...register("rememberMe")}
+                defaultChecked
               >
-                Keep me logged in
+                <Text color={textColorDetails} fontSize="sm">
+                  Keep me logged in
+                </Text>
               </Checkbox>
 
               <NavLink to="/auth/forgot-password">
-                <Text color={textColorBrand} fontWeight="500" fontSize="sm">
+                <Text color="brand.500" fontSize="sm" fontWeight="500">
                   Forgot password?
                 </Text>
               </NavLink>
             </Flex>
 
+            {/* SUBMIT BUTTON */}
             <Button
               type="submit"
+              fontSize="sm"
+              variant="solid"
+              colorScheme="brand"
               w="100%"
-              h="50px"
-              variant="brand"
+              h="50"
+              mb="24px"
               isLoading={isSubmitting}
             >
               Sign In
             </Button>
           </form>
 
-          <Text color={textColorDetails} mt="20px">
-            Not registered yet?
+          {/* REGISTER LINK */}
+          <Flex justifyContent="center" align="center">
+            <Text color={textColorDetails} fontSize="sm" me="4px">
+              Not registered yet?
+            </Text>
             <NavLink to="/auth/create_new_user">
-              <Text as="span" color={textColorBrand} ms="5px" fontWeight="500">
-                Create an Account
+              <Text
+                color="brand.500"
+                fontSize="sm"
+                fontWeight="500"
+                textDecoration="underline"
+              >
+                Create an account
               </Text>
             </NavLink>
-          </Text>
+          </Flex>
         </Flex>
       </Flex>
     </DefaultAuth>

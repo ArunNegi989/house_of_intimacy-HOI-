@@ -26,6 +26,7 @@ import AdminRoute from 'routes/AdminRoute';
 import ProfilePage from 'views/account/ProfilePage';
 import OrdersPage from 'views/account/OrdersPage';
 import VerifyEmail from 'views/auth/VerifyEmail';
+import AddProducts from 'pages/management/products/add-new';
 
 export default function Main() {
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
@@ -118,6 +119,7 @@ export default function Main() {
                 </ProtectedRoute>
               }
             />
+            
 
             {/* HOME PAGE (public) */}
             <Route path="/" element={<Home />} />

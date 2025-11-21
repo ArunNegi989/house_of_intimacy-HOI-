@@ -1,7 +1,8 @@
 import React from 'react';
 
 import { Icon } from '@chakra-ui/react';
-import { MdHome } from 'react-icons/md';
+import { MdAdd, MdHome } from 'react-icons/md';
+import { FaCartShopping } from "react-icons/fa6";
 
 // Admin Imports
 import MainDashboard from 'views/admin/admin_dashboard';
@@ -10,39 +11,47 @@ import MainDashboard from 'views/admin/admin_dashboard';
 import Home from 'components/Home';
 import Users from 'pages/management/users';
 import Products from 'pages/management/products';
+import AddProducts from 'pages/management/products/add-new';
+import { FaUser } from 'react-icons/fa';
 
 const routes = [
-  // Home page
   {
     name: 'Main Dashboard',
     layout: '/home',
     path: '/',
     component: <Home />,
   },
-
-  // Admin dashboard (sidebar pe dikh raha)
   {
     name: 'Main Dashboard',
     layout: '/admin',
     path: '/admin_dashboard',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     component: <MainDashboard />,
+    // showInSidebar: true,  // optional
   },
-
-  // ✅ Users – ab admin sidebar me dikhega
   {
     name: 'Users',
-    layout: '/admin',  // ⬅️ /pages se /admin kar diya
+    layout: '/admin',
     path: '/users',
-    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+    icon: <FaUser />,
     component: <Users />,
+    // showInSidebar: true,  // optional
   },
   {
     name: 'Products',
-    layout: '/admin',  // ⬅️ /pages se /admin kar diya
+    layout: '/admin',
     path: '/products',
-    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+    icon: <FaCartShopping />,
     component: <Products />,
+    // showInSidebar: true,  // optional
+  },
+  // ✅ Hidden page (sirf button se open hoga)
+  {
+    name: "Add Product",
+    layout: "/admin",
+    path: "/products/add-new",
+    component: <AddProducts />,
+    showInSidebar: false, // 👈 isko sidebar se hide rakhenge
   },
 ];
 
