@@ -15,7 +15,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import DefaultAuth from "layouts/auth/Default";
-import illustration from "assets/img/auth/auth.png";
+import illustration from "assets/img/auth/auth.webp";
 
 const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
 

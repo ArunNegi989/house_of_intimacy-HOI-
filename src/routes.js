@@ -9,6 +9,7 @@ import MainDashboard from 'views/admin/admin_dashboard';
 // Auth / Other Imports
 import Home from 'components/Home';
 import Users from 'pages/management/users';
+import Products from 'pages/management/products';
 
 const routes = [
   // Home page
@@ -35,6 +36,13 @@ const routes = [
     path: '/users',
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     component: <Users />,
+  },
+  {
+    name: 'Products',
+    layout: '/admin',  // ⬅️ /pages se /admin kar diya
+    path: '/products',
+    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+    component: <Products />,
   },
 ];
 

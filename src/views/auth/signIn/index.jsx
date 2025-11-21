@@ -21,7 +21,7 @@ import { useForm } from "react-hook-form";
 import { HSeparator } from "../../../components/Dashboard/separator/Separator";
 import DefaultAuth from "layouts/auth/Default";
 
-import illustration from "assets/img/auth/auth.png";
+import illustration from "assets/img/auth/auth.webp";
 import { FcGoogle } from "react-icons/fc";
 import { MdOutlineRemoveRedEye } from "react-icons/md";
 import { RiEyeCloseLine } from "react-icons/ri";
