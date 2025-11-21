@@ -1,4 +1,6 @@
+// src/pages/management/products/add-new.jsx
 import React, { useState } from "react";
+import axios from "axios";
 import {
   Box,
   Button,
@@ -19,8 +21,10 @@ import {
   useColorModeValue,
   Badge,
   Image,
+  useToast, // ✅ added
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 
 const predefinedColors = [
   "Black",
@@ -33,6 +37,8 @@ const predefinedColors = [
   "Purple",
 ];
 
+const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
+
 const AddProducts = () => {
   const {
     register,
@@ -41,6 +47,9 @@ const AddProducts = () => {
     setValue,
     formState: { errors },
   } = useForm();
+
+  const navigate = useNavigate();
+  const toast = useToast(); // ✅ toast instance
 
   const [sizes, setSizes] = useState([
     { label: "XS", stock: 0, selected: false },
@@ -78,61 +87,163 @@ const AddProducts = () => {
   const colorsRegister = register("colors");
   const mainImageRegister = register("mainImage");
 
-  // Submit Handler
-  const onSubmit = (data) => {
+  // 👉 SUBMIT: send FormData
+  const onSubmit = async (data) => {
     const selectedSizes = sizes
       .filter((s) => s.selected)
       .map((s) => ({ label: s.label, stock: Number(s.stock || 0) }));
 
     const tagsArray = data.tags
-      ? data.tags.split(",").map((t) => t.trim()).filter(Boolean)
+      ? data.tags
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean)
       : [];
 
-    // prefer data.colors string; fallback to selectedColors
     const colorsSource =
       data.colors && data.colors.trim().length > 0
         ? data.colors
         : selectedColors.join(",");
     const colorsArray = colorsSource
-      ? colorsSource.split(",").map((c) => c.trim()).filter(Boolean)
+      ? colorsSource
+          .split(",")
+          .map((c) => c.trim())
+          .filter(Boolean)
       : [];
 
     const keywordsArray = data.seoKeywords
-      ? data.seoKeywords.split(",").map((k) => k.trim()).filter(Boolean)
+      ? data.seoKeywords
+          .split(",")
+          .map((k) => k.trim())
+          .filter(Boolean)
       : [];
 
-    const {
-      metaTitle,
-      metaDescription,
-      seoKeywords,
-      seoSchema,
-      ...restFields
-    } = data;
+    const collectionsArray = data.collections
+      ? data.collections
+          .split(",")
+          .map((c) => c.trim())
+          .filter(Boolean)
+      : [];
 
-    const finalData = {
-      ...restFields,
-      price: {
+    // Build FormData
+    const formData = new FormData();
+
+    // BASIC INFO
+    formData.append("name", data.name || "");
+    formData.append("slug", data.slug || "");
+    formData.append("brand", data.brand || "");
+    formData.append("gender", data.gender || "");
+    formData.append("category", data.category || "");
+    formData.append("subcategory", data.subcategory || "");
+    formData.append("sku", data.sku || "");
+    formData.append("taxSlab", data.taxSlab || "");
+
+    // MEDIA
+    formData.append("sizeGuideUrl", data.sizeGuideUrl || "");
+    formData.append("videoUrl", data.videoUrl || "");
+
+    // FABRIC / ATTRIBUTES
+    formData.append("fabric", data.fabric || "");
+    formData.append("composition", data.composition || "");
+    formData.append("coverage", data.coverage || "");
+    formData.append("padding", data.padding || "");
+    formData.append("underwire", data.underwire || "");
+    formData.append("strapType", data.strapType || "");
+    formData.append("closureType", data.closureType || "");
+    formData.append("pattern", data.pattern || "");
+    formData.append("occasion", data.occasion || "");
+    formData.append("careInstructions", data.careInstructions || "");
+
+    // DESCRIPTIONS
+    formData.append("shortDescription", data.shortDescription || "");
+    formData.append("description", data.description || "");
+
+    // INVENTORY
+    formData.append("status", data.status || "active");
+    formData.append("totalStock", data.totalStock || "");
+
+    // FEATURED
+    formData.append("isFeatured", data.isFeatured ? "true" : "false");
+
+    // OBJECTS / ARRAYS -> JSON
+    formData.append(
+      "price",
+      JSON.stringify({
         mrp,
         discountPercent: discount,
         sale: salePrice,
-      },
-      sizes: selectedSizes,
-      tags: tagsArray,
-      colors: colorsArray,
-      seo: {
-        metaTitle: metaTitle || "",
-        metaDescription: metaDescription || "",
-        keywords: keywordsArray,
-        schemaMarkup: seoSchema || "",
-      },
-    };
+      })
+    );
+    formData.append("sizes", JSON.stringify(selectedSizes));
+    formData.append("tags", JSON.stringify(tagsArray));
+    formData.append("colors", JSON.stringify(colorsArray));
+    formData.append("collections", JSON.stringify(collectionsArray));
 
-    console.log("Final Product Payload:", finalData);
-    alert("Product data ready! Console me payload check karo.");
+    formData.append(
+      "seo",
+      JSON.stringify({
+        metaTitle: data.metaTitle || "",
+        metaDescription: data.metaDescription || "",
+        keywords: keywordsArray,
+        schemaMarkup: data.seoSchema || "",
+      })
+    );
+
+    // FILES
+    if (data.mainImage && data.mainImage[0]) {
+      formData.append("mainImage", data.mainImage[0]);
+    }
+
+    if (data.galleryImages && data.galleryImages.length > 0) {
+      Array.from(data.galleryImages).forEach((file) => {
+        formData.append("galleryImages", file);
+      });
+    }
+
+    try {
+      const token =
+        localStorage.getItem("authToken") ||
+        sessionStorage.getItem("authToken");
+
+      const res = await axios.post(`${baseUrl}/products`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Product created:", res.data);
+
+      // ✅ Success toast instead of alert
+      toast({
+        title: "Product Saved",
+        description: "Your product has been added successfully.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+
+      navigate("/admin/products");
+    } catch (err) {
+      console.error("Save product error:", err);
+
+      // ❌ Error toast instead of alert
+      toast({
+        title: "Error",
+        description:
+          err?.response?.data?.message ||
+          "Something went wrong while saving product",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+        position: "top-right",
+      });
+    }
   };
 
   return (
-    <Box bg={pageBg} pt={{ base: "95px", md: "85px" }} minH="100vh">
+    <Box bg={pageBg} pt={{ base: "140px", md: "85px" }} minH="100vh">
       <Box maxW="1200px" mx="auto">
         {/* Page Header */}
         <Flex
@@ -173,7 +284,7 @@ const AddProducts = () => {
             p={{ base: 4, md: 6 }}
             boxShadow="sm"
           >
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
               {/* SECTION: BASIC INFO */}
               <Heading size="md" mb={3}>
                 Basic Information
@@ -220,7 +331,6 @@ const AddProducts = () => {
                   <Select {...register("gender")} placeholder="Select target">
                     <option value="women">Women</option>
                     <option value="men">Men</option>
-                    <option value="unisex">Unisex</option>
                   </Select>
                 </FormControl>
 
@@ -284,7 +394,6 @@ const AddProducts = () => {
                     accept="image/*"
                     {...mainImageRegister}
                     onChange={(e) => {
-                      // react-hook-form ka onChange bhi call karna hai
                       mainImageRegister.onChange(e);
                       const file = e.target.files?.[0];
                       if (file) {
@@ -337,7 +446,8 @@ const AddProducts = () => {
               <FormControl mb={4}>
                 <FormLabel>Colors</FormLabel>
                 <Text fontSize="xs" color="gray.500" mb={2}>
-                  Click to select available colors. Ye values baad me filter ke liye use hongi.
+                  Click to select available colors. Ye values baad me filter ke
+                  liye use hongi.
                 </Text>
 
                 <Flex wrap="wrap" gap={2} mb={3}>
@@ -353,7 +463,9 @@ const AddProducts = () => {
                         onClick={() => {
                           let updated;
                           if (isActive) {
-                            updated = selectedColors.filter((c) => c !== color);
+                            updated = selectedColors.filter(
+                              (c) => c !== color
+                            );
                           } else {
                             updated = [...selectedColors, color];
                           }
@@ -500,7 +612,7 @@ const AddProducts = () => {
 
               <Divider my={6} />
 
-              {/* SECTION: ATTRIBUTES */}
+              {/* SECTION: FABRIC & COMFORT */}
               <Heading size="md" mb={3}>
                 Fabric & Comfort Attributes
               </Heading>

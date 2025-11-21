@@ -1,4 +1,4 @@
-// src/pages/management/users/index.jsx
+// src/pages/management/products/index.jsx
 import React, { useEffect, useState } from "react";
 import {
   Box,
@@ -10,6 +10,7 @@ import {
   useToast,
   useColorModeValue,
   Button,
+  Image,
 } from "@chakra-ui/react";
 
 import { useNavigate } from "react-router-dom";
@@ -19,22 +20,24 @@ import { Table, Thead, Tbody, Tr, Th, Td } from "react-super-responsive-table";
 import "react-super-responsive-table/dist/SuperResponsiveTableStyle.css";
 
 import ReactPaginate from "react-paginate";
-import "../../../assets/styles/Users.module.css"; // pagination CSS
+import "../../../assets/styles/Users.module.css"; // pagination CSS, reuse
 
 const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
+// API root (without /v1) for images like /uploads/...
+const apiRoot = baseUrl.replace(/\/v1$/, "");
 
 const Products = () => {
-  const [users, setUsers] = useState([]);
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // pagination state
+  // pagination state (frontend is 0-based, backend is 1-based)
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 10; // per page users
+  const [pageCount, setPageCount] = useState(0);
+  const itemsPerPage = 10;
 
   const toast = useToast();
   const navigate = useNavigate();
 
-  // PRE-CALCULATED COLORS
   const pageBg = useColorModeValue("gray.50", "gray.900");
   const cardBg = useColorModeValue("white", "gray.800");
 
@@ -42,14 +45,69 @@ const Products = () => {
   const headerTextColor = useColorModeValue("white", "white");
   const rowHoverBg = useColorModeValue("gray.100", "gray.700");
 
+  // 👉 FETCH PRODUCTS (with backend pagination)
+  const fetchProducts = async (pageIndex = 0) => {
+    setLoading(true);
+    try {
+      const page = pageIndex + 1; // backend page starts from 1
+
+      const res = await axios.get(
+        `${baseUrl}/products?page=${page}&limit=${itemsPerPage}`
+      );
+
+      console.log("PRODUCTS RESPONSE:", res.data);
+
+      // Try to read products array from various possible keys
+      const productsArray =
+        res.data.data || res.data.products || res.data.items || [];
+
+      setProducts(productsArray);
+
+      // Try to read totalPages from various possible keys
+      const totalPagesFromPagination = res.data.pagination?.totalPages;
+      const totalPagesDirect = res.data.totalPages;
+
+      let finalPageCount = 0;
+
+      if (typeof totalPagesFromPagination === "number") {
+        finalPageCount = totalPagesFromPagination;
+      } else if (typeof totalPagesDirect === "number") {
+        finalPageCount = totalPagesDirect;
+      } else {
+        // Fallback: if backend only sends total count, compute pages
+        const totalItems =
+          res.data.pagination?.total || res.data.total || productsArray.length;
+        finalPageCount = Math.ceil(totalItems / itemsPerPage);
+      }
+
+      setPageCount(finalPageCount || 0);
+      setCurrentPage(pageIndex);
+    } catch (err) {
+      console.error("Error loading products:", err);
+      toast({
+        title: "Error Fetching Products",
+        description: err.response?.data?.message || "Error loading products.",
+        status: "error",
+        duration: 4000,
+        isClosable: true,
+        position: "bottom-right",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts(0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handlePageClick = ({ selected }) => {
+    fetchProducts(selected);
+  };
+
   // DELETE HANDLER
-  const handleDelete = async (userId) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this user?"
-    );
-
-    if (!confirmDelete) return;
-
+  const handleDelete = async (productId) => {
     try {
       const token =
         localStorage.getItem("authToken") ||
@@ -61,141 +119,91 @@ const Products = () => {
           description: "Please login again.",
           status: "warning",
           duration: 3000,
+          isClosable: true,
+          position: "bottom-right",
         });
         navigate("/login");
         return;
       }
 
-      const res = await axios.delete(`${baseUrl}/users/${userId}`, {
+      toast({
+        title: "Deleting product...",
+        description: "Please wait while we remove this product.",
+        status: "info",
+        duration: 1500,
+        isClosable: true,
+        position: "bottom-right",
+      });
+
+      await axios.delete(`${baseUrl}/products/${productId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      if (res.data && res.data.success) {
-        toast({
-          title: "User Deleted",
-          description: "User removed successfully.",
-          status: "success",
-          duration: 3000,
-        });
+      toast({
+        title: "Product Deleted",
+        description: "Product removed successfully.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "bottom-right",
+      });
 
-        // update list + fix page if last item removed
-        setUsers((prev) => {
-          const updated = prev.filter((u) => u._id !== userId);
-          const totalPages = Math.ceil(updated.length / itemsPerPage);
-          if (currentPage >= totalPages && currentPage > 0) {
-            setCurrentPage(currentPage - 1);
-          }
-          return updated;
-        });
-      }
+      // refetch current page
+      fetchProducts(currentPage);
     } catch (err) {
+      console.error("Delete product error:", err);
       toast({
         title: "Delete Error",
         description: err.response?.data?.message || "Server error.",
         status: "error",
         duration: 4000,
+        isClosable: true,
+        position: "bottom-right",
       });
     }
-  };
-
-  // FETCH USERS
-  const fetchUsers = async () => {
-    try {
-      const token =
-        localStorage.getItem("authToken") ||
-        sessionStorage.getItem("authToken");
-
-      if (!token) {
-        toast({
-          title: "Not logged in",
-          description: "Please login to view users list.",
-          status: "warning",
-          duration: 3000,
-        });
-        navigate("/login");
-        return;
-      }
-
-      const res = await axios.get(`${baseUrl}/users`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (res.data.success) {
-        setUsers(res.data.users);
-      }
-    } catch (err) {
-      toast({
-        title: "Error Fetching Users",
-        description: err.response?.data?.message || "Error loading users.",
-        status: "error",
-      });
-
-      if (err.response?.status === 401) navigate("/login");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchUsers();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // client-side pagination logic
-  const pageCount = Math.ceil(users.length / itemsPerPage);
-  const offset = currentPage * itemsPerPage;
-  const currentUsers = users.slice(offset, offset + itemsPerPage);
-
-  const handlePageClick = ({ selected }) => {
-    setCurrentPage(selected);
   };
 
   return (
     <Box
       bg={pageBg}
-      pt={{ base: "90px", md: "120px" }} // header ki height ke hisaab se
+      pt={{ base: "150px", md: "120px" }}
       pb={10}
       px={{ base: 4, md: 6 }}
     >
-      {/* Top bar: Title + Back button (right side) */}
-     <Flex justify="end" align="center" mb={4}>
- 
+      {/* Top bar: Add Product + Back */}
+      <Flex justify="flex-end" align="center" mb={4}>
+        <Flex gap={3}>
+          <Button
+            colorScheme="green"
+            onClick={() => navigate("/admin/products/add-new")}
+            rounded="full"
+            px={6}
+            py={2}
+            fontWeight="600"
+          >
+            Add Product
+          </Button>
 
-  <Flex gap={3}>
-    <Button
-      colorScheme="green"
-     onClick={() => navigate("/admin/products/add-new")} // 🔥 yahan change
-      rounded="full"
-      px={6}
-      py={2}
-      fontWeight="600"
-    >
-      Add Products
-    </Button>
-
-    <Button
-      colorScheme="purple"
-      onClick={() => navigate(-1)}
-      rounded="full"
-      px={6}
-      py={2}
-      fontWeight="600"
-    >
-      Back
-    </Button>
-  </Flex>
-</Flex>
-
+            <Button
+              colorScheme="purple"
+              onClick={() => navigate(-1)}
+              rounded="full"
+              px={6}
+              py={2}
+              fontWeight="600"
+            >
+              Back
+            </Button>
+        </Flex>
+      </Flex>
 
       {loading ? (
         <Flex justify="center" mt={10}>
           <Spinner size="lg" />
         </Flex>
-      ) : users.length === 0 ? (
+      ) : products.length === 0 ? (
         <Box
           bg={cardBg}
           p={6}
@@ -204,7 +212,7 @@ const Products = () => {
           boxShadow="md"
           mt={4}
         >
-          <Text>No users found.</Text>
+          <Text>No products found.</Text>
         </Box>
       ) : (
         <>
@@ -231,11 +239,13 @@ const Products = () => {
                   }}
                 >
                   <Th style={{ padding: "16px", color: "white" }}>S No.</Th>
-                  <Th style={{ padding: "16px", color: "white" }}>Name</Th>
-                  <Th style={{ padding: "16px", color: "white" }}>Email</Th>
-                  <Th style={{ padding: "16px", color: "white" }}>Phone</Th>
-                  <Th style={{ padding: "16px", color: "white" }}>Address</Th>
-                  <Th style={{ padding: "16px", color: "white" }}>Role</Th>
+                  <Th style={{ padding: "16px", color: "white" }}>Image</Th>
+                  <Th style={{ padding: "16px", color: "white" }}>Product</Th>
+                  <Th style={{ padding: "16px", color: "white" }}>Category</Th>
+                  <Th style={{ padding: "16px", color: "white" }}>Brand</Th>
+                  <Th style={{ padding: "16px", color: "white" }}>Price</Th>
+                  <Th style={{ padding: "16px", color: "white" }}>Stock</Th>
+                  <Th style={{ padding: "16px", color: "white" }}>Status</Th>
                   <Th style={{ padding: "16px", color: "white" }}>
                     Created At
                   </Th>
@@ -244,96 +254,165 @@ const Products = () => {
               </Thead>
 
               <Tbody>
-                {currentUsers.map((user, index) => (
-                  <Tr
-                    key={user._id}
-                    style={{ transition: "0.2s" }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = rowHoverBg)
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.background = "transparent")
-                    }
-                  >
-                    <Td style={{ padding: "14px", fontWeight: "600" }}>
-                      {offset + index + 1}
-                    </Td>
+                {products.map((product, index) => {
+                  const priceInfo = product?.price || {};
+                  const mrp = priceInfo.mrp ?? 0;
+                  const sale = priceInfo.sale ?? mrp ?? 0;
+                  const discountPercent = priceInfo.discountPercent ?? null;
 
-                    <Td style={{ padding: "14px" }}>{user.name}</Td>
-                    <Td style={{ padding: "14px" }}>{user.email}</Td>
-                    <Td style={{ padding: "14px" }}>{user.phone}</Td>
-                    <Td style={{ padding: "14px" }}>{user.address}</Td>
+                  const imageUrl = product.mainImage
+                    ? `${apiRoot}${product.mainImage}`
+                    : null;
 
-                    <Td style={{ padding: "14px" }}>
-                      <Tag
-                        size="md"
-                        colorScheme={
-                          user.role === "admin"
-                            ? "purple"
-                            : user.role === "moderator"
-                            ? "blue"
-                            : "green"
-                        }
-                        px={3}
-                        py={1}
-                        rounded="full"
-                        fontSize="14px"
-                        fontWeight="600"
-                      >
-                        <TagLabel>{user.role}</TagLabel>
-                      </Tag>
-                    </Td>
-
-                    <Td style={{ padding: "14px" }}>
-                      {new Date(user.createdAt).toLocaleString()}
-                    </Td>
-
-                    <Td
-                      style={{
-                        padding: "14px",
-                        display: "flex",
-                        gap: "10px",
-                        flexWrap: "wrap",
-                      }}
+                  return (
+                    <Tr
+                      key={product._id}
+                      style={{ transition: "0.2s" }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = rowHoverBg)
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.background = "transparent")
+                      }
                     >
-                      {/* EDIT BUTTON */}
-                      <Button
-                        size="sm"
-                        colorScheme="blue"
-                        px={4}
-                        py={2}
-                        rounded="full"
-                        fontWeight="600"
-                        onClick={() =>
-                          navigate(`/management/users/edit/${user._id}`)
-                        }
-                        _hover={{ transform: "scale(1.05)" }}
-                      >
-                        Edit
-                      </Button>
+                      {/* S No. */}
+                      <Td style={{ padding: "14px", fontWeight: "600" }}>
+                        {currentPage * itemsPerPage + index + 1}
+                      </Td>
 
-                      {/* DELETE BUTTON */}
-                      <Button
-                        size="sm"
-                        colorScheme="red"
-                        px={4}
-                        py={2}
-                        rounded="full"
-                        fontWeight="600"
-                        onClick={() => handleDelete(user._id)}
-                        _hover={{ transform: "scale(1.05)" }}
+                      {/* Thumbnail Image */}
+                      <Td style={{ padding: "14px" }}>
+                        {imageUrl ? (
+                          <Image
+                            src={imageUrl}
+                            alt={product.name}
+                            boxSize="60px"
+                            objectFit="cover"
+                            borderRadius="md"
+                            border="1px solid #E2E8F0"
+                          />
+                        ) : (
+                          <Text fontSize="xs" color="gray.500">
+                            No image
+                          </Text>
+                        )}
+                      </Td>
+
+                      {/* Product Name */}
+                      <Td style={{ padding: "14px" }}>
+                        <Text fontWeight="600">{product.name}</Text>
+                      </Td>
+
+                      {/* Category */}
+                      <Td style={{ padding: "14px" }}>
+                        {product.category || "-"}
+                      </Td>
+
+                      {/* Brand */}
+                      <Td style={{ padding: "14px" }}>
+                        {product.brand || "-"}
+                      </Td>
+
+                      {/* Price */}
+                      <Td style={{ padding: "14px" }}>
+                        <Text fontWeight="600">₹{sale}</Text>
+                        {discountPercent ? (
+                          <Text fontSize="xs" color="gray.500">
+                            MRP ₹{mrp} • {discountPercent}% off
+                          </Text>
+                        ) : (
+                          mrp > 0 && (
+                            <Text fontSize="xs" color="gray.500">
+                              MRP ₹{mrp}
+                            </Text>
+                          )
+                        )}
+                      </Td>
+
+                      {/* Stock */}
+                      <Td style={{ padding: "14px" }}>
+                        {typeof product.totalStock !== "undefined"
+                          ? product.totalStock
+                          : "-"}
+                      </Td>
+
+                      {/* Status */}
+                      <Td style={{ padding: "14px" }}>
+                        <Tag
+                          size="md"
+                          colorScheme={
+                            product.status === "active"
+                              ? "green"
+                              : product.status === "draft"
+                              ? "yellow"
+                              : product.status === "out-of-stock"
+                              ? "red"
+                              : "gray"
+                          }
+                          px={3}
+                          py={1}
+                          rounded="full"
+                          fontSize="14px"
+                          fontWeight="600"
+                        >
+                          <TagLabel>
+                            {product.status ? product.status : "N/A"}
+                          </TagLabel>
+                        </Tag>
+                      </Td>
+
+                      {/* Created At */}
+                      <Td style={{ padding: "14px" }}>
+                        {product.createdAt
+                          ? new Date(product.createdAt).toLocaleString()
+                          : "-"}
+                      </Td>
+
+                      {/* Actions */}
+                      <Td
+                        style={{
+                          padding: "14px",
+                          display: "flex",
+                          gap: "10px",
+                          flexWrap: "wrap",
+                        }}
                       >
-                        Delete
-                      </Button>
-                    </Td>
-                  </Tr>
-                ))}
+                        <Button
+                          size="sm"
+                          colorScheme="blue"
+                          px={4}
+                          py={2}
+                          rounded="full"
+                          fontWeight="600"
+                          onClick={() =>
+                            navigate(`/admin/products/${product._id}`)
+                          }
+                          _hover={{ transform: "scale(1.05)" }}
+                        >
+                          Edit
+                        </Button>
+                        <Button
+                          size="sm"
+                          colorScheme="red"
+                          px={4}
+                          py={2}
+                          rounded="full"
+                          fontWeight="600"
+                          onClick={() => handleDelete(product._id)}
+                          _hover={{ transform: "scale(1.05)" }}
+                        >
+                          Delete
+                        </Button>
+                      </Td>
+                    </Tr>
+                  );
+                })}
               </Tbody>
             </Table>
           </Box>
 
           {/* Pagination controls */}
-          {pageCount > 1 && (
+          {pageCount > 0 && (
             <Flex justify="center" mt={6}>
               <ReactPaginate
                 previousLabel="<"
@@ -354,6 +433,7 @@ const Products = () => {
                 breakLinkClassName="page-link"
                 activeClassName="active"
                 disabledClassName="disabled"
+                forcePage={currentPage} // keep in sync with state
               />
             </Flex>
           )}

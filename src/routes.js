@@ -13,6 +13,7 @@ import Users from 'pages/management/users';
 import Products from 'pages/management/products';
 import AddProducts from 'pages/management/products/add-new';
 import { FaUser } from 'react-icons/fa';
+import EditProducts from 'pages/management/products/[id]';
 
 const routes = [
   {
@@ -52,6 +53,12 @@ const routes = [
     path: "/products/add-new",
     component: <AddProducts />,
     showInSidebar: false, // 👈 isko sidebar se hide rakhenge
+  },{
+    name: 'Edit Product',
+    layout: '/admin',
+    path: '/products/:id',       // ✅ dynamic route
+    component: <EditProducts />,
+    showInSidebar: false,
   },
 ];
 

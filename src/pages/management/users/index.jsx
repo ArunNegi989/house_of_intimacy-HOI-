@@ -20,7 +20,7 @@ import { Table, Thead, Tbody, Tr, Th, Td } from 'react-super-responsive-table';
 import 'react-super-responsive-table/dist/SuperResponsiveTableStyle.css';
 
 import ReactPaginate from 'react-paginate';
-import '../../../assets/styles/Users.module.css'; // 👈 pagination CSS (next step)
+import '../../../assets/styles/Users.module.css'; // pagination + custom table CSS
 
 const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
 
@@ -30,7 +30,7 @@ const Users = () => {
 
   // pagination state
   const [currentPage, setCurrentPage] = useState(0);
-  const itemsPerPage = 10; // 👈 per page users
+  const itemsPerPage = 10; // per page users
 
   const toast = useToast();
   const navigate = useNavigate();
@@ -141,6 +141,7 @@ const Users = () => {
 
   useEffect(() => {
     fetchUsers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // client-side pagination logic
@@ -153,14 +154,13 @@ const Users = () => {
   };
 
   return (
-     <Box
-        bg={pageBg}
-       
-        pt={{ base: "90px", md: "80px" }} // header ki height ke hisaab se
-        pb={10}
-        px={{ base: 4, md: 6 }}
-      >
-     
+    <Box
+      bg={pageBg}
+      pt={{ base: '140px', md: '80px' }} // header ki height ke hisaab se
+      pb={10}
+      px={{ base: 4, md: 6 }}
+    >
+      
 
       {loading ? (
         <Flex justify="center" mt={10}>
@@ -181,129 +181,172 @@ const Users = () => {
         <>
           <Box
             bg={cardBg}
-            p={4}
+            p={{ base: 2, md: 4 }}
             rounded="2xl"
             boxShadow="lg"
             border="1px solid"
-            
+           
             mt={2}
           >
-            <Table
-              className="super-responsive-table"
-              style={{ fontSize: '16px' }}
-            >
-              <Thead>
-                <Tr
-                  style={{
-                    background: headerBg,
-                    color: headerTextColor,
-                    fontSize: '18px',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px',
-                  }}
-                >
-                  <Th style={{ padding: '16px', color: 'white' }}>S No.</Th>
-                  <Th style={{ padding: '16px', color: 'white' }}>Name</Th>
-                  <Th style={{ padding: '16px', color: 'white' }}>Email</Th>
-                  <Th style={{ padding: '16px', color: 'white' }}>Phone</Th>
-                  <Th style={{ padding: '16px', color: 'white' }}>Address</Th>
-                  <Th style={{ padding: '16px', color: 'white' }}>Role</Th>
-                  <Th style={{ padding: '16px', color: 'white' }}>
-                    Created At
-                  </Th>
-                  <Th style={{ padding: '16px', color: 'white' }}>Action</Th>
-                </Tr>
-              </Thead>
-
-              <Tbody>
-                {currentUsers.map((user, index) => (
+            {/* 👇 IMPORTANT: wrap in overflowX for mid breakpoints */}
+            <Box overflowX="auto">
+              <Table
+                className="super-responsive-table users-table"
+                style={{ fontSize: '17px', width: '100%' }}
+              >
+                <Thead>
                   <Tr
-                    key={user._id}
-                    style={{ transition: '0.2s' }}
-                    onMouseEnter={(e) =>
-                      (e.currentTarget.style.background = rowHoverBg)
-                    }
-                    onMouseLeave={(e) =>
-                      (e.currentTarget.style.background = 'transparent')
-                    }
+                    style={{
+                      background: headerBg,
+                      color: headerTextColor,
+                      fontSize: '18px',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                    }}
                   >
-                    <Td style={{ padding: '14px', fontWeight: '600' }}>
-                      {offset + index + 1}
-                    </Td>
-
-                    <Td style={{ padding: '14px' }}>{user.name}</Td>
-                    <Td style={{ padding: '14px' }}>{user.email}</Td>
-                    <Td style={{ padding: '14px' }}>{user.phone}</Td>
-                    <Td style={{ padding: '14px' }}>{user.address}</Td>
-
-                    <Td style={{ padding: '14px' }}>
-                      <Tag
-                        size="md"
-                        colorScheme={
-                          user.role === 'admin'
-                            ? 'purple'
-                            : user.role === 'moderator'
-                            ? 'blue'
-                            : 'green'
-                        }
-                        px={3}
-                        py={1}
-                        rounded="full"
-                        fontSize="14px"
-                        fontWeight="600"
-                      >
-                        <TagLabel>{user.role}</TagLabel>
-                      </Tag>
-                    </Td>
-
-                    <Td style={{ padding: '14px' }}>
-                      {new Date(user.createdAt).toLocaleString()}
-                    </Td>
-
-                    <Td style={{ padding: '14px' }}>
-                      <Button
-                        size="sm"
-                        colorScheme="red"
-                        px={4}
-                        py={2}
-                        rounded="full"
-                        fontWeight="600"
-                        onClick={() => handleDelete(user._id)}
-                        _hover={{ transform: 'scale(1.05)' }}
-                      >
-                        Delete
-                      </Button>
-                    </Td>
+                    <Th style={{ padding: '12px 16px', color: 'white' }}>
+                      S No.
+                    </Th>
+                    <Th style={{ padding: '12px 16px', color: 'white' }}>
+                      Name
+                    </Th>
+                    <Th style={{ padding: '12px 16px', color: 'white' }}>
+                      Email
+                    </Th>
+                    <Th style={{ padding: '12px 16px', color: 'white' }}>
+                      Phone
+                    </Th>
+                    <Th style={{ padding: '12px 16px', color: 'white' }}>
+                      Address
+                    </Th>
+                    <Th style={{ padding: '12px 16px', color: 'white' }}>
+                      Role
+                    </Th>
+                    <Th style={{ padding: '12px 16px', color: 'white' }}>
+                      Created At
+                    </Th>
+                    <Th style={{ padding: '12px 16px', color: 'white' }}>
+                      Action
+                    </Th>
                   </Tr>
-                ))}
-              </Tbody>
-            </Table>
+                </Thead>
+
+                <Tbody>
+                  {currentUsers.map((user, index) => (
+                    <Tr
+                      key={user._id}
+                      style={{ transition: '0.2s' }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.background = rowHoverBg)
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.background = 'transparent')
+                      }
+                    >
+                      <Td
+                        data-label="S No."
+                        style={{ padding: '10px 14px', fontWeight: 600 }}
+                      >
+                        {offset + index + 1}
+                      </Td>
+
+                      <Td data-label="Name" style={{ padding: '10px 14px' }}>
+                        {user.name}
+                      </Td>
+                      <Td
+                        data-label="Email"
+                        style={{
+                          padding: '10px 14px',
+                          wordBreak: 'break-all',
+                        }}
+                      >
+                        {user.email}
+                      </Td>
+                      <Td data-label="Phone" style={{ padding: '10px 14px' }}>
+                        {user.phone}
+                      </Td>
+                      <Td
+                        data-label="Address"
+                        style={{
+                          padding: '10px 14px',
+                          whiteSpace: 'normal',
+                          wordBreak: 'break-word',
+                        }}
+                      >
+                        {user.address}
+                      </Td>
+
+                      <Td data-label="Role" style={{ padding: '10px 14px' }}>
+                        <Tag
+                          size="md"
+                          colorScheme={
+                            user.role === 'admin'
+                              ? 'purple'
+                              : user.role === 'moderator'
+                              ? 'blue'
+                              : 'green'
+                          }
+                          px={3}
+                          py={1}
+                          rounded="full"
+                          fontSize="18px"
+                          fontWeight="600"
+                        >
+                          <TagLabel>{user.role}</TagLabel>
+                        </Tag>
+                      </Td>
+
+                      <Td
+                        data-label="Created At"
+                        style={{ padding: '10px 14px' }}
+                      >
+                        {new Date(user.createdAt).toLocaleString()}
+                      </Td>
+
+                      <Td data-label="Action" style={{ padding: '10px 14px' }}>
+                        <Button
+                          size="sm"
+                          colorScheme="red"
+                          px={4}
+                          py={2}
+                          rounded="full"
+                          fontWeight="600"
+                          onClick={() => handleDelete(user._id)}
+                          _hover={{ transform: 'scale(1.05)' }}
+                        >
+                          Delete
+                        </Button>
+                      </Td>
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </Box>
           </Box>
 
           {/* Pagination controls */}
           {pageCount > 1 && (
             <Flex justify="center" mt={6}>
               <ReactPaginate
-  previousLabel="<"
-  nextLabel=">"
-  breakLabel="..."
-  pageCount={pageCount}
-  marginPagesDisplayed={1}
-  pageRangeDisplayed={3}
-  onPageChange={handlePageClick}
-  containerClassName="pagination"
-  pageClassName="page-item"
-  pageLinkClassName="page-link"
-  previousClassName="page-item"
-  previousLinkClassName="page-link"
-  nextClassName="page-item"
-  nextLinkClassName="page-link"
-  breakClassName="page-item"
-  breakLinkClassName="page-link"
-  activeClassName="active"
-  disabledClassName="disabled"   // 👈 yeh add karo
-/>
-
+                previousLabel="<"
+                nextLabel=">"
+                breakLabel="..."
+                pageCount={pageCount}
+                marginPagesDisplayed={1}
+                pageRangeDisplayed={3}
+                onPageChange={handlePageClick}
+                containerClassName="pagination"
+                pageClassName="page-item"
+                pageLinkClassName="page-link"
+                previousClassName="page-item"
+                previousLinkClassName="page-link"
+                nextClassName="page-item"
+                nextLinkClassName="page-link"
+                breakClassName="page-item"
+                breakLinkClassName="page-link"
+                activeClassName="active"
+                disabledClassName="disabled"
+              />
             </Flex>
           )}
         </>
