@@ -1,8 +1,8 @@
 import React from 'react';
 
 import { Icon } from '@chakra-ui/react';
-import { MdAdd, MdHome } from 'react-icons/md';
-import { FaCartShopping } from "react-icons/fa6";
+import { MdHome } from 'react-icons/md';
+import { FaCartShopping } from 'react-icons/fa6';
 
 // Admin Imports
 import MainDashboard from 'views/admin/admin_dashboard';
@@ -48,15 +48,16 @@ const routes = [
   },
   // ✅ Hidden page (sirf button se open hoga)
   {
-    name: "Add Product",
-    layout: "/admin",
-    path: "/products/add-new",
+    name: 'Add Product',
+    layout: '/admin',
+    path: '/products/add-new',
     component: <AddProducts />,
     showInSidebar: false, // 👈 isko sidebar se hide rakhenge
-  },{
+  },
+  {
     name: 'Edit Product',
     layout: '/admin',
-    path: '/products/:id',       // ✅ dynamic route
+    path: '/products/:id', // ✅ dynamic route
     component: <EditProducts />,
     showInSidebar: false,
   },

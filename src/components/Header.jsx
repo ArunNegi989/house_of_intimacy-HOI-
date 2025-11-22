@@ -1,5 +1,5 @@
 // src/components/Header.jsx
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   FiSearch,
   FiHeart,
@@ -7,6 +7,7 @@ import {
   FiShoppingBag,
   FiMenu,
   FiX,
+  FiChevronDown, // 👈 arrow for user dropdown
 } from 'react-icons/fi';
 import { useNavigate } from 'react-router-dom';
 
@@ -121,8 +122,25 @@ const Header = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [megaOpen, setMegaOpen] = useState(null);
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
   const navigate = useNavigate();
+  const userMenuRef = useRef(null);
+
+  // ---- Auth state from storage ----
+  const authToken =
+    localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
+
+  const rawName =
+    localStorage.getItem('userName') ||
+    sessionStorage.getItem('userName') ||
+    localStorage.getItem('name') ||
+    sessionStorage.getItem('name') ||
+    '';
+
+  const isLoggedIn = !!authToken;
+  const displayName = rawName || 'Account'; // full name
 
   const toggleMobile = () => setMobileOpen((prev) => !prev);
 
@@ -136,6 +154,7 @@ const Header = () => {
 
   const openAuthModal = () => {
     setAuthModalOpen(true);
+    setUserMenuOpen(false);
   };
 
   const closeAuthModal = () => setAuthModalOpen(false);
@@ -147,6 +166,42 @@ const Header = () => {
   const handleModalContentClick = (e) => {
     e.stopPropagation(); // prevent closing when clicking inside
   };
+
+  // Called only when user confirms "Yes"
+  const handleLogout = () => {
+    // clear storage
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('name');
+
+    sessionStorage.removeItem('authToken');
+    sessionStorage.removeItem('userRole');
+    sessionStorage.removeItem('userName');
+    sessionStorage.removeItem('name');
+
+    setUserMenuOpen(false);
+    setLogoutConfirmOpen(false);
+    navigate('/');
+  };
+
+  const handleLogoClick = () => {
+    navigate('/'); // home route
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target)) {
+        setUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   return (
     <header className={styles.header}>
@@ -160,7 +215,11 @@ const Header = () => {
           {mobileOpen ? <FiX /> : <FiMenu />}
         </button>
 
-        <div className={styles.logo}>
+        <div
+          className={styles.logo}
+          onClick={handleLogoClick}
+          style={{ cursor: 'pointer' }}
+        >
           <img src={logo} alt="House Of Intimacy" className={styles.logoImg} />
         </div>
 
@@ -177,14 +236,57 @@ const Header = () => {
             <span className={styles.badge}>0</span>
           </button>
 
-          {/* Account icon opens auth modal */}
-          <button
-            className={styles.iconBtn}
-            aria-label="Account"
-            onClick={openAuthModal}
-          >
-            <FiUser />
-          </button>
+          {/* ===== If NOT logged in → show icon that opens auth modal ===== */}
+          {!isLoggedIn && (
+            <button
+              className={styles.iconBtn}
+              aria-label="Account"
+              onClick={openAuthModal}
+            >
+              <FiUser />
+            </button>
+          )}
+
+          {/* ===== If logged in → show full name + arrow + dropdown ===== */}
+          {isLoggedIn && (
+            <div className={styles.userMenuWrapper} ref={userMenuRef}>
+              <button
+                type="button"
+                className={`${styles.iconBtn} ${styles.userBtn}`}
+                onClick={() => setUserMenuOpen((prev) => !prev)}
+                aria-label="User menu"
+              >
+                <span className={styles.userNameText}>{displayName}</span>
+                <FiChevronDown className={styles.userArrow} />
+              </button>
+
+              {userMenuOpen && (
+                <div className={styles.userDropdown}>
+                  <button
+                    type="button"
+                    className={styles.userDropdownItem}
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      navigate('/account/profile');
+                    }}
+                  >
+                    My Account
+                  </button>
+
+                  <button
+                    type="button"
+                    className={styles.userDropdownItem}
+                    onClick={() => {
+                      setUserMenuOpen(false);
+                      setLogoutConfirmOpen(true);
+                    }}
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
 
           <button className={styles.iconBtn} aria-label="Bag">
             <FiShoppingBag />
@@ -201,7 +303,7 @@ const Header = () => {
                 key={item.label}
                 className={styles.navItem}
                 onMouseEnter={() => handleEnter(item)}
-                // onMouseLeave={handleLeave}
+                onMouseLeave={handleLeave}
               >
                 <a href={item.path} className={styles.navLink}>
                   {item.label}
@@ -333,6 +435,59 @@ const Header = () => {
                   </a>
                   .
                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===== Logout Confirm Modal (interactive like auth modal) ===== */}
+      {logoutConfirmOpen && (
+        <div
+          className={styles.authOverlay}
+          onClick={() => setLogoutConfirmOpen(false)}
+          aria-modal="true"
+          role="dialog"
+        >
+          <div
+            className={styles.logoutModal}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Close icon (reusing same style as auth) */}
+            <button
+              className={styles.authCloseBtn}
+              onClick={() => setLogoutConfirmOpen(false)}
+              aria-label="Close"
+            >
+              <FiX />
+            </button>
+
+            <div className={styles.logoutContent}>
+              <div className={styles.logoutIconCircle}>!</div>
+
+              <h3 className={styles.logoutTitle}>
+                Are you sure you want to logout?
+              </h3>
+              <p className={styles.logoutText}>
+                You&apos;ll be logged out from House Of Intimacy and will need
+                to sign in again to access your account.
+              </p>
+
+              <div className={styles.logoutActions}>
+                <button
+                  type="button"
+                  className={styles.logoutYesBtn}
+                  onClick={handleLogout}
+                >
+                  Yes, Logout
+                </button>
+                <button
+                  type="button"
+                  className={styles.logoutNoBtn}
+                  onClick={() => setLogoutConfirmOpen(false)}
+                >
+                  No, Stay Logged In
+                </button>
               </div>
             </div>
           </div>

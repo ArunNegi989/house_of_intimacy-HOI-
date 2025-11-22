@@ -7,13 +7,15 @@
 
 /* ===== Top row ===== */
 .topRow {
-  
+
   margin: 0 auto;
   padding: 14px 40px 10px;
   display: flex;
-  justify-content: center; /* logo centered */
+  justify-content: center;
+  /* logo centered */
   align-items: center;
-  position: relative;      /* so absolute children align to this row */
+  position: relative;
+  /* so absolute children align to this row */
 }
 
 /* Hamburger button (absolute on left) */
@@ -24,7 +26,8 @@
   background: transparent;
   font-size: 24px;
   cursor: pointer;
-  display: none; /* shown only on mobile */
+  display: none;
+  /* shown only on mobile */
 }
 
 /* Logo center */
@@ -227,7 +230,8 @@
 }
 
 .mobileNavOpen {
-  max-height: 400px; /* enough for all items */
+  max-height: 400px;
+  /* enough for all items */
   border-bottom-color: #eee;
 }
 
@@ -237,7 +241,7 @@
   padding: 0 16px 10px;
 }
 
-.mobileNavItem + .mobileNavItem {
+.mobileNavItem+.mobileNavItem {
   border-top: 1px solid #eee;
 }
 
@@ -269,7 +273,8 @@
   }
 
   .navDesktop {
-    display: none; /* hide desktop nav */
+    display: none;
+    /* hide desktop nav */
   }
 
   .bottomRow {
@@ -457,5 +462,237 @@
   .authSubheading,
   .termsText {
     text-align: center;
+  }
+}
+
+
+/* wrapper around username button */
+/* wrapper around username button */
+.userMenuWrapper {
+  position: relative;
+}
+
+/* username button look */
+.userBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #e3e3e3;
+  background: #ffffff;
+  transition: background 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease, transform 0.1s ease;
+}
+
+/* hover effect on user button */
+.userBtn:hover {
+  background: #f7f7f7;
+  border-color: #d0d0d0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+/* full name text */
+.userNameText {
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
+  white-space: nowrap;
+}
+
+/* arrow on the right */
+.userArrow {
+  font-size: 14px;
+}
+
+/* dropdown panel */
+.userDropdown {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  background: #ffffff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  min-width: 170px;
+  z-index: 50;
+  padding: 6px 0;
+}
+
+/* each item in dropdown */
+.userDropdownItem {
+  width: 100%;
+  padding: 8px 14px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.userDropdownItem:hover {
+  background: #f5f5f5;
+}
+
+/* ===== Logout confirm modal ===== */
+
+.confirmOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  /* above header */
+}
+
+.confirmModal {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 20px 24px;
+  max-width: 360px;
+  width: 90%;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.confirmTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.confirmText {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 18px;
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* yes / no buttons */
+.confirmYesBtn,
+.confirmNoBtn {
+  padding: 8px 14px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+/* primary (Yes) */
+.confirmYesBtn {
+  background: #000;
+  color: #fff;
+}
+
+.confirmYesBtn:hover {
+  opacity: 0.9;
+}
+
+/* secondary (No) */
+.confirmNoBtn {
+  background: #f3f3f3;
+  color: #333;
+}
+
+.confirmNoBtn:hover {
+  background: #e4e4e4;
+}
+
+/* ===== Logout modal (auth style) ===== */
+
+.logoutModal {
+  position: relative;
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 24px 24px 20px;
+  max-width: 420px;
+  width: 90%;
+  margin: 0 auto;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.18);
+  animation: logoutPopIn 0.2s ease-out;
+}
+
+.logoutContent {
+  text-align: center;
+}
+
+.logoutIconCircle {
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  border: 1px solid #f2c1c7;
+  background: #ffeef2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 22px;
+  color: #c7253e;
+}
+
+.logoutTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.logoutText {
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.logoutActions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+.logoutYesBtn,
+.logoutNoBtn {
+  padding: 8px 16px;
+  font-size: 14px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  min-width: 120px;
+}
+
+.logoutYesBtn {
+  background: #000;
+  color: #fff;
+}
+
+.logoutYesBtn:hover {
+  opacity: 0.9;
+}
+
+.logoutNoBtn {
+  background: #f5f5f5;
+  color: #333;
+}
+
+.logoutNoBtn:hover {
+  background: #e4e4e4;
+}
+
+@keyframes logoutPopIn {
+  from {
+    transform: translateY(10px) scale(0.97);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0px) scale(1);
+    opacity: 1;
   }
 }

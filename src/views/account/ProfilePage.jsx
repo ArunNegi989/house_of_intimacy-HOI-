@@ -118,9 +118,9 @@ export default function ProfilePage() {
   return (
     <Box
       bg={pageBg}
-      pt={{ base: '90px', md: '180px' }} // header ki height ke hisaab se
+      pt={{ base: '20px', md: '20px' }} // header ki height ke hisaab se
       pb={10}
-      px={{ base: 4, md: 6 }}
+      px={{ base: 2, md: 2 }}
     >
       <Box maxW="1200px" mx="auto">
         {/* Page heading */}
@@ -307,7 +307,7 @@ export default function ProfilePage() {
                 fontWeight="600"
                 fontSize="sm"
               >
-                Edit Profile (coming soon)
+                Edit Profile
               </Button>
             </Flex>
           </Box>

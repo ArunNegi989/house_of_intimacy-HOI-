@@ -120,12 +120,11 @@ export default function Main() {
                 </ProtectedRoute>
               }
             />
-            
 
             {/* HOME PAGE (public) */}
             <Route path="/" element={<Home />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-<Route path="/reset-password/:token" element={<ResetPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
           </Routes>
         </div>
 
