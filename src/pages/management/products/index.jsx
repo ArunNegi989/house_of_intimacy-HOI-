@@ -186,16 +186,7 @@ const Products = () => {
             Add Product
           </Button>
 
-            <Button
-              colorScheme="purple"
-              onClick={() => navigate(-1)}
-              rounded="full"
-              px={6}
-              py={2}
-              fontWeight="600"
-            >
-              Back
-            </Button>
+           
         </Flex>
       </Flex>
 

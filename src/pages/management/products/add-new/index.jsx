@@ -243,9 +243,23 @@ const AddProducts = () => {
   };
 
   return (
-    <Box bg={pageBg} pt={{ base: "140px", md: "85px" }} minH="100vh">
+    <Box bg={pageBg} pt={{ base: "145px", md: "115px" }} minH="100vh">
       <Box maxW="1200px" mx="auto">
         {/* Page Header */}
+        {/* BACK BUTTON - Top Right */}
+<Flex justify="flex-end" mb={3}>
+   <Button
+                colorScheme="purple"
+                onClick={() => navigate(-1)}
+                rounded="full"
+                px={6}
+                py={2}
+                fontWeight="600"
+              >
+                ← Back to Products
+              </Button>
+</Flex>
+
         <Flex
           justify="space-between"
           align={{ base: "flex-start", md: "center" }}
