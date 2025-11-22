@@ -106,8 +106,8 @@ const pantiesMega = {
 
 const navItems = [
   { label: 'NEW SEASON', path: '/new-season' },
-  { label: 'BRAS', path: '/bras', mega: BRAS_MEGA },
-  { label: 'PANTIES', path: '/panties', mega: pantiesMega },
+  { label: 'BRAS', path: '#', mega: BRAS_MEGA },
+  { label: 'PANTIES', path: '#', mega: pantiesMega },
   { label: 'ATHLEISURE', path: '/athleisure' },
   { label: 'LOUNGE/SLEEP', path: '/lounge-sleep' },
   { label: 'LAYERING', path: '/layering' },
@@ -329,7 +329,7 @@ const Header = () => {
 
                       <div className={styles.megaPromo}>
                         <img
-                          src="https://via.placeholder.com/350x360.png?text=Bestsellers"
+                          src={authSideImg}
                           alt="Bestsellers"
                           className={styles.megaPromoImg}
                         />
