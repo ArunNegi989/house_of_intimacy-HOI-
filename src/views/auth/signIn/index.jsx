@@ -1,6 +1,9 @@
 // src/views/auth/signIn.jsx
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { Link as RouterLink } from "react-router-dom";
+import { Link, Text } from "@chakra-ui/react";
+
 import {
   Box,
   Button,
@@ -13,7 +16,6 @@ import {
   Input,
   InputGroup,
   InputRightElement,
-  Text,
   useColorModeValue,
   useToast,
 } from "@chakra-ui/react";
@@ -255,9 +257,11 @@ function SignIn() {
               </Checkbox>
 
               <NavLink to="/auth/forgot-password">
-                <Text color="brand.500" fontSize="sm" fontWeight="500">
-                  Forgot password?
-                </Text>
+                <Text fontSize="sm" textAlign="right" mt={2}>
+  <Link as={RouterLink} to="/forgot-password" color="pink.500">
+    Forgot password?
+  </Link>
+</Text>
               </NavLink>
             </Flex>
 

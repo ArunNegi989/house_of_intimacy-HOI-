@@ -26,7 +26,8 @@ import AdminRoute from 'routes/AdminRoute';
 import ProfilePage from 'views/account/ProfilePage';
 import OrdersPage from 'views/account/OrdersPage';
 import VerifyEmail from 'views/auth/VerifyEmail';
-import AddProducts from 'pages/management/products/add-new';
+import ForgotPassword from 'views/auth/ForgotPassword';
+import ResetPassword from 'views/auth/ResetPassword';
 
 export default function Main() {
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
@@ -123,6 +124,8 @@ export default function Main() {
 
             {/* HOME PAGE (public) */}
             <Route path="/" element={<Home />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+<Route path="/reset-password/:token" element={<ResetPassword />} />
           </Routes>
         </div>
 
