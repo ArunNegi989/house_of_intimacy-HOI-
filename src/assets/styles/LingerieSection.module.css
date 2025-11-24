@@ -1,0 +1,309 @@
+/* src/components/NewArrival/NewArrival.module.css */
+
+.section {
+  padding: 40px 40px 60px;
+  background: #fff7ee; /* light nude */
+}
+
+.inner {
+  max-width: 1560px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 28px;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 26px;
+  color: #1f1f1f;
+}
+
+.contentRow {
+  display: flex;
+  align-items: stretch;
+}
+
+/* ---------- LEFT PANEL (fixed video) ---------- */
+.leftPanel {
+  flex: 0 0 32%;
+  max-width: 22%;
+  min-width: 260px;
+}
+
+.heroCard {
+  position: relative;
+  border-radius: 40px 0px 40px 0px;
+  overflow: hidden;
+  height: 480px;
+}
+
+.heroVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+      circle at 10% 10%,
+      rgba(0, 0, 0, 0.18),
+      transparent 50%
+    ),
+    linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent);
+}
+
+.heroBtn {
+  position: absolute;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  padding: 10px 40px;
+  border-radius: 999px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  font-weight: 500;
+  background: #5a002c;
+  color: #ffffff;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.heroBtn:hover {
+  background: #77023c;
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- RIGHT PANEL (slider) ---------- */
+.sliderWrapper {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+.productCard {
+  position: relative;
+  background: #ffffff;
+  border-radius: 30px 0px 30px 0px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.productImageWrap {
+  width: 100%;
+  height: 332px;
+  overflow: hidden;
+}
+
+.productImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.productBody {
+  padding: 14px 18px 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #a58c7c;
+}
+
+.productName {
+  font-size: 14px;
+  line-height: 1.4;
+  color: #2c2c2c;
+  min-height: 38px;
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  margin-top: 6px;
+}
+
+.mrpLabel {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+.mrpValue {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f1f1f;
+}
+
+/* bottom row inside card */
+.bottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* color swatches */
+.colorRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.colorDot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.18);
+}
+
+.moreColors {
+  font-size: 11px;
+  color: #555;
+}
+
+/* wishlist + bag buttons */
+.wishBtn {
+  position: absolute;
+  right: 14px;
+  top: 12px;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.wishBtn svg {
+  font-size: 17px;
+  color: #b02e50;
+}
+
+.wishBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
+}
+
+.cartBtn {
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f5e7de;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.cartBtn svg {
+  font-size: 17px;
+  color: #41162a;
+}
+
+.cartBtn:hover {
+  background: #e3c7b7;
+  transform: translateY(-1px);
+}
+
+/* ---------- SLICK OVERRIDES (with :global) ---------- */
+.sliderWrapper :global(.slick-list) {
+  padding-right: 30px;
+}
+
+.sliderWrapper :global(.slick-track) {
+  display: flex;
+}
+
+.sliderWrapper :global(.slick-slide) {
+  height: auto;
+}
+
+/* arrows */
+.arrowBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.prevArrow {
+  left: -12px;
+}
+
+.nextArrow {
+  right: 4px;
+}
+
+.arrowBtn:hover {
+  transform: translateY(-50%) translateY(-1px);
+}
+
+/* hide default slick arrows */
+.sliderWrapper :global(.slick-arrow) {
+  display: none !important;
+}
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width: 992px) {
+  .section {
+    padding: 30px 16px 40px;
+  }
+
+  .contentRow {
+    flex-direction: column;
+  }
+
+  .leftPanel,
+  .sliderWrapper {
+    max-width: 100%;
+    flex-basis: 100%;
+  }
+
+  .heroCard {
+    height: 360px;
+  }
+
+  .prevArrow {
+    left: 4px;
+  }
+}
+
+@media (max-width: 600px) {
+  .heroCard {
+    border-radius: 22px;
+  }
+  .productCard {
+    border-radius: 22px;
+  }
+}
+

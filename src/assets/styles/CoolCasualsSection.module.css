@@ -1,0 +1,280 @@
+/* src/assets/styles/CoolCasualsSection.module.css */
+
+.section {
+  width: 100%;
+  background: radial-gradient(circle at 0% 0%, #5c4b3c 0, #181818 60%);
+  padding: 40px 0;
+  box-sizing: border-box;
+}
+
+.inner {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.3fr);
+  gap: 32px;
+  align-items: stretch;
+}
+
+/* ---------- LEFT HERO ---------- */
+
+.leftHero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 24px;
+}
+
+.heroImg {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  object-fit: cover;
+  display: block;
+  transform: scale(1.02);
+}
+
+/* Overlay text like screenshot */
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  padding: 40px 52px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  pointer-events: none;
+}
+
+.heroSmall {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #ffd54f;
+  text-transform: uppercase;
+}
+
+.heroTitle {
+  margin-top: 8px;
+  font-size: 120px;
+  line-height: 0.9;
+  font-weight: 800;
+  color: #ffeb3b;
+  text-transform: uppercase;
+}
+
+/* ---------- RIGHT SIDE PANEL ---------- */
+
+.rightPanel {
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 24px;
+  padding: 20px 20px 28px;
+  display: flex;
+  flex-direction: column;
+  backdrop-filter: blur(14px);
+}
+
+/* tabs */
+
+.tabsWrapper {
+  align-self: center;
+  display: inline-flex;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.tabBtn {
+  padding: 10px 40px;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  background: transparent;
+  color: #f5f5f5;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.tabBtnActive {
+  background: #f9f9f9;
+  color: #111;
+}
+
+/* slider */
+
+.sliderWrapper {
+  margin-top: 8px;
+}
+
+/* Each slide item: fix padding from react-slick */
+.slideItem {
+  padding: 8px;
+}
+
+/* card */
+
+.card {
+  position: relative;
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* wishlist icon */
+
+.wishlistBtn {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  border: none;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* image */
+
+.imgWrap {
+  padding: 18px 18px 6px;
+}
+
+.productImg {
+  width: 100%;
+  border-radius: 14px;
+  object-fit: cover;
+}
+
+/* content */
+
+.cardBody {
+  padding: 10px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.colorBadge {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: #4458ff;
+  color: #ffffff;
+}
+
+.styleCode {
+  font-size: 13px;
+  color: #757575;
+}
+
+.productName {
+  font-size: 15px;
+  font-weight: 600;
+  color: #212121;
+  min-height: 40px;
+}
+
+/* bottom row */
+
+.bottomRow {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.price {
+  font-size: 16px;
+  font-weight: 700;
+  color: #212121;
+}
+
+/* add to bag button */
+
+.addBtn {
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: #111111;
+  color: #ffffff;
+}
+
+.bagIcon {
+  font-size: 14px;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 1024px) {
+  .inner {
+    grid-template-columns: 1fr;
+  }
+
+  .rightPanel {
+    margin-top: 16px;
+  }
+
+  .heroTitle {
+    font-size: 72px;
+  }
+
+  .heroSmall {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .section {
+    padding: 24px 0 32px;
+  }
+
+  .inner {
+    padding: 0 16px;
+  }
+
+  .heroOverlay {
+    padding: 24px 24px;
+  }
+
+  .heroTitle {
+    font-size: 52px;
+  }
+
+  .heroSmall {
+    font-size: 20px;
+  }
+
+  .tabsWrapper {
+    margin-bottom: 8px;
+  }
+
+  .tabBtn {
+    padding: 8px 22px;
+    font-size: 14px;
+  }
+}

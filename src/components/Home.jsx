@@ -8,6 +8,9 @@ import BestChoice from "./BestChoice.jsx";
 import ColorsSelector from "./ColorsSelector.jsx";
 import VideoPlayer from "./VideoPlayer.jsx";
 import CategoryStrip from "./CategoryStrip.jsx";
+import ShopByCategory from "./ShopByCategory.jsx";
+import NewArrival from "./NewArricalSection.jsx";
+import CoolCasualsSection from "./CoolCasualsSection.jsx";
 
 
 
@@ -19,11 +22,14 @@ export default function Home() {
     <>
     <CategoryStrip/>
       <Herosection/>
+      <NewArrival/>
       <ColorsSelector/>
       <SwimwearSection />
       <Offermarquee/>
       <Bestsellers/>
+      <CoolCasualsSection/>
       <BestChoice/>
+      <ShopByCategory/>
       <ProductSection/>
       <VideoPlayer/>
       
