@@ -7,6 +7,7 @@ import ProductSection from "./Productsection.jsx";
 import BestChoice from "./BestChoice.jsx";
 import ColorsSelector from "./ColorsSelector.jsx";
 import VideoPlayer from "./VideoPlayer.jsx";
+import CategoryStrip from "./CategoryStrip.jsx";
 
 
 
@@ -16,6 +17,7 @@ export default function Home() {
 
   return (
     <>
+    <CategoryStrip/>
       <Herosection/>
       <ColorsSelector/>
       <SwimwearSection />
