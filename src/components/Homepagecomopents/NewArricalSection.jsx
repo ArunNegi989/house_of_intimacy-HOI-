@@ -134,7 +134,7 @@ const NewArrival = () => {
   return (
     <section className={styles.section}>
       <div className={styles.inner}>
-        <h2 className={styles.title}>New Arrival</h2>
+        <h2 className={styles.title}>Vamika</h2>
 
         <div className={styles.contentRow}>
           {/* LEFT FIXED VIDEO CARD */}
