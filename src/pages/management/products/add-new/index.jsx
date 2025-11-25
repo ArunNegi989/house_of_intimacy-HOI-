@@ -21,20 +21,23 @@ import {
   useColorModeValue,
   Badge,
   Image,
-  useToast, // ✅ added
+  useToast,
 } from "@chakra-ui/react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { ChromePicker } from "react-color"; // 🎨 color plate
 
-const predefinedColors = [
-  "Black",
-  "Nude",
-  "Red",
-  "White",
-  "Pink",
-  "Blue",
-  "Green",
-  "Purple",
+// Ready-made color options
+const predefinedSwatches = [
+  { label: "Black", value: "#000000" },
+  { label: "White", value: "#FFFFFF" },
+  { label: "Nude", value: "#F5D0C5" },
+  { label: "Red", value: "#EF4444" },
+  { label: "Pink", value: "#EC4899" },
+  { label: "Blue", value: "#3B82F6" },
+  { label: "Green", value: "#22C55E" },
+  { label: "Purple", value: "#A855F7" },
+  { label: "Yellow", value: "#FACC15" },
 ];
 
 const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
@@ -49,7 +52,7 @@ const AddProducts = () => {
   } = useForm();
 
   const navigate = useNavigate();
-  const toast = useToast(); // ✅ toast instance
+  const toast = useToast();
 
   const [sizes, setSizes] = useState([
     { label: "XS", stock: 0, selected: false },
@@ -62,6 +65,9 @@ const AddProducts = () => {
   ]);
 
   const [imagePreview, setImagePreview] = useState(null);
+
+  // 🎨 current picked color & selected list
+  const [currentColor, setCurrentColor] = useState("#000000");
   const [selectedColors, setSelectedColors] = useState([]);
 
   const cardBg = useColorModeValue("white", "gray.900");
@@ -71,23 +77,39 @@ const AddProducts = () => {
   // Auto price calculation
   const mrp = Number(watch("mrp") || 0);
   const discount = Number(watch("discount") || 0);
-  const salePrice = Math.max(
-    0,
-    Math.round(mrp - (mrp * discount) / 100) || 0
-  );
+  const salePrice = Math.max(0, Math.round(mrp - (mrp * discount) / 100) || 0);
 
   // Live preview data
   const nameWatch = watch("name") || "Product name";
   const brandWatch = watch("brand") || "Brand";
   const categoryWatch = watch("category") || "Category";
-  const colorsWatch = watch("colors") || selectedColors.join(", ");
+  const colorsWatch = selectedColors.join(", ");
   const tagsWatch = watch("tags") || "";
   const isFeaturedWatch = watch("isFeatured") || false;
 
-  const colorsRegister = register("colors");
   const mainImageRegister = register("mainImage");
 
-  // 👉 SUBMIT: send FormData
+  // 👉 Add current color to selected list
+  const handleAddColor = () => {
+    setSelectedColors((prev) => {
+      if (!currentColor) return prev;
+      if (prev.includes(currentColor)) return prev;
+      const updated = [...prev, currentColor];
+      setValue("colors", updated.join(","), { shouldValidate: true });
+      return updated;
+    });
+  };
+
+  // 👉 Remove a selected color
+  const handleRemoveColor = (hex) => {
+    setSelectedColors((prev) => {
+      const updated = prev.filter((c) => c !== hex);
+      setValue("colors", updated.join(","), { shouldValidate: true });
+      return updated;
+    });
+  };
+
+  // SUBMIT: send FormData
   const onSubmit = async (data) => {
     const selectedSizes = sizes
       .filter((s) => s.selected)
@@ -100,10 +122,8 @@ const AddProducts = () => {
           .filter(Boolean)
       : [];
 
-    const colorsSource =
-      data.colors && data.colors.trim().length > 0
-        ? data.colors
-        : selectedColors.join(",");
+    // Colors from hidden input (comma separated)
+    const colorsSource = data.colors || "";
     const colorsArray = colorsSource
       ? colorsSource
           .split(",")
@@ -214,7 +234,6 @@ const AddProducts = () => {
 
       console.log("Product created:", res.data);
 
-      // ✅ Success toast instead of alert
       toast({
         title: "Product Saved",
         description: "Your product has been added successfully.",
@@ -228,7 +247,6 @@ const AddProducts = () => {
     } catch (err) {
       console.error("Save product error:", err);
 
-      // ❌ Error toast instead of alert
       toast({
         title: "Error",
         description:
@@ -245,21 +263,21 @@ const AddProducts = () => {
   return (
     <Box bg={pageBg} pt={{ base: "145px", md: "115px" }} minH="100vh">
       <Box maxW="1200px" mx="auto">
-        {/* Page Header */}
         {/* BACK BUTTON - Top Right */}
-<Flex justify="flex-end" mb={3}>
-   <Button
-                colorScheme="purple"
-                onClick={() => navigate(-1)}
-                rounded="full"
-                px={6}
-                py={2}
-                fontWeight="600"
-              >
-                ← Back to Products
-              </Button>
-</Flex>
+        <Flex justify="flex-end" mb={3}>
+          <Button
+            colorScheme="purple"
+            onClick={() => navigate(-1)}
+            rounded="full"
+            px={6}
+            py={2}
+            fontWeight="600"
+          >
+            ← Back to Products
+          </Button>
+        </Flex>
 
+        {/* Page Header */}
         <Flex
           justify="space-between"
           align={{ base: "flex-start", md: "center" }}
@@ -457,58 +475,156 @@ const AddProducts = () => {
                 Multiple colors & per-size stock set kar sakte ho.
               </Text>
 
-              {/* COLOR TABS / CHIPS */}
+              {/* 🎨 COLOR PICKER + OPTIONS + INPUT */}
               <FormControl mb={4}>
                 <FormLabel>Colors</FormLabel>
                 <Text fontSize="xs" color="gray.500" mb={2}>
-                  Click to select available colors. Ye values baad me filter ke
-                  liye use hongi.
+                  Color plate se pick karo, quick colors pe click karo ya manual
+                  color type karo. Jo add karoge woh hex/code ke form me save
+                  hoga.
                 </Text>
 
-                <Flex wrap="wrap" gap={2} mb={3}>
-                  {predefinedColors.map((color) => {
-                    const isActive = selectedColors.includes(color);
-                    return (
-                      <Button
-                        key={color}
-                        size="xs"
-                        variant={isActive ? "solid" : "outline"}
-                        colorScheme={isActive ? "purple" : "gray"}
-                        borderRadius="full"
-                        onClick={() => {
-                          let updated;
-                          if (isActive) {
-                            updated = selectedColors.filter(
-                              (c) => c !== color
-                            );
-                          } else {
-                            updated = [...selectedColors, color];
-                          }
-                          setSelectedColors(updated);
-                          setValue("colors", updated.join(", "));
-                        }}
-                      >
-                        {color}
-                      </Button>
-                    );
-                  })}
-                </Flex>
-
-                {/* Custom colors input – synced with RHF + state */}
+                {/* Hidden field – RHF ke liye actual value */}
                 <Input
-                  placeholder="Custom colors (comma separated) - e.g. Wine, Teal"
-                  size="sm"
-                  {...colorsRegister}
-                  onChange={(e) => {
-                    colorsRegister.onChange(e);
-                    const value = e.target.value;
-                    const parts = value
-                      .split(",")
-                      .map((v) => v.trim())
-                      .filter(Boolean);
-                    setSelectedColors(parts);
-                  }}
+                  type="hidden"
+                  {...register("colors")}
+                  value={selectedColors.join(",")}
+                  readOnly
                 />
+
+                <Flex
+                  gap={6}
+                  align={{ base: "flex-start", md: "flex-start" }}
+                  direction={{ base: "column", md: "row" }}
+                >
+                  {/* LEFT: Color plate / ChromePicker */}
+                  <Box>
+                    <ChromePicker
+                      color={currentColor}
+                      onChangeComplete={(color) => {
+                        setCurrentColor(color.hex);
+                      }}
+                    />
+                  </Box>
+
+                  {/* RIGHT: current color + input + ready options + selected list */}
+                  <Box flex="1">
+                    {/* Current color preview + hex */}
+                    <Flex align="center" gap={3} mb={3}>
+                      <Box
+                        w="32px"
+                        h="32px"
+                        borderRadius="full"
+                        border="1px solid"
+                        borderColor={borderColor}
+                        bg={currentColor}
+                      />
+                      <Text fontSize="sm">{currentColor}</Text>
+                    </Flex>
+
+                    {/* Manual input field */}
+                    <FormLabel fontSize="xs" color="gray.500" mb={1}>
+                      Type color (hex ya naam) – e.g. #F97316, #000000, red
+                    </FormLabel>
+                    <Flex gap={2} mb={3}>
+                      <Input
+                        size="sm"
+                        value={currentColor}
+                        onChange={(e) => setCurrentColor(e.target.value)}
+                        placeholder="#F97316 ya red"
+                      />
+                      <Button
+                        size="sm"
+                        colorScheme="purple"
+                        onClick={handleAddColor}
+                      >
+                        Add Color
+                      </Button>
+                    </Flex>
+
+                    {/* Ready-made color options */}
+                    <Box mb={3}>
+                      <Text fontSize="xs" color="gray.500" mb={1}>
+                        Quick colors:
+                      </Text>
+                      <Flex wrap="wrap" gap={3}>
+                        {predefinedSwatches.map((c) => (
+                          <Flex
+                            key={c.value}
+                            direction="column"
+                            align="center"
+                            gap={1}
+                            cursor="pointer"
+                            onClick={() => {
+                              setCurrentColor(c.value);
+                            }}
+                          >
+                            <Box
+                              w="22px"
+                              h="22px"
+                              borderRadius="full"
+                              borderWidth="1px"
+                              borderColor="gray.300"
+                              bg={c.value}
+                            />
+                            <Text fontSize="9px" color="gray.600">
+                              {c.label}
+                            </Text>
+                          </Flex>
+                        ))}
+                      </Flex>
+                    </Box>
+
+                    {/* Selected colors list */}
+                    <Box
+                      borderWidth="1px"
+                      borderColor={borderColor}
+                      borderRadius="md"
+                      p={3}
+                    >
+                      <Text fontSize="xs" color="gray.500" mb={2}>
+                        Selected Colors:
+                      </Text>
+
+                      {selectedColors.length === 0 && (
+                        <Text fontSize="xs" color="gray.400">
+                          Abhi koi color add nahi hua hai.
+                        </Text>
+                      )}
+
+                      <Flex wrap="wrap" gap={3}>
+                        {selectedColors.map((hex) => (
+                          <Flex
+                            key={hex}
+                            align="center"
+                            gap={2}
+                            borderWidth="1px"
+                            borderColor={borderColor}
+                            borderRadius="full"
+                            px={2}
+                            py={1}
+                          >
+                            <Box
+                              w="18px"
+                              h="18px"
+                              borderRadius="full"
+                              bg={hex}
+                              border="1px solid rgba(0,0,0,0.15)"
+                            />
+                            <Text fontSize="xs">{hex}</Text>
+                            <Button
+                              size="xs"
+                              variant="ghost"
+                              onClick={() => handleRemoveColor(hex)}
+                            >
+                              ✕
+                            </Button>
+                          </Flex>
+                        ))}
+                      </Flex>
+                    </Box>
+                  </Box>
+                </Flex>
               </FormControl>
 
               {/* Sizes with Stock */}

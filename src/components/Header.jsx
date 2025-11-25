@@ -1,5 +1,5 @@
 // src/components/Header.jsx
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import {
   FiSearch,
   FiHeart,
@@ -15,6 +15,9 @@ import logo from '../assets/images/House_of_intimacy_logo.webp';
 import authSideImg from '../assets/images/auth_login.png';
 
 import styles from '../assets/styles/Header.module.css';
+
+// ✅ NEW: import WishlistContext
+import { WishlistContext } from '../contexts/WishlistContext';
 
 const BRAS_MEGA = {
   columns: [
@@ -128,6 +131,10 @@ const Header = () => {
   const navigate = useNavigate();
   const userMenuRef = useRef(null);
 
+  // ✅ Wishlist from context
+  const { wishlistItems } = useContext(WishlistContext);
+  const wishlistCount = wishlistItems.length;
+
   // ---- Auth state from storage ----
   const authToken =
     localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
@@ -228,12 +235,14 @@ const Header = () => {
             <FiSearch />
           </button>
 
+          {/* ✅ Wishlist with dynamic count */}
           <button
             className={`${styles.iconBtn} ${styles.iconHeart}`}
             aria-label="Wishlist"
+            // onClick={() => navigate('/wishlist')} // later when you make wishlist page
           >
             <FiHeart />
-            <span className={styles.badge}>0</span>
+            <span className={styles.badge}>{wishlistCount}</span>
           </button>
 
           {/* ===== If NOT logged in → show icon that opens auth modal ===== */}
