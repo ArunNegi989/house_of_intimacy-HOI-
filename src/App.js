@@ -32,6 +32,7 @@ import ResetPassword from 'views/auth/ResetPassword';
 import BraListing from 'components/productcollections/bras';
 import PantiesListing from 'components/productcollections/panties';
 import NightwearListing from 'components/productcollections/nightwear';
+import ProductDetail from 'pages/management/ProductDetail/ProductDetail';
 
 export default function Main() {
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
@@ -60,6 +61,7 @@ export default function Main() {
 
         <div style={{ flex: 1 }}>
           <Routes>
+              <Route path="/product/:id" element={<ProductDetail />} />
             {/* Auth layout (register, forgot, etc) */}
             <Route path="auth/*" element={<AuthLayout />} />
 

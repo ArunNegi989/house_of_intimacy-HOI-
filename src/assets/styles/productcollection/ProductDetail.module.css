@@ -1,0 +1,315 @@
+.pageWrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background-color: #fff8f0;
+}
+
+/* -------- breadcrumb -------- */
+.breadcrumb {
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 16px;
+}
+
+.breadcrumb span {
+  cursor: pointer;
+}
+
+.separator {
+  margin: 0 6px;
+}
+
+/* -------- layout -------- */
+.contentWrapper {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 40px;
+}
+
+/* LEFT: images */
+.leftCol {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 16px;
+}
+
+.thumbsWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.thumb {
+  border: 1px solid transparent;
+  padding: 2px;
+  border-radius: 6px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.thumb img {
+  width: 100%;
+  border-radius: 6px;
+  display: block;
+}
+
+.thumbActive {
+  border-color: #333;
+}
+
+.mainImageWrapper {
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.mainImageWrapper img {
+  width: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* RIGHT: details */
+.rightCol {
+  padding-top: 12px;
+}
+
+.brand {
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+.sku {
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 16px;
+}
+
+/* price */
+.priceWrapper {
+  margin-bottom: 20px;
+}
+
+.mrpLine {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.mrpLabel {
+  font-size: 13px;
+  color: #666;
+}
+
+.mrpValue {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.discount {
+  font-size: 12px;
+  color: #d32f2f;
+}
+
+.salePrice {
+  font-size: 14px;
+  color: #388e3c;
+  margin-top: 4px;
+}
+
+.taxNote {
+  font-size: 11px;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* sections (color, size, pin) */
+.section {
+  margin-bottom: 20px;
+}
+
+.sectionLabel {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.sizeError {
+  color: #d32f2f;
+  margin-left: 4px;
+  font-size: 12px;
+}
+
+.sizeGuideBtn {
+  margin-left: 12px;
+  font-size: 12px;
+  color: #b71c1c;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+/* colors */
+.colorDots {
+  display: flex;
+  gap: 8px;
+}
+
+.colorDot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+/* sizes */
+.sizeList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sizeBtn {
+  min-width: 36px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+/* pincode */
+.pinRow {
+  display: flex;
+  gap: 8px;
+  max-width: 320px;
+}
+
+.pinRow input {
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 6px 10px;
+  font-size: 13px;
+}
+
+.pinRow button {
+  padding: 6px 14px;
+  border: none;
+  background: #222;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.dispatchText {
+  font-size: 11px;
+  color: #777;
+  margin-top: 6px;
+}
+
+/* actions */
+.actionRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.addToBag {
+  flex: 1;
+  padding: 10px 18px;
+  border: none;
+  background: #222;
+  color: #fff;
+  font-size: 14px;
+  border-radius: 24px;
+  cursor: pointer;
+}
+
+.wishlist {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+}
+
+/* related section */
+.relatedWrapper {
+  margin-top: 40px;
+}
+
+.relatedWrapper h2 {
+  font-size: 18px;
+  margin-bottom: 16px;
+}
+
+.relatedList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.relatedCard {
+  display: grid;
+  grid-template-columns: 80px 1fr 40px;
+  align-items: center;
+  padding: 10px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  max-width: 340px;
+}
+
+.relatedImgWrapper img {
+  width: 100%;
+  border-radius: 8px;
+}
+
+.relatedInfo {
+  padding: 0 10px;
+}
+
+.relatedTitle {
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.relatedPrice {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.relatedAddBtn {
+  border: none;
+  background: #222;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* responsive */
+@media (max-width: 900px) {
+  .contentWrapper {
+    grid-template-columns: 1fr;
+  }
+
+  .leftCol {
+    grid-template-columns: 70px 1fr;
+  }
+}

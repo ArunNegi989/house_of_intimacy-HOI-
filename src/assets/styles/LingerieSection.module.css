@@ -11,7 +11,7 @@
 }
 
 .title {
-  font-size: 28px;
+  font-size: 32px;
   letter-spacing: 0.08em;
   font-weight: 600;
   text-align: center;
@@ -35,7 +35,7 @@
   position: relative;
   border-radius: 40px 0px 40px 0px;
   overflow: hidden;
-  height: 480px;
+  height: 502px;
 }
 
 .heroVideo {
@@ -117,23 +117,50 @@
 }
 
 .brand {
-  font-size: 11px;
+  font-size: 15px;
+  font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: #a58c7c;
 }
 
 .productName {
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1.4;
   color: #2c2c2c;
-  min-height: 38px;
+  min-height: 14px;
+  font-weight: 700;
 }
+
 
 .priceRow {
   display: flex;
   align-items: baseline;
   margin-top: 6px;
+}
+
+.priceRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.currentPrice {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.originalPrice {
+  font-size: 13px;
+  color: #999;
+  text-decoration: line-through; /* original price cut */
+}
+
+.discountTag {
+  font-size: 12px;
+  font-weight: 600;
+  color: #d32f2f; /* ya brand primary */
 }
 
 .mrpLabel {
@@ -162,9 +189,51 @@
   gap: 6px;
 }
 
+/* stock + gender row */
+.metaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+
+.stockBadge {
+  font-size: 13px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid #e5e5e5;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.inStock {
+  background-color: #e6f8ea;
+  border-color: #4caf50;
+  color: #256029;
+}
+
+.outOfStock {
+  background-color: #fdecea;
+  border-color: #f44336;
+  color: #b71c1c;
+}
+
+.genderTag {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background-color: #f3f3f3;
+  color: #555;
+}
+
+
 .colorDot {
-  width: 14px;
-  height: 14px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   border: 1px solid rgba(0, 0, 0, 0.18);
 }

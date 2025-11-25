@@ -1,218 +1,289 @@
 // src/components/NewArrival/NewArrival.jsx
-import React from "react";
-import Slider from "react-slick";
-import { FiHeart, FiShoppingBag } from "react-icons/fi";
+import React, { useEffect, useState } from 'react';
+import Slider from 'react-slick';
+import axios from 'axios';
+import { FiHeart, FiShoppingBag } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';   // 👈 ADD THIS
 
-import styles from "../../assets/styles/LingerieSection.module.css";
+import styles from '../../assets/styles/LingerieSection.module.css';
 
-// 🔔 make sure somewhere in your app (e.g. index.js or App.js)
-// you have imported slick css:
-// import "slick-carousel/slick/slick.css";
-// import "slick-carousel/slick/slick-theme.css";
+// ---------- ASSETS ----------
+import heroVideoPoster from '../../assets/videos/IMG_3698.MP4';
+import heroVideo from '../../assets/videos/IMG_3698.MP4';
 
-// ---------- ASSETS (change paths as per your setup) ----------
-import heroVideoPoster from "../../assets/videos/IMG_3698.MP4"; // fallback poster
-// If you have video:
-import heroVideo from "../../assets/videos/IMG_3698.MP4";
+// fallback image if none available
+import prodFallback from '../../assets/images/17.jpg';
 
-import prod1 from "../../assets/images/17.jpg";
-import prod2 from "../../assets/images/19.jpg";
-import prod3 from "../../assets/images/5.jpg";
-import prod4 from "../../assets/images/17.jpg";
-import prod5 from "../../assets/images/19.jpg";
+// ---------- CONFIG ----------
+const BRAND_NAME = 'Vamika';
+const API_BASE_URL = 'http://localhost:8000';
 
-// ---------- DATA ----------
-const PRODUCTS = [
-  {
-    id: 1,
-    brand: "AMANTE",
-    name: "Femme Lace Padded Non-Wired Demi Bra - Green Heron",
-    mrp: "₹ 1769",
-    image: prod1,
-    colors: ["#0e4b4a", "#000000", "#c9b1a5"],
-    moreColors: 2,
-  },
-  {
-    id: 2,
-    brand: "AMANTE",
-    name: "Femme Lace Bikini Panty - Green Heron",
-    mrp: "₹ 695",
-    image: prod2,
-    colors: ["#0e4b4a", "#3b3b98", "#7a1e6a"],
-    moreColors: 1,
-  },
-  {
-    id: 3,
-    brand: "AMANTE",
-    name: "Femme Lace Padded Non-Wired Demi Bra - Blackberry Cordial",
-    mrp: "₹ 1769",
-    image: prod3,
-    colors: ["#4b235b", "#000000", "#d1b9d6"],
-    moreColors: 2,
-  },
-  {
-    id: 4,
-    brand: "AMANTE",
-    name: "Femme Lace Bikini Panty - Blackberry Cordial",
-    mrp: "₹ 695",
-    image: prod4,
-    colors: ["#4b235b", "#000000", "#d1b9d6"],
-    moreColors: 0,
-  },
-  {
-    id: 5,
-    brand: "AMANTE",
-    name: "Soft Touch Non-Wired T-Shirt Bra",
-    mrp: "₹ 1499",
-    image: prod5,
-    colors: ["#d88c93", "#000000", "#f5d2c6"],
-    moreColors: 3,
-  },
-];
+const PRODUCTS_ENDPOINT = `${API_BASE_URL}/v1/products/brand/${encodeURIComponent(
+  BRAND_NAME,
+)}`;
+
+// ---------- HELPERS ----------
+const getDiscountPercent = (mrp, price) => {
+  if (!mrp || !price || mrp <= price) return 0;
+  return Math.round(((mrp - price) / mrp) * 100);
+};
+
+const getImageUrl = (path) => {
+  if (!path) return prodFallback;
+  if (path.startsWith('http')) return path;
+  return `${API_BASE_URL}${path}`;
+};
+
 
 // ---------- CUSTOM ARROWS ----------
-const NextArrow = (props) => {
-  const { style, onClick } = props;
-  return (
-    <button
-      type="button"
-      className={`${styles.arrowBtn} ${styles.nextArrow}`}
-      style={{ ...style }}
-      onClick={onClick}
-    >
-      &gt;
-    </button>
-  );
-};
+const NextArrow = ({ style, onClick }) => (
+  <button
+    type="button"
+    className={`${styles.arrowBtn} ${styles.nextArrow}`}
+    style={{ ...style }}
+    onClick={onClick}
+  >
+    &gt;
+  </button>
+);
 
-const PrevArrow = (props) => {
-  const { style, onClick } = props;
-  return (
-    <button
-      type="button"
-      className={`${styles.arrowBtn} ${styles.prevArrow}`}
-      style={{ ...style }}
-      onClick={onClick}
-    >
-      &lt;
-    </button>
-  );
-};
+const PrevArrow = ({ style, onClick }) => (
+  <button
+    type="button"
+    className={`${styles.arrowBtn} ${styles.prevArrow}`}
+    style={{ ...style }}
+    onClick={onClick}
+  >
+    &lt;
+  </button>
+);
 
 const NewArrival = () => {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  const navigate = useNavigate(); // 👈 HOOK
+
+  // ---------- SLIDER SETTINGS ----------
   const settings = {
-    infinite: true,        // 🔁 now it loops infinitely
+    infinite: true,
     speed: 500,
-    slidesToShow: 4,       // 🟣 show 4 cards on desktop
+    slidesToShow: 4,
     slidesToScroll: 1,
     swipeToSlide: true,
     arrows: true,
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
     responsive: [
-      {
-        breakpoint: 1280,  // tablets / small laptops
-        settings: {
-          slidesToShow: 3,
-        },
-      },
-      {
-        breakpoint: 992,   // large mobiles / tablets
-        settings: {
-          slidesToShow: 2,
-        },
-      },
-      {
-        breakpoint: 768,   // small mobiles
-        settings: {
-          slidesToShow: 1.2, // thoda sa partial card effect
-        },
-      },
+      { breakpoint: 1280, settings: { slidesToShow: 3 } },
+      { breakpoint: 992, settings: { slidesToShow: 2 } },
+      { breakpoint: 768, settings: { slidesToShow: 1.2 } },
     ],
   };
+
+  // ---------- FETCH PRODUCTS ----------
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+
+        const res = await axios.get(PRODUCTS_ENDPOINT);
+        const backendProducts = res.data?.data || [];
+
+        const mapped = backendProducts.map((prod) => {
+          const mrp = prod.price?.mrp || 0;
+          const salePrice = prod.price?.sale || mrp;
+          const colorsArray = Array.isArray(prod.colors) ? prod.colors : [];
+
+          // stock calculator
+          let totalStock = 0;
+          if (typeof prod.totalStock === 'number') {
+            totalStock = prod.totalStock;
+          } else if (typeof prod.stock === 'number') {
+            totalStock = prod.stock;
+          } else if (Array.isArray(prod.sizes)) {
+            totalStock = prod.sizes.reduce((sum, s) => sum + (s.stock || 0), 0);
+          }
+
+          const genderType = prod.gender || prod.genderType || 'Unisex';
+
+          return {
+            id: prod._id,
+            brand: prod.brand || BRAND_NAME,
+            name: prod.name,
+            description: prod.description || '',
+            mrp,
+            price: salePrice,
+            image: getImageUrl(
+              prod.mainImage || (prod.galleryImages && prod.galleryImages[0]),
+            ),
+            colors: colorsArray,
+            moreColors: colorsArray.length > 3 ? colorsArray.length - 3 : 0,
+            stock: totalStock,
+            gender: genderType,
+          };
+        });
+
+        setProducts(mapped);
+      } catch (err) {
+        console.error('Error fetching Vamika products:', err);
+        setError('Failed to load products.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   return (
     <section className={styles.section}>
       <div className={styles.inner}>
-        <h2 className={styles.title}>Vamika</h2>
+        <h2 className={styles.title}>{BRAND_NAME}</h2>
 
         <div className={styles.contentRow}>
-          {/* LEFT FIXED VIDEO CARD */}
+          {/* LEFT VIDEO SECTION */}
           <div className={styles.leftPanel}>
             <div className={styles.heroCard}>
-             <video
-  className={styles.heroVideo}
-  autoPlay
-  muted
-  loop
-  playsInline
-  poster={heroVideoPoster}
->
-  <source src={heroVideo} type="video/mp4" />
-</video>
-
+              <video
+                className={styles.heroVideo}
+                autoPlay
+                muted
+                loop
+                playsInline
+                poster={heroVideoPoster}
+              >
+                <source src={heroVideo} type="video/mp4" />
+              </video>
 
               <div className={styles.heroOverlay}></div>
 
               <button type="button" className={styles.heroBtn}>
-                Show Now
+                Shop Now
               </button>
             </div>
           </div>
 
           {/* RIGHT SLIDER */}
           <div className={styles.sliderWrapper}>
-            <Slider {...settings}>
-              {PRODUCTS.map((item) => (
-                <div key={item.id} className={styles.slideOuter}>
-                  <div className={styles.productCard}>
-                    {/* top wishlist icon */}
-                    <button className={styles.wishBtn} type="button">
-                      <FiHeart />
-                    </button>
+            {loading && <p className={styles.infoText}>Loading products...</p>}
+            {error && !loading && (
+              <p className={styles.errorText}>{error}</p>
+            )}
+            {!loading && !error && products.length === 0 && (
+              <p className={styles.infoText}>No products found.</p>
+            )}
 
-                    <div className={styles.productImageWrap}>
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        className={styles.productImage}
-                      />
-                    </div>
+            {!loading && !error && products.length > 0 && (
+              <Slider {...settings}>
+                {products.map((item) => {
+                  const discount = getDiscountPercent(item.mrp, item.price);
 
-                    <div className={styles.productBody}>
-                      <div className={styles.brand}>{item.brand}</div>
-                      <div className={styles.productName}>{item.name}</div>
+                  return (
+                    <div key={item.id} className={styles.slideOuter}>
+                      {/* 👇 PURE CARD CLICKABLE */}
+                      <div
+                        className={styles.productCard}
+                        onClick={() => navigate(`/product/${item.id}`)}
+                        role="button"
+                      >
+                        {/* wishlist button – stopPropagation so card click na ho */}
+                        <button
+                          className={styles.wishBtn}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // yaha wishlist logic daalna ho to daal sakte ho
+                          }}
+                        >
+                          <FiHeart />
+                        </button>
 
-                      <div className={styles.priceRow}>
-                        <span className={styles.mrpLabel}>MRP</span>
-                        <span className={styles.mrpValue}>{item.mrp}</span>
-                      </div>
-
-                      <div className={styles.bottomRow}>
-                        <div className={styles.colorRow}>
-                          {item.colors.map((c, idx) => (
-                            <span
-                              key={idx}
-                              className={styles.colorDot}
-                              style={{ backgroundColor: c }}
-                            />
-                          ))}
-                          {item.moreColors > 0 && (
-                            <span className={styles.moreColors}>
-                              +{item.moreColors}
-                            </span>
-                          )}
+                        <div className={styles.productImageWrap}>
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            className={styles.productImage}
+                          />
                         </div>
 
-                        <button className={styles.cartBtn} type="button">
-                          <FiShoppingBag />
-                        </button>
+                        <div className={styles.productBody}>
+                          <div className={styles.brand}>{item.brand}</div>
+                          <div className={styles.productName}>{item.name}</div>
+
+                          {/* price row */}
+                          <div className={styles.priceRow}>
+                            <span className={styles.currentPrice}>
+                              ₹ {item.price}
+                            </span>
+
+                            {item.mrp > 0 && (
+                              <span className={styles.originalPrice}>
+                                ₹ {item.mrp}
+                              </span>
+                            )}
+
+                            {discount > 0 && (
+                              <span className={styles.discountTag}>
+                                {discount}% OFF
+                              </span>
+                            )}
+                          </div>
+
+                          {/* stock + gender row */}
+                          <div className={styles.metaRow}>
+                            <span
+                              className={`${styles.stockBadge} ${
+                                item.stock > 0
+                                  ? styles.inStock
+                                  : styles.outOfStock
+                              }`}
+                            >
+                              {item.stock > 0
+                                ? `Available Stock: ${item.stock}`
+                                : 'Out of stock'}
+                            </span>
+
+                            <span className={styles.genderTag}>
+                              {item.gender}
+                            </span>
+                          </div>
+
+                          {/* colors + cart */}
+                          <div className={styles.bottomRow}>
+                            <div className={styles.colorRow}>
+                              {item.colors.slice(0, 3).map((c, idx) => (
+                                <span
+                                  key={idx}
+                                  className={styles.colorDot}
+                                  style={{ backgroundColor: c }}
+                                />
+                              ))}
+
+                              {item.moreColors > 0 && (
+                                <span className={styles.moreColors}>
+                                  +{item.moreColors}
+                                </span>
+                              )}
+                            </div>
+
+                            <button
+                              className={styles.cartBtn}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                // yaha add-to-cart logic daalna
+                              }}
+                            >
+                              <FiShoppingBag />
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              ))}
-            </Slider>
+                  );
+                })}
+              </Slider>
+            )}
           </div>
         </div>
       </div>

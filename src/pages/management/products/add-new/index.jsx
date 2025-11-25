@@ -337,6 +337,7 @@ const AddProducts = () => {
                     <option value="Puma">Puma</option>
                     <option value="Clovia">Clovia</option>
                     <option value="Zivame">Zivame</option>
+                    <option value="Vamika">Vamika</option>
                   </Select>
                 </FormControl>
 
