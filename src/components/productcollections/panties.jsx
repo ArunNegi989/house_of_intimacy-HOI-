@@ -1,214 +1,24 @@
-// src/components/BrasListing/BrasListing.jsx
+// src/components/PantiesListing/PantiesListing.jsx
 import React, { useState, useMemo, useEffect } from "react";
+import axios from "axios";
 import { FiHeart, FiShoppingBag } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
 import styles from "../../assets/styles/productcollection/BraListing.module.css";
 
 // 🔁 Replace these with your real image imports
-import paddedImg from "../../assets/images/17.jpg";
-import nonPaddedImg from "../../assets/images/19.jpg";
-import wiredImg from "../../assets/images/5.jpg";
-import nonWiredImg from "../../assets/images/17.jpg";
-import tshirtImg from "../../assets/images/19.jpg";
-import pushupImg from "../../assets/images/5.jpg";
-import multiwayImg from "../../assets/images/17.jpg";
+import bikiniImg from "../../assets/images/17.jpg";
+import hipsterImg from "../../assets/images/19.jpg";
+import fullBriefImg from "../../assets/images/5.jpg";
+import boyShortsImg from "../../assets/images/17.jpg";
+import thongImg from "../../assets/images/19.jpg";
+import seamlessImg from "../../assets/images/5.jpg";
+import boylegImg from "../../assets/images/17.jpg";
 
-// Product card images
-import prod1Img from "../../assets/images/CSC_0015.jpg";
-import prod2Img from "../../assets/images/IMG_4869.JPG";
-import prod3Img from "../../assets/images/CSC_0015.jpg";
-import prod4Img from "../../assets/images/IMG_4869.JPG";
-import { useNavigate } from "react-router-dom";
+// ================== CONFIG ==================
+const API_BASE_URL = "http://localhost:8000";
 
-// ----- TOP FILTER TYPES -----
-const BRA_TYPES = [
-  { id: "padded", label: "Binki", image: paddedImg },
-  { id: "nonPadded", label: "Hipster", image: nonPaddedImg },
-  { id: "wired", label: "FullBrief", image: wiredImg },
-  { id: "nonWired", label: "Boy-shorts", image: nonWiredImg },
-  { id: "tshirt", label: "Tong", image: tshirtImg },
-  { id: "pushup", label: "vanish Seemless", image: pushupImg },
-  { id: "multiway", label: "Boyleg", image: multiwayImg },
-];
-
-// ----- PRODUCT DATA -----
-const ALL_PRODUCTS = [
-  {
-    id: 1,
-    brand: "AMANTE",
-    name: "Carefree Casuals Padded Non-Wired T-Shirt Bra - Shadow Floral Pr",
-    mrp: 745,
-    price: 745,
-    discount: 0,
-    image: prod1Img,
-    types: ["padded", "nonWired", "tshirt"],
-    colors: ["#f7d7e1", "#f2b8c6", "#fbe9e7"],
-  },
-  {
-    id: 2,
-    brand: "AMANTE",
-    name: "Skins V-Neck Bra - Mellow Mauve",
-    mrp: 1489,
-    price: 1489,
-    discount: 0,
-    image: prod2Img,
-    types: ["nonPadded", "nonWired"],
-    colors: ["#c08497", "#f6d1e0"],
-  },
-  {
-    id: 3,
-    brand: "AMANTE",
-    name: "Luxe Support Non-Padded Wired Bra - Black",
-    mrp: 1539,
-    price: 1539,
-    discount: 0,
-    image: prod3Img,
-    types: ["nonPadded", "wired"],
-    colors: ["#111827", "#4b5563"],
-  },
-  {
-    id: 4,
-    brand: "AMANTE",
-    name: "Cool Contour Non Padded Wirefree Bra - Ditsy Floral Pr",
-    mrp: 695,
-    price: 278,
-    discount: 60,
-    image: prod4Img,
-    types: ["nonPadded", "nonWired", "tshirt"],
-    colors: ["#fde2e4", "#fbb1bd", "#ffccd5"],
-  },
-  {
-    id: 5,
-    brand: "AMANTE",
-    name: "Everyday Lace Non-Wired Bra",
-    mrp: 899,
-    price: 899,
-    discount: 0,
-    image: prod1Img,
-    types: ["nonWired", "bralette"],
-    colors: ["#ffe4e6", "#f9a8d4"],
-  },
-  {
-    id: 6,
-    brand: "AMANTE",
-    name: "SoftLift Padded Bra",
-    mrp: 1299,
-    price: 999,
-    discount: 20,
-    image: prod2Img,
-    types: ["padded"],
-    colors: ["#f5d0fe", "#e9d5ff"],
-  },
-  {
-    id: 7,
-    brand: "AMANTE",
-    name: "Contour Wired T-Shirt Bra",
-    mrp: 1499,
-    price: 1499,
-    discount: 0,
-    image: prod3Img,
-    types: ["wired", "tshirt"],
-    colors: ["#fecdd3", "#fee2e2"],
-  },
-  {
-    id: 8,
-    brand: "AMANTE",
-    name: "UltraSoft Lounge Slip-On Bra",
-    mrp: 699,
-    price: 699,
-    discount: 0,
-    image: prod4Img,
-    types: ["slipon", "nonWired"],
-    colors: ["#fbcfe8", "#f5d0fe"],
-  },
-  {
-    id: 9,
-    brand: "AMANTE",
-    name: "Athleisure Sports Bra - FlexFit",
-    mrp: 1799,
-    price: 1299,
-    discount: 28,
-    image: prod1Img,
-    types: ["sports"],
-    colors: ["#bfdbfe", "#93c5fd"],
-  },
-  {
-    id: 10,
-    brand: "AMANTE",
-    name: "FeatherSoft Minimizer Bra",
-    mrp: 1699,
-    price: 1350,
-    discount: 21,
-    image: prod2Img,
-    types: ["minimizer"],
-    colors: ["#fef2f2", "#fecaca"],
-  },
-  {
-    id: 11,
-    brand: "AMANTE",
-    name: "MicroFiber Multiway Bra",
-    mrp: 1299,
-    price: 1299,
-    discount: 0,
-    image: prod3Img,
-    types: ["multiway"],
-    colors: ["#d1d5db", "#9ca3af"],
-  },
-  {
-    id: 12,
-    brand: "AMANTE",
-    name: "Classic Lace Bralette",
-    mrp: 899,
-    price: 899,
-    discount: 0,
-    image: prod4Img,
-    types: ["bralette"],
-    colors: ["#fbcfe8"],
-  },
-  {
-    id: 13,
-    brand: "AMANTE",
-    name: "NextGen Push-Up Bra",
-    mrp: 1599,
-    price: 1299,
-    discount: 19,
-    image: prod1Img,
-    types: ["pushup", "padded"],
-    colors: ["#fee2e2", "#fecaca"],
-  },
-  {
-    id: 14,
-    brand: "AMANTE",
-    name: "ComfortFull Full Figure Bra",
-    mrp: 1899,
-    price: 1599,
-    discount: 15,
-    image: prod2Img,
-    types: ["fullFigure"],
-    colors: ["#f3e8ff"],
-  },
-  {
-    id: 15,
-    brand: "AMANTE",
-    name: "DailyWear Non-Padded Bra",
-    mrp: 699,
-    price: 599,
-    discount: 14,
-    image: prod3Img,
-    types: ["nonPadded"],
-    colors: ["#e5e7eb"],
-  },
-  {
-    id: 16,
-    brand: "AMANTE",
-    name: "Premium Cotton Non-Wired Bra",
-    mrp: 849,
-    price: 799,
-    discount: 6,
-    image: prod4Img,
-    types: ["nonWired"],
-    colors: ["#fef3c7"],
-  },
-];
+// 👉 must match your DB category for panties
+const PANTIES_CATEGORY = "Panty";
 
 const SORT_OPTIONS = [
   { id: "featured", label: "Featured" },
@@ -216,42 +26,164 @@ const SORT_OPTIONS = [
   { id: "priceHigh", label: "Price: High to Low" },
 ];
 
-const PRODUCTS_PER_PAGE = 12; // 12 per page
+const PRODUCTS_PER_PAGE = 12;
+
+// ----- TOP FILTER TYPES (Panties Types) -----
+// ⚠️ "id" should match tags/subcategory values in DB: "bikini", "hipster", etc.
+const PANTY_TYPES = [
+  { id: "bikini", label: "Bikini", image: bikiniImg },
+  { id: "hipster", label: "Hipster", image: hipsterImg },
+  { id: "fullbrief", label: "Full Brief", image: fullBriefImg },
+  { id: "boyshorts", label: "Boy-shorts", image: boyShortsImg },
+  { id: "thong", label: "Thong", image: thongImg },
+  { id: "seamless", label: "Vanish Seamless", image: seamlessImg },
+  { id: "boyleg", label: "Boyleg", image: boylegImg },
+];
+
+// ---------- HELPERS ----------
+const getImageUrl = (url) => {
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  return `${API_BASE_URL}${url}`;
+};
+
+// color name → hex map
+const COLOR_MAP = {
+  Black: "#000000",
+  Purple: "#800080",
+  White: "#ffffff",
+  Red: "#ef4444",
+  Blue: "#3b82f6",
+  Green: "#22c55e",
+  Nude: "#F5D0C5",
+  Pink: "#ec4899",
+  Yellow: "#facc15",
+};
+
+// Decode color value coming from backend
+// supports: "#hex", "Black", {label, value}, {hex}, etc.
+const decodeColor = (value) => {
+  if (!value) return "#e5e7eb"; // fallback grey
+
+  if (typeof value === "string") {
+    const v = value.trim();
+    if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(v)) return v;
+    if (COLOR_MAP[v]) return COLOR_MAP[v];
+    return "#e5e7eb";
+  }
+
+  if (typeof value === "object") {
+    if (value.hex && /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(value.hex)) {
+      return value.hex;
+    }
+    if (value.value && /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(value.value)) {
+      return value.value;
+    }
+    if (value.label && COLOR_MAP[value.label]) {
+      return COLOR_MAP[value.label];
+    }
+  }
+
+  return "#e5e7eb";
+};
+
+// Check if product matches selected type (using product.tags or subcategory)
+const matchesSelectedType = (product, selectedType) => {
+  if (selectedType === "all") return true;
+
+  // tags array
+  if (product.tags && Array.isArray(product.tags)) {
+    return product.tags
+      .map((t) => String(t).toLowerCase())
+      .includes(selectedType.toLowerCase());
+  }
+
+  // subcategory as fallback
+  if (product.subcategory) {
+    return (
+      String(product.subcategory).toLowerCase() ===
+      selectedType.toLowerCase()
+    );
+  }
+
+  return false;
+};
 
 const PantiesListing = () => {
+  const navigate = useNavigate();
+
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const [selectedType, setSelectedType] = useState("all");
   const [sortBy, setSortBy] = useState("featured");
   const [currentPage, setCurrentPage] = useState(1);
-  const navigate = useNavigate();
 
-  // ⭐ Scroll to top whenever page changes (Prev, Next, number)
+  // ⭐ Scroll to top whenever page changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
 
-  // ----- FILTER + SORT -----
+  // ---------- FETCH PANTIES FROM BACKEND ----------
+  useEffect(() => {
+    const fetchPanties = async () => {
+      try {
+        setLoading(true);
+        setError("");
+
+        const res = await axios.get(`${API_BASE_URL}/v1/products`, {
+          params: {
+            category: PANTIES_CATEGORY,
+            page: 1,
+            limit: 200,
+          },
+        });
+
+        const apiProducts = res.data?.data || [];
+        setProducts(apiProducts);
+      } catch (err) {
+        console.error("Error fetching panties:", err);
+        setError("Failed to load panties. Please try again.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPanties();
+  }, []);
+
+  // ---------- FILTER + SORT ----------
   const filteredProducts = useMemo(() => {
-    let products =
-      selectedType === "all"
-        ? [...ALL_PRODUCTS]
-        : ALL_PRODUCTS.filter((p) => p.types.includes(selectedType));
+    let filtered = products.filter((p) =>
+      matchesSelectedType(p, selectedType)
+    );
 
-    if (sortBy === "priceLow") {
-      products.sort((a, b) => a.price - b.price);
-    } else if (sortBy === "priceHigh") {
-      products.sort((a, b) => b.price - a.price);
-    }
-    return products;
-  }, [selectedType, sortBy]);
+    filtered.sort((a, b) => {
+      const aMrp = Number(a.price?.mrp || 0);
+      const aSale = Number(a.price?.sale ?? aMrp);
+      const bMrp = Number(b.price?.mrp || 0);
+      const bSale = Number(b.price?.sale ?? bMrp);
 
-  // ----- PAGINATION -----
-  const totalPages = Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE);
+      if (sortBy === "priceLow") return aSale - bSale;
+      if (sortBy === "priceHigh") return bSale - aSale;
+
+      return 0; // featured
+    });
+
+    return filtered;
+  }, [products, selectedType, sortBy]);
+
+  // ---------- PAGINATION ----------
+  const totalPages = Math.ceil(
+    (filteredProducts.length || 0) / PRODUCTS_PER_PAGE
+  );
 
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
   const endIndex = startIndex + PRODUCTS_PER_PAGE;
   const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
 
-  // filter/sort → reset to page 1
+  // handlers
   const handleTypeChange = (typeId) => {
     setSelectedType(typeId);
     setCurrentPage(1);
@@ -262,21 +194,53 @@ const PantiesListing = () => {
     setCurrentPage(1);
   };
 
+  const handleCardClick = (product) => {
+  navigate(`/product/${product._id}`);
+};
+
+  const handleAddToBag = (event, product) => {
+    event.stopPropagation();
+    // 👉 integrate CartContext later if needed
+    console.log("ADD TO BAG (Panty):", product.name);
+  };
+
+  const handleWishlist = (event, product) => {
+    event.stopPropagation();
+    // 👉 integrate WishlistContext later if needed
+    console.log("WISHLIST (Panty):", product.name);
+  };
+
+  // ---------- RENDER ----------
   return (
     <div className={styles.page}>
       {/* -------- BREADCRUMB -------- */}
-       <div className={`container ${styles.breadcrumb}`}>
+      <div className={`container ${styles.breadcrumb}`}>
         <span
           className={styles.breadcrumbLink}
           onClick={() => navigate("/")}
         >
           Home
         </span>
-
         <span className={styles.breadcrumbSeparator}>&gt;</span>
-
         <span>Panties</span>
       </div>
+
+      {/* -------- PAGE HEADER (same style as Bras) -------- */}
+      <div className={`container ${styles.pageHeader}`}>
+        <div>
+          <h1 className={styles.pageTitle}>Panties Collection</h1>
+          <p className={styles.pageSubtitle}>
+            Explore {filteredProducts.length} styles · Bikini, Hipster, Full
+            Brief & more.
+          </p>
+        </div>
+        <div className={styles.badgeStrip}>
+          <span className={styles.badgeChip}>All Day Comfort</span>
+          <span className={styles.badgeChip}>No Visible Lines</span>
+          <span className={styles.badgeChip}>Soft Cotton</span>
+        </div>
+      </div>
+
       {/* -------- TOP TYPE FILTER (IMAGE CHIPS) -------- */}
       <div className={`container-fluid ${styles.typeFilterWrapper}`}>
         <button
@@ -289,10 +253,10 @@ const PantiesListing = () => {
           <div className={styles.typeChipImgWrapper}>
             <div className={styles.typeChipAllCircle}>All</div>
           </div>
-          <span className={styles.typeChipLabel}>All Bras</span>
+          <span className={styles.typeChipLabel}>All Panties</span>
         </button>
 
-        {BRA_TYPES.map((type) => (
+        {PANTY_TYPES.map((type) => (
           <button
             key={type.id}
             type="button"
@@ -317,22 +281,22 @@ const PantiesListing = () => {
       <div className={`container-fluid ${styles.filterSortRow}`}>
         <div className={styles.filterLeft}>
           <span className={styles.filterLabel}>FILTER:</span>
-          <button className={styles.filterPill}>CATEGORY</button>
-          <button className={styles.filterPill}>COLOR</button>
-          <button className={styles.filterPill}>SIZE</button>
-          <button className={styles.filterPill}>BRAND</button>
-          <button className={styles.filterPill}>PREFERENCE</button>
-          <button className={styles.filterPill}>STYLES</button>
-          <button className={styles.filterPill}>COVERAGE</button>
-          <button className={styles.filterPill}>OCCASION</button>
-          <button className={styles.filterPill}>FABRIC</button>
-          <button className={styles.filterPill}>PACK OF</button>
-          <button className={styles.filterPill}>PATTERN</button>
-          <button className={styles.filterPill}>CLOSURE TYPE</button>
-          <button className={styles.filterPill}>STRAP</button>
-          <button className={styles.filterPill}>PRICE</button>
-          <button className={styles.filterPill}>AVAILABILITY</button>
-          <button className={styles.filterPill}>DISCOUNT</button>
+          <button className={styles.filterPill}>Category</button>
+          <button className={styles.filterPill}>Color</button>
+          <button className={styles.filterPill}>Size</button>
+          <button className={styles.filterPill}>Brand</button>
+          <button className={styles.filterPill}>Preference</button>
+          <button className={styles.filterPill}>Style</button>
+          <button className={styles.filterPill}>Coverage</button>
+          <button className={styles.filterPill}>Occasion</button>
+          <button className={styles.filterPill}>Fabric</button>
+          <button className={styles.filterPill}>Pack of</button>
+          <button className={styles.filterPill}>Pattern</button>
+          <button className={styles.filterPill}>Closure</button>
+          <button className={styles.filterPill}>Strap</button>
+          <button className={styles.filterPill}>Price</button>
+          <button className={styles.filterPill}>Availability</button>
+          <button className={styles.filterPill}>Discount</button>
         </div>
 
         <div className={styles.sortRight}>
@@ -351,71 +315,198 @@ const PantiesListing = () => {
         </div>
       </div>
 
+      {/* -------- LOADING / ERROR -------- */}
+      {loading && (
+        <div className={styles.loadingState}>Loading panties...</div>
+      )}
+      {error && <div className={styles.errorState}>{error}</div>}
+
       {/* -------- PRODUCTS GRID -------- */}
-      <div className={styles.productsGrid}>
-        {paginatedProducts.map((product) => (
-          <div key={product.id} className={styles.card}>
-            {product.discount > 0 && (
-              <div className={styles.discountTag}>{product.discount}% off</div>
-            )}
-
-            <button className={styles.wishlistBtn} type="button">
-              <FiHeart />
-            </button>
-
-            <div className={styles.cardImageWrapper}>
-              <img
-                src={product.image}
-                alt={product.name}
-                className={styles.cardImage}
-              />
-            </div>
-
-            <div className={styles.cardBody}>
-              <div className={styles.brand}>{product.brand}</div>
-              <div className={styles.name}>{product.name}</div>
-
-              <div className={styles.priceRow}>
-                <span className={styles.price}>MRP ₹ {product.price}</span>
-                {product.discount > 0 && (
-                  <span className={styles.mrpStriked}>
-                    ₹ {product.mrp.toFixed(0)}
-                  </span>
-                )}
-              </div>
-
-              {product.colors?.length > 0 && (
-                <div className={styles.colorsRow}>
-                  {product.colors.map((c, index) => (
-                    <span
-                      key={index}
-                      className={styles.colorDot}
-                      style={{ backgroundColor: c }}
-                    />
-                  ))}
-                </div>
-              )}
-
-              <button type="button" className={styles.addToBagBtn}>
-                <FiShoppingBag className={styles.addToBagIcon} />
-              </button>
-            </div>
+      {!loading && !error && (
+        <div className={`container-fluid ${styles.productsGridWrapper}`}>
+          <div className={styles.collectionMeta}>
+            <span className={styles.collectionCount}>
+              Showing {paginatedProducts.length} of {filteredProducts.length}{" "}
+              styles
+            </span>
+            <span className={styles.collectionInfo}>
+              MRP inclusive of all taxes · Easy returns
+            </span>
           </div>
-        ))}
 
-        {paginatedProducts.length === 0 && (
-          <div className={styles.noResults}>No products found.</div>
-        )}
-      </div>
+          <div className={styles.productsGrid}>
+            {paginatedProducts.map((product) => {
+              const mrp = Number(product.price?.mrp || 0);
+              const sale = Number(
+                product.price?.sale != null ? product.price.sale : mrp
+              );
+              const discountPercent =
+                product.price?.discountPercent != null
+                  ? Number(product.price.discountPercent)
+                  : mrp > 0
+                  ? Math.round(((mrp - sale) / mrp) * 100)
+                  : 0;
+
+              const mainImg =
+                product.mainImage ||
+                (product.galleryImages && product.galleryImages[0]) ||
+                "";
+
+              const colorDots = Array.isArray(product.colors)
+                ? product.colors.map(decodeColor)
+                : [];
+
+              const shortDescription = product.description
+                ? product.description.length > 90
+                  ? product.description.slice(0, 90) + "..."
+                  : product.description
+                : "";
+
+              return (
+                <div
+                  key={product._id}
+                  className={styles.card}
+                  onClick={() => handleCardClick(product)}
+                >
+                  {discountPercent > 0 && (
+                    <div className={styles.discountTag}>
+                      {discountPercent}% OFF
+                    </div>
+                  )}
+
+                  {product.isFeatured && (
+                    <div className={styles.tagNew}>New</div>
+                  )}
+
+                  <button
+                    className={styles.wishlistBtn}
+                    type="button"
+                    onClick={(e) => handleWishlist(e, product)}
+                  >
+                    <FiHeart />
+                  </button>
+
+                  <div className={styles.cardImageWrapper}>
+                    <img
+                      src={getImageUrl(mainImg)}
+                      alt={product.name}
+                      className={styles.cardImage}
+                    />
+                  </div>
+
+                  <div className={styles.cardBody}>
+                    <div className={styles.brandRow}>
+                      <span className={styles.brand}>{product.brand}</span>
+                      {product.gender && (
+                        <span className={styles.genderBadge}>
+                          {product.gender}
+                        </span>
+                      )}
+                    </div>
+
+                    <div className={styles.name}>{product.name}</div>
+
+                    {shortDescription && (
+                      <p className={styles.description}>
+                        {shortDescription}
+                      </p>
+                    )}
+
+                    <div className={styles.priceRow}>
+                      <span className={styles.salePrice}>
+                        ₹ {sale.toFixed(0)}
+                      </span>
+                      {mrp > sale && (
+                        <span className={styles.mrpStriked}>
+                          MRP ₹ {mrp.toFixed(0)}
+                        </span>
+                      )}
+                      {discountPercent > 0 && (
+                        <span className={styles.discountText}>
+                          ({discountPercent}% OFF)
+                        </span>
+                      )}
+                    </div>
+
+                    <div className={styles.taxText}>
+                      Inclusive of all taxes
+                    </div>
+
+                    {/* meta pills: coverage, fabric, etc. */}
+                    <div className={styles.metaRow}>
+                      {product.coverage && (
+                        <span className={styles.metaPill}>
+                          {product.coverage} coverage
+                        </span>
+                      )}
+                      {product.fabric && (
+                        <span className={styles.metaPill}>
+                          {product.fabric}
+                        </span>
+                      )}
+                      {product.pattern && (
+                        <span className={styles.metaPill}>
+                          {product.pattern}
+                        </span>
+                      )}
+                    </div>
+
+                    {colorDots.length > 0 && (
+                      <div className={styles.colorsRow}>
+                        {colorDots.map((c, index) => (
+                          <span
+                            key={index}
+                            className={styles.colorDot}
+                            style={{ backgroundColor: c }}
+                          />
+                        ))}
+                      </div>
+                    )}
+
+                    {product.totalStock != null && (
+                      <div className={styles.stockRow}>
+                        {product.totalStock > 0 ? (
+                          <span className={styles.inStock}>
+                            In stock · {product.totalStock}
+                          </span>
+                        ) : (
+                          <span className={styles.outOfStock}>
+                            Out of stock
+                          </span>
+                        )}
+                      </div>
+                    )}
+
+                    <button
+                      type="button"
+                      className={styles.addToBagBtn}
+                      onClick={(e) => handleAddToBag(e, product)}
+                    >
+                      <FiShoppingBag className={styles.addToBagIcon} />
+                      <span className={styles.addToBagText}>Add to bag</span>
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+
+            {paginatedProducts.length === 0 && !loading && (
+              <div className={styles.noResults}>No products found.</div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* -------- PAGINATION -------- */}
-      {totalPages > 1 && (
+      {!loading && totalPages > 1 && (
         <div className={styles.paginationWrapper}>
           <button
             type="button"
             className={`${styles.pageBtn} ${styles.pagePrevNext}`}
             disabled={currentPage === 1}
-            onClick={() => setCurrentPage((prev) => prev - 1)}
+            onClick={() =>
+              setCurrentPage((prev) => Math.max(prev - 1, 1))
+            }
           >
             Prev
           </button>
@@ -440,7 +531,11 @@ const PantiesListing = () => {
             type="button"
             className={`${styles.pageBtn} ${styles.pagePrevNext}`}
             disabled={currentPage === totalPages}
-            onClick={() => setCurrentPage((prev) => prev + 1)}
+            onClick={() =>
+              setCurrentPage((prev) =>
+                Math.min(prev + 1, totalPages)
+              )
+            }
           >
             Next
           </button>

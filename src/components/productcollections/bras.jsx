@@ -186,13 +186,10 @@ const BrasListing = () => {
     setCurrentPage(1);
   };
 
-  const handleCardClick = (product) => {
-    if (product.slug) {
-      navigate(`/product/${product.slug}`);
-    } else {
-      navigate(`/product/id/${product._id}`);
-    }
-  };
+ const handleCardClick = (product) => {
+  navigate(`/product/${product._id}`);
+};
+
 
   const handleAddToBag = (event, product) => {
     event.stopPropagation();
