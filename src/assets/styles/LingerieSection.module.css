@@ -108,6 +108,7 @@
   height: 100%;
   object-fit: cover;
   display: block;
+  object-position: top;   /* 👈 IMPORTANT: crop only from bottom */
 }
 
 .productBody {

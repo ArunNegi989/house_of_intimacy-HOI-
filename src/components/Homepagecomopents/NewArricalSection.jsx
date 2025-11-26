@@ -73,12 +73,13 @@ const NewArrival = () => {
 
   // ---------- SLIDER SETTINGS ----------
   const settings = {
+    dots: false,
     infinite: true,
-    speed: 500,
+    speed: 800,
     slidesToShow: 4,
     slidesToScroll: 1,
     swipeToSlide: true,
-    arrows: true,
+    autoplay: false, // ⛔ desktop autoplay on
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
     responsive: [
