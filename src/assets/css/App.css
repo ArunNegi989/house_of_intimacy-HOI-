@@ -6,3 +6,8 @@ body {
 option {
   color: black;
 }
+
+body {
+  --header-height: 136px; /* adjust based on real height */
+  padding-top: var(--header-height);
+}
