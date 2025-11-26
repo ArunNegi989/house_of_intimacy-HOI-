@@ -2,6 +2,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Slider from "react-slick";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // ✅ NEW
 import styles from "../../assets/styles/JockeyColorSlider.module.css";
 
 const API_BASE_URL = "http://localhost:8000";
@@ -100,8 +101,9 @@ const JockeyColorSlider = () => {
   const [activeGender, setActiveGender] = useState("men"); // "men" | "women"
   const [activeColorIndex, setActiveColorIndex] = useState(0);
   const [allProducts, setAllProducts] = useState([]); // sab products (Men + Women)
-
   const sliderRef = useRef(null);
+
+  const navigate = useNavigate(); // ✅ NEW
 
   const activeColor = COLORS[activeColorIndex];
 
@@ -153,42 +155,47 @@ const JockeyColorSlider = () => {
     filteredByColor.length > 0 ? filteredByColor : genderFilteredProducts;
 
   const thumbPercent =
-    COLORS.length === 1
-      ? 0
-      : (activeColorIndex / (COLORS.length - 1)) * 100;
+    COLORS.length === 1 ? 0 : (activeColorIndex / (COLORS.length - 1)) * 100;
 
   const settings = {
-  infinite: productsToShow.length > 4,  // 👈 auto-safe infinite
-  slidesToShow: 4,
-  slidesToScroll: 1,
-  speed: 400,
-  arrows: true,
-  nextArrow: <NextArrow />,
-  prevArrow: <PrevArrow />,
-  responsive: [
-    {
-      breakpoint: 1200,
-      settings: {
-        slidesToShow: 3,
-        infinite: productsToShow.length > 3, // 👈 responsive infinite fix
+    infinite: productsToShow.length > 4, // 👈 auto-safe infinite
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    speed: 400,
+    arrows: true,
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+    responsive: [
+      {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 3,
+          infinite: productsToShow.length > 3, // 👈 responsive infinite fix
+        },
       },
-    },
-    {
-      breakpoint: 900,
-      settings: {
-        slidesToShow: 2,
-        infinite: productsToShow.length > 2,
+      {
+        breakpoint: 900,
+        settings: {
+          slidesToShow: 2,
+          infinite: productsToShow.length > 2,
+        },
       },
-    },
-    {
-      breakpoint: 600,
-      settings: {
-        slidesToShow: 1,
-        infinite: productsToShow.length > 1,
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          infinite: productsToShow.length > 1,
+        },
       },
-    },
-  ],
-};
+    ],
+  };
+
+  // ✅ when user clicks a card → go to product detail page with its id
+  const handleCardClick = (productId) => {
+    // 👉 yaha apne route ke hisaab se path change kar sakte ho:
+    // e.g. "/product/:id" or "/products/:id"
+    navigate(`/product/${productId}`);
+  };
 
   return (
     <section className={styles.section}>
@@ -234,7 +241,12 @@ const JockeyColorSlider = () => {
               const genderLabel = p.gender || "";
 
               return (
-                <div key={p._id} className={styles.cardOuter}>
+                <div
+                  key={p._id}
+                  className={styles.cardOuter}
+                  onClick={() => handleCardClick(p._id)} // ✅ CLICK HANDLER
+                  style={{ cursor: "pointer" }} // optional: visual feedback
+                >
                   <div className={styles.card}>
                     <div className={styles.cardImageWrap}>
                       {/* 🔥 Gender badge top-right */}

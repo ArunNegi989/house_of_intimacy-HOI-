@@ -1,7 +1,7 @@
 .section {
   width: 100%;
   padding: 60px 0 80px;
-  background: radial-gradient(circle at top, #74294e, #ea48a1 50%, #750854);
+  background: radial-gradient(circle at top, #874a67, #e971b3 50%, #61254e);
   color: #ffffff;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
@@ -71,6 +71,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  cursor: pointer;   /* 👈 show hand cursor */
+}
+.card,
+.cardImageWrap,
+.cardImage {
+  cursor: pointer;
 }
 
 /* IMAGE FULL IN CARD */
