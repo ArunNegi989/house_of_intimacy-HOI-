@@ -999,7 +999,7 @@ const AddProducts = () => {
             >
               {/* Image Preview */}
               <Box
-                h="220px"
+                h="350px"
                 bgGradient="linear(to-br, purple.100, pink.100)"
                 position="relative"
               >
@@ -1008,8 +1008,10 @@ const AddProducts = () => {
                     src={imagePreview}
                     alt={nameWatch}
                     objectFit="cover"
+                    objectPosition="top" 
                     w="100%"
                     h="100%"
+                    o
                   />
                 ) : (
                   <Flex

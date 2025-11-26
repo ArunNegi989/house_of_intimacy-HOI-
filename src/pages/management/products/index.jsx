@@ -279,6 +279,7 @@ const Products = () => {
                             alt={product.name}
                             boxSize="60px"
                             objectFit="cover"
+                            objectPosition="top" 
                             borderRadius="md"
                             border="1px solid #E2E8F0"
                           />

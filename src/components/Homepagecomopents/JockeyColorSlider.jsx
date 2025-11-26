@@ -1,18 +1,12 @@
 // src/components/JockeyColorSlider/JockeyColorSlider.jsx
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Slider from "react-slick";
+import axios from "axios";
 import styles from "../../assets/styles/JockeyColorSlider.module.css";
 
-// Dummy images
-import men1 from "../../assets/images/CSC_0015.jpg";
-import men2 from "../../assets/images/IMG_4869.JPG";
-import men3 from "../../assets/images/CSC_0015.jpg";
+const API_BASE_URL = "http://localhost:8000";
 
-import women1 from "../../assets/images/19.jpg";
-import women2 from "../../assets/images/5.jpg";
-import women3 from "../../assets/images/17.jpg";
-
-// ----- COLORS -----
+// ----- UI COLORS (slider ke liye) -----
 const COLORS = [
   { id: "black", label: "Black", hex: "#000000" },
   { id: "grey", label: "Grey", hex: "#4B5563" },
@@ -26,37 +20,59 @@ const COLORS = [
   { id: "yellow", label: "Yellow", hex: "#FACC15" },
 ];
 
-// ===== MEN & WOMEN PRODUCTS AUTO-GENERATED =====
-const menImages = [men1, men2, men3];
-const womenImages = [women1, women2, women3];
+// 💡 master color map (name → hex)
+const COLOR_MAP = {
+  black: "#000000",
+  grey: "#4B5563",
+  navy: "#1F2937",
+  blue: "#2563EB",
+  teal: "#14B8A6",
+  green: "#22C55E",
+  orange: "#F97316",
+  red: "#EF4444",
+  pink: "#EC4899",
+  yellow: "#FACC15",
+};
 
-// Men: 10 products per color
-let menIdCounter = 1;
-const MEN_PRODUCTS = COLORS.flatMap((color) =>
-  Array.from({ length: 10 }, (_, index) => ({
-    id: menIdCounter++,
-    name: `Men ${color.label} Product ${index + 1}`,
-    subtitle: `Color: ${color.label}`,
-    image: menImages[index % menImages.length],
-    colorId: color.id,
-  }))
+// reverse map (hex → name)
+const HEX_TO_NAME = Object.fromEntries(
+  Object.entries(COLOR_MAP).map(([name, hex]) => [hex.toLowerCase(), name])
 );
 
-// Women: 10 products per color
-let womenIdCounter = 1;
-const WOMEN_PRODUCTS = COLORS.flatMap((color) =>
-  Array.from({ length: 10 }, (_, index) => ({
-    id: womenIdCounter++,
-    name: `Women ${color.label} Product ${index + 1}`,
-    subtitle: `Color: ${color.label}`,
-    image: womenImages[index % womenImages.length],
-    colorId: color.id,
-  }))
-);
+// ✅ universal color normalizer
+// backend me jo bhi aaye: "#EF4444" / "Red" / "red" / {label:'Red'} → "red"
+function normalizeColor(val) {
+  if (!val) return null;
 
-// ----- CUSTOM ARROWS -----
-function NextArrow(props) {
-  const { onClick } = props;
+  // If object like {label:"Red"} ya {name:"Red"}
+  if (typeof val === "object") {
+    if (val.label) return String(val.label).toLowerCase();
+    if (val.name) return String(val.name).toLowerCase();
+  }
+
+  // If hex string "#EF4444"
+  if (typeof val === "string" && val.startsWith("#")) {
+    const lowerHex = val.toLowerCase();
+    const mappedName = HEX_TO_NAME[lowerHex];
+    return mappedName ? mappedName.toLowerCase() : null;
+  }
+
+  // Simple string like "Red", "RED"
+  if (typeof val === "string") {
+    return val.toLowerCase();
+  }
+
+  return null;
+}
+
+// backend image helper
+const getImageUrl = (url) => {
+  if (!url) return "";
+  return url.startsWith("http") ? url : `${API_BASE_URL}${url}`;
+};
+
+// custom arrows
+function NextArrow({ onClick }) {
   return (
     <button
       type="button"
@@ -68,8 +84,7 @@ function NextArrow(props) {
   );
 }
 
-function PrevArrow(props) {
-  const { onClick } = props;
+function PrevArrow({ onClick }) {
   return (
     <button
       type="button"
@@ -82,71 +97,105 @@ function PrevArrow(props) {
 }
 
 const JockeyColorSlider = () => {
-  const [activeGender, setActiveGender] = useState("men");
+  const [activeGender, setActiveGender] = useState("men"); // "men" | "women"
   const [activeColorIndex, setActiveColorIndex] = useState(0);
+  const [allProducts, setAllProducts] = useState([]); // sab products (Men + Women)
 
-  const sliderRef = useRef(null); // 👈 slider ka ref
+  const sliderRef = useRef(null);
 
   const activeColor = COLORS[activeColorIndex];
 
-  // kaun sa gender selected hai
-  const baseProducts =
-    activeGender === "men" ? MEN_PRODUCTS : WOMEN_PRODUCTS;
+  // ---------- API: ek hi baar sab products lao ----------
+  useEffect(() => {
+    const fetchAllProducts = async () => {
+      try {
+        const res = await axios.get(`${API_BASE_URL}/v1/products`, {
+          params: {
+            limit: 500,
+          },
+        });
 
-  // yaha sirf selected colorId wale products nikal rahe hain
-  const filteredProducts = baseProducts.filter(
-    (p) => p.colorId === activeColor.id
-  );
+        console.log("Jockey slider all products:", res.data);
+        setAllProducts(res.data?.data || []);
+        if (sliderRef.current) {
+          sliderRef.current.slickGoTo(0);
+        }
+      } catch (err) {
+        console.error("Error fetching products:", err);
+      }
+    };
 
-  // theoretically hamesha 10 honge, phir bhi safety
+    fetchAllProducts();
+  }, []);
+
+  // ---------- GENDER FILTER FRONTEND PE ----------
+  const currentGenderValue = activeGender === "men" ? "men" : "women";
+
+  const genderFilteredProducts = allProducts.filter((p) => {
+    if (!p.gender) return false;
+    return p.gender.toLowerCase() === currentGenderValue;
+  });
+
+  // ---------- COLOR FILTER FRONTEND PE (universal logic) ----------
+  const filteredByColor = genderFilteredProducts.filter((p) => {
+    if (!p.colors || !Array.isArray(p.colors)) return false;
+
+    const wantedColor = activeColor.label.toLowerCase(); // e.g. "red"
+
+    return p.colors.some((c) => {
+      const normalized = normalizeColor(c);
+      return normalized === wantedColor;
+    });
+  });
+
+  // agar is color me kuch nahi mila → fallback: sirf gender-based sab dikhana
   const productsToShow =
-    filteredProducts.length > 0 ? filteredProducts : baseProducts;
+    filteredByColor.length > 0 ? filteredByColor : genderFilteredProducts;
 
-  // color name ko thumb ke upar dikhane ke liye percentage position
   const thumbPercent =
     COLORS.length === 1
       ? 0
       : (activeColorIndex / (COLORS.length - 1)) * 100;
 
   const settings = {
-    infinite: false,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    speed: 400,
-    arrows: true,
-    nextArrow: <NextArrow />,
-    prevArrow: <PrevArrow />,
-    responsive: [
-      {
-        breakpoint: 1200,
-        settings: { slidesToShow: 3 },
+  infinite: productsToShow.length > 4,  // 👈 auto-safe infinite
+  slidesToShow: 4,
+  slidesToScroll: 1,
+  speed: 400,
+  arrows: true,
+  nextArrow: <NextArrow />,
+  prevArrow: <PrevArrow />,
+  responsive: [
+    {
+      breakpoint: 1200,
+      settings: {
+        slidesToShow: 3,
+        infinite: productsToShow.length > 3, // 👈 responsive infinite fix
       },
-      {
-        breakpoint: 900,
-        settings: { slidesToShow: 2 },
+    },
+    {
+      breakpoint: 900,
+      settings: {
+        slidesToShow: 2,
+        infinite: productsToShow.length > 2,
       },
-      {
-        breakpoint: 600,
-        settings: { slidesToShow: 1 },
+    },
+    {
+      breakpoint: 600,
+      settings: {
+        slidesToShow: 1,
+        infinite: productsToShow.length > 1,
       },
-    ],
-  };
-
-  // helper: slider ko first slide pe lao
-  const resetSlider = () => {
-    if (sliderRef.current) {
-      sliderRef.current.slickGoTo(0);
-    }
-  };
+    },
+  ],
+};
 
   return (
     <section className={styles.section}>
       <div className={styles.inner}>
         {/* Top row: title + tabs */}
         <div className={styles.topRow}>
-          <h2 className={styles.title}>
-            SLIDE INTO THE COLORS OF HOI
-          </h2>
+          <h2 className={styles.title}>SLIDE INTO THE COLORS OF HOI</h2>
 
           <div className={styles.tabs}>
             <button
@@ -156,8 +205,8 @@ const JockeyColorSlider = () => {
               }`}
               onClick={() => {
                 setActiveGender("men");
-                setActiveColorIndex(0); // default Black
-                resetSlider(); // 👈 men pe click -> first slide
+                setActiveColorIndex(0);
+                if (sliderRef.current) sliderRef.current.slickGoTo(0);
               }}
             >
               Men
@@ -169,8 +218,8 @@ const JockeyColorSlider = () => {
               }`}
               onClick={() => {
                 setActiveGender("women");
-                setActiveColorIndex(0); // default Black
-                resetSlider(); // 👈 women pe click -> first slide
+                setActiveColorIndex(0);
+                if (sliderRef.current) sliderRef.current.slickGoTo(0);
               }}
             >
               Women
@@ -181,25 +230,37 @@ const JockeyColorSlider = () => {
         {/* Slider */}
         <div className={styles.sliderWrapper}>
           <Slider ref={sliderRef} {...settings}>
-            {productsToShow.map((product) => (
-              <div key={product.id} className={styles.cardOuter}>
-                <div className={styles.card}>
-                  <div className={styles.cardImageWrap}>
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className={styles.cardImage}
-                    />
+            {productsToShow.map((p) => {
+              const genderLabel = p.gender || "";
+
+              return (
+                <div key={p._id} className={styles.cardOuter}>
+                  <div className={styles.card}>
+                    <div className={styles.cardImageWrap}>
+                      {/* 🔥 Gender badge top-right */}
+                      {genderLabel && (
+                        <span className={styles.genderBadge}>
+                          {genderLabel}
+                        </span>
+                      )}
+
+                      <img
+                        src={getImageUrl(p.mainImage || p.galleryImages?.[0])}
+                        alt={p.name}
+                        className={styles.cardImage}
+                      />
+                    </div>
+                  </div>
+
+                  <div className={styles.cardInfo}>
+                    <p className={styles.cardName}>{p.name}</p>
+                    <p className={styles.cardSubtitle}>
+                      {p.brand || p.category || ""}
+                    </p>
                   </div>
                 </div>
-                <div className={styles.cardInfo}>
-                  <p className={styles.cardName}>{product.name}</p>
-                  <p className={styles.cardSubtitle}>
-                    {product.subtitle}
-                  </p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </Slider>
         </div>
 
@@ -226,7 +287,10 @@ const JockeyColorSlider = () => {
               onChange={(e) => {
                 const newIndex = Number(e.target.value);
                 setActiveColorIndex(newIndex);
-                resetSlider(); // 👈 color change -> first slide
+
+                if (sliderRef.current) {
+                  sliderRef.current.slickGoTo(0);
+                }
               }}
               className={styles.colorRange}
             />
