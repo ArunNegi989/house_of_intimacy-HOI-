@@ -364,6 +364,40 @@
   justify-content: space-between;
   cursor: pointer;
 }
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 18px 8px;
+}
+
+/* 🔒 hide scrollbar but allow scroll */
+.body::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.body {
+  -ms-overflow-style: none;  /* IE/Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+.colorWrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.colorDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.colorText {
+  font-size: 12px;
+}
+
 
 /* RESPONSIVE */
 

@@ -21,10 +21,108 @@ const getImageUrl = (url) => {
   return `${API_BASE_URL}${url}`;
 };
 
-const FREE_SHIPPING_THRESHOLD = 999; // change as per your logic
+const FREE_SHIPPING_THRESHOLD = 999;
+
+// ---------- HELPERS ----------
+
+const getDiscountPercent = (mrp, price) => {
+  if (!mrp || !price || mrp <= price) return 0;
+  return Math.round(((mrp - price) / mrp) * 100);
+};
+
+/**
+ * Normalize different price shapes into:
+ *  { unitMrp, unitPrice, discountPercent }
+ */
+const getUnitPriceInfo = (item) => {
+  let unitMrp = 0;
+  let unitPrice = 0;
+  let discountPercent = 0;
+
+  // 1) If price is an object (most likely your case)
+  if (item.price && typeof item.price === 'object') {
+    unitMrp =
+      item.price.mrp ||
+      item.price.mrpPrice ||
+      item.mrp ||
+      0;
+
+    unitPrice =
+      item.price.sellingPrice ||
+      item.price.salePrice ||
+      item.price.finalPrice ||
+      item.price.price ||
+      item.salePrice ||
+      item.sellingPrice ||
+      item.priceValue ||
+      0;
+
+    // prefer backend discount if present
+    if (typeof item.price.discountPercent === 'number') {
+      discountPercent = item.price.discountPercent;
+    } else {
+      discountPercent = getDiscountPercent(unitMrp, unitPrice);
+    }
+  } else {
+    // 2) price is a number at top-level
+    unitMrp =
+      item.mrp ||
+      item.mrpPrice ||
+      item.priceMrp ||
+      0;
+
+    unitPrice =
+      item.salePrice ||
+      item.sellingPrice ||
+      item.price ||
+      0;
+
+    discountPercent = getDiscountPercent(unitMrp, unitPrice);
+  }
+
+  // avoid NaN
+  if (!unitMrp && unitPrice) unitMrp = unitPrice;
+  if (!unitPrice && unitMrp) unitPrice = unitMrp;
+
+  if (!discountPercent) {
+    discountPercent = getDiscountPercent(unitMrp, unitPrice);
+  }
+
+  return { unitMrp, unitPrice, discountPercent };
+};
+
+/**
+ * Render color:
+ * - if hex code (#xxxxxx) → show dot + optional label
+ * - if normal text → show text
+ */
+const renderColorInfo = (colorValue, colorLabel) => {
+  const value = colorValue || colorLabel;
+
+  if (!value) return 'Color not selected';
+
+  if (typeof value === 'string' && value.startsWith('#')) {
+    return (
+      <span className={styles.colorWrap}>
+        <span
+          className={styles.colorDot}
+          style={{ backgroundColor: value }}
+        />
+        <span className={styles.colorText}>
+          {colorLabel || 'Selected color'}
+        </span>
+      </span>
+    );
+  }
+
+  return value;
+};
+
+// ---------- COMPONENT ----------
 
 function CartDrawer({ isOpen, onClose }) {
   const navigate = useNavigate();
+
   const {
     cartItems = [],
     incrementQty,
@@ -37,19 +135,18 @@ function CartDrawer({ isOpen, onClose }) {
 
   const [couponCode, setCouponCode] = useState('');
 
+  // subtotal using normalized price
   const cartSubtotal = useMemo(
     () =>
-      cartItems.reduce(
-        (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
-        0,
-      ),
+      cartItems.reduce((sum, item) => {
+        const { unitPrice } = getUnitPriceInfo(item);
+        const qty = item.quantity || 1;
+        return sum + unitPrice * qty;
+      }, 0),
     [cartItems],
   );
 
-  const totalItems = useMemo(
-    () => cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0),
-    [cartItems],
-  );
+  const totalItems = cartItems.length;
 
   const remainingForFreeShipping =
     FREE_SHIPPING_THRESHOLD - cartSubtotal > 0
@@ -58,7 +155,7 @@ function CartDrawer({ isOpen, onClose }) {
 
   const handleCheckout = () => {
     onClose();
-    navigate('/checkout'); // change route if needed
+    navigate('/checkout');
   };
 
   const handleAddWishlistItem = (product) => {
@@ -66,10 +163,7 @@ function CartDrawer({ isOpen, onClose }) {
   };
 
   const handleOverlayClick = (e) => {
-    // close when clicking on dark overlay only
-    if (e.target === e.currentTarget) {
-      onClose();
-    }
+    if (e.target === e.currentTarget) onClose();
   };
 
   return (
@@ -93,7 +187,7 @@ function CartDrawer({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* BODY SCROLL AREA */}
+        {/* BODY */}
         <div className={styles.body}>
           {/* CART ITEMS */}
           <div className={styles.cartItemsWrapper}>
@@ -102,83 +196,145 @@ function CartDrawer({ isOpen, onClose }) {
                 Your bag is empty. Start shopping!
               </div>
             ) : (
-              cartItems.map((item) => (
-                <div key={item._id || item.id} className={styles.cartItem}>
-                  <div className={styles.itemImageWrap}>
-                    <img
-                      src={getImageUrl(item.mainImage || item.image)}
-                      alt={item.name}
-                      className={styles.itemImage}
-                    />
-                  </div>
+              cartItems.map((item) => {
+                const qty = item.quantity || 1;
+                const { unitMrp, unitPrice, discountPercent } =
+                  getUnitPriceInfo(item);
 
-                  <div className={styles.itemContent}>
-                    <div className={styles.itemTopRow}>
-                      <div>
-                        <p className={styles.itemName}>{item.name}</p>
-                        <p className={styles.itemMeta}>
-                          {item.color || item.shade} | {item.size}
-                        </p>
-                      </div>
-                      <button
-                        className={styles.removeBtn}
-                        onClick={() =>
-                          removeFromCart &&
-                          removeFromCart(item._id || item.id)
-                        }
-                      >
-                        <FiTrash2 />
-                      </button>
+                const lineMrp = unitMrp * qty;
+                const linePrice = unitPrice * qty;
+
+                const colorLabel =
+                  item.colorLabel ||
+                  item.colorName ||
+                  item.shadeLabel;
+                const colorValue =
+                  item.color ||
+                  item.shade ||
+                  item.colorValue;
+
+                return (
+                  <div
+                    key={item._id || item.id}
+                    className={styles.cartItem}
+                  >
+                    <div className={styles.itemImageWrap}>
+                      <img
+                        src={getImageUrl(item.mainImage || item.image)}
+                        alt={item.name}
+                        className={styles.itemImage}
+                      />
                     </div>
 
-                    <div className={styles.itemPriceRow}>
-                      <div className={styles.priceBlock}>
-                        {item.mrp && item.mrp > item.price ? (
-                          <>
-                            <span className={styles.mrp}>₹ {item.mrp}</span>
-                            <span className={styles.price}>₹ {item.price}</span>
-                          </>
-                        ) : (
-                          <span className={styles.price}>₹ {item.price}</span>
-                        )}
+                    <div className={styles.itemContent}>
+                      <div className={styles.itemTopRow}>
+                        <div>
+                          {/* name */}
+                          <p className={styles.itemName}>{item.name}</p>
+
+                          {/* brand · category · subcategory */}
+                          <p className={styles.itemMetaLine}>
+                            {item.brand && <span>{item.brand}</span>}
+                            {item.category && (
+                              <span>
+                                {item.brand ? ' · ' : ''}
+                                {item.category}
+                              </span>
+                            )}
+                            {item.subcategory && (
+                              <span> · {item.subcategory}</span>
+                            )}
+                          </p>
+
+                          {/* color | size | gender */}
+                          <p className={styles.itemMeta}>
+                            {renderColorInfo(colorValue, colorLabel)}
+                            {item.size && <> | {item.size}</>}
+                            {item.gender && <> | {item.gender}</>}
+                          </p>
+                        </div>
+
+                        {/* remove */}
+                        <button
+                          className={styles.removeBtn}
+                          onClick={() =>
+                            removeFromCart &&
+                            removeFromCart(item._id || item.id)
+                          }
+                        >
+                          <FiTrash2 />
+                        </button>
                       </div>
 
-                      <div className={styles.qtyControls}>
-                        <button
-                          className={styles.qtyBtn}
-                          onClick={() =>
-                            decrementQty &&
-                            decrementQty(item._id || item.id)
-                          }
-                          disabled={item.quantity <= 1}
-                        >
-                          <FiMinus />
-                        </button>
-                        <span className={styles.qtyValue}>
-                          {item.quantity || 1}
-                        </span>
-                        <button
-                          className={styles.qtyBtn}
-                          onClick={() =>
-                            incrementQty &&
-                            incrementQty(item._id || item.id)
-                          }
-                        >
-                          <FiPlus />
-                        </button>
+                      {/* price + qty */}
+                      <div className={styles.itemPriceRow}>
+                        <div className={styles.priceBlock}>
+                          {lineMrp && lineMrp > linePrice ? (
+                            <>
+                              <span className={styles.mrp}>
+                                ₹ {lineMrp}
+                              </span>
+                              <span className={styles.price}>
+                                ₹ {linePrice}
+                              </span>
+                            </>
+                          ) : (
+                            <span className={styles.price}>
+                              ₹ {linePrice}
+                            </span>
+                          )}
+
+                          {discountPercent > 0 && (
+                            <span className={styles.discountTag}>
+                              {discountPercent}% OFF
+                            </span>
+                          )}
+
+                          {qty > 1 && (
+                            <span className={styles.perUnit}>
+                              (₹ {unitPrice} each)
+                            </span>
+                          )}
+                        </div>
+
+                        <div className={styles.qtyControls}>
+                          <button
+                            className={styles.qtyBtn}
+                            onClick={() =>
+                              decrementQty &&
+                              decrementQty(item._id || item.id)
+                            }
+                            disabled={qty <= 1}
+                          >
+                            <FiMinus />
+                          </button>
+                          <span className={styles.qtyValue}>{qty}</span>
+                          <button
+                            className={styles.qtyBtn}
+                            onClick={() =>
+                              incrementQty &&
+                              incrementQty(item._id || item.id)
+                            }
+                          >
+                            <FiPlus />
+                          </button>
+                        </div>
                       </div>
+
+                      <p className={styles.returnInfo}>
+                        {item.returnInfo ||
+                          (item.isNonReturnable
+                            ? 'Non Returnable'
+                            : '14 days return available')}
+                      </p>
                     </div>
-
-                    <p className={styles.returnInfo}>
-                      {item.returnInfo || '14 days return available'}
-                    </p>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
 
-          {/* COUPON SECTION */}
+          {/* COUPON */}
           <div className={styles.couponCard}>
             <button className={styles.viewOffersBtn}>
               <span>View available offers</span>
@@ -201,36 +357,96 @@ function CartDrawer({ isOpen, onClose }) {
             </p>
           </div>
 
-          {/* ADD FROM WISHLIST */}
+          {/* WISHLIST SECTION */}
           {wishlistItems && wishlistItems.length > 0 && (
             <div className={styles.wishlistSection}>
               <h3 className={styles.wishlistTitle}>Add from Wishlist</h3>
 
               <div className={styles.wishlistGrid}>
-                {wishlistItems.map((prod) => (
-                  <div
-                    key={prod._id || prod.id}
-                    className={styles.wishlistCard}
-                  >
-                    <div className={styles.wishlistImgWrap}>
-                      <img
-                        src={getImageUrl(prod.mainImage || prod.image)}
-                        alt={prod.name}
-                        className={styles.wishlistImg}
-                      />
+                {wishlistItems.map((prod) => {
+                  const {
+                    unitMrp,
+                    unitPrice,
+                    discountPercent,
+                  } = getUnitPriceInfo(prod);
+
+                  const colorLabel =
+                    prod.colorLabel ||
+                    prod.colorName ||
+                    prod.shadeLabel;
+                  const colorValue =
+                    prod.color ||
+                    prod.shade ||
+                    prod.colorValue;
+
+                  return (
+                    <div
+                      key={prod._id || prod.id}
+                      className={styles.wishlistCard}
+                    >
+                      <div className={styles.wishlistImgWrap}>
+                        <img
+                          src={getImageUrl(prod.mainImage || prod.image)}
+                          alt={prod.name}
+                          className={styles.wishlistImg}
+                        />
+                      </div>
+
+                      <div className={styles.wishlistBody}>
+                        <p className={styles.wishlistName}>{prod.name}</p>
+
+                        <p className={styles.wishlistMeta}>
+                          {prod.brand && <span>{prod.brand}</span>}
+                          {prod.category && (
+                            <span>
+                              {prod.brand ? ' · ' : ''}
+                              {prod.category}
+                            </span>
+                          )}
+                          {prod.subcategory && (
+                            <span> · {prod.subcategory}</span>
+                          )}
+                        </p>
+
+                        <p className={styles.wishlistMetaSmall}>
+                          {renderColorInfo(colorValue, colorLabel)}
+                          {prod.size && <> | {prod.size}</>}
+                          {prod.gender && <> | {prod.gender}</>}
+                        </p>
+
+                        <div className={styles.wishlistPriceRow}>
+                          {unitMrp && unitMrp > unitPrice ? (
+                            <>
+                              <span className={styles.wishlistMrp}>
+                                ₹ {unitMrp}
+                              </span>
+                              <span className={styles.wishlistPrice}>
+                                ₹ {unitPrice}
+                              </span>
+                            </>
+                          ) : (
+                            <span className={styles.wishlistPrice}>
+                              ₹ {unitPrice}
+                            </span>
+                          )}
+
+                          {discountPercent > 0 && (
+                            <span className={styles.wishlistDiscount}>
+                              {discountPercent}% OFF
+                            </span>
+                          )}
+                        </div>
+
+                        <button
+                          className={styles.wishlistAddBtn}
+                          onClick={() => handleAddWishlistItem(prod)}
+                        >
+                          ADD TO BAG
+                        </button>
+                      </div>
                     </div>
-                    <div className={styles.wishlistBody}>
-                      <p className={styles.wishlistName}>{prod.name}</p>
-                      <p className={styles.wishlistPrice}>₹ {prod.price}</p>
-                      <button
-                        className={styles.wishlistAddBtn}
-                        onClick={() => handleAddWishlistItem(prod)}
-                      >
-                        ADD TO BAG
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
@@ -249,7 +465,7 @@ function CartDrawer({ isOpen, onClose }) {
           )}
         </div>
 
-        {/* STICKY FOOTER CHECKOUT */}
+        {/* FOOTER */}
         <div className={styles.footer}>
           <button className={styles.checkoutBtn} onClick={handleCheckout}>
             <span>CHECK OUT</span>

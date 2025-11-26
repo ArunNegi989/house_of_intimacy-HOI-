@@ -1,7 +1,7 @@
-/* src/assets/styles/BrasListing.module.css */
+/* src/assets/styles/productcollection/BraListing.module.css */
 
 .page {
-  background-color: #fff7ef;
+  background: radial-gradient(circle at top, #ffe8dd 0, #fff7ef 40%, #ffffff 100%);
   min-height: 100vh;
   padding: 24px 5vw 40px;
   font-family: "Helvetica Neue", Arial, sans-serif;
@@ -9,27 +9,77 @@
 
 /* ------- BREADCRUMB ------- */
 .breadcrumb {
-  font-size: 12px;
+  font-size: 14px;
   color: #777;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  font-weight: 500;
 }
 
 .breadcrumbSeparator {
   margin: 0 6px;
 }
 
-/* ------- TYPE FILTER (TOP) ------- */
+.breadcrumbLink {
+  cursor: pointer;
+  color: #e91e63;
+  font-weight: 500;
+}
 
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}
+
+/* ------- PAGE HEADER ------- */
+.pageHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.pageTitle {
+  font-size: 26px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #3b0020;
+  margin: 0 0 4px;
+  font-weight: 600;
+}
+
+.pageSubtitle {
+  font-size: 14px;
+  color: #7a4a4f;
+  margin: 0;
+}
+
+.badgeStrip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badgeChip {
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px dashed rgba(183, 110, 121, 0.6);
+  background: rgba(255, 232, 221, 0.6);
+  color: #6b2f3b;
+}
+
+/* ------- TYPE FILTER (TOP) ------- */
 .typeFilterWrapper {
   display: flex;
   flex-wrap: nowrap;
   gap: 12px;
   justify-content: center;
   overflow-x: auto;
-  padding: 12px 0 20px;
   border-bottom: 1px solid #f1e1d7;
   margin-bottom: 18px;
-  padding: 0px  138px 20px 138px;
+  padding: 0 138px 20px 138px;
 }
 
 .typeFilterWrapper::-webkit-scrollbar {
@@ -55,7 +105,7 @@
   min-width: 70px;
   padding: 4px 6px 8px;
   cursor: pointer;
-  border-radius: 20px 0px 20px 0px;
+  border-radius: 20px 0 20px 0;
   transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
   flex-shrink: 0;
 }
@@ -63,7 +113,7 @@
 .typeChipImgWrapper {
   width: 76px;
   height: 76px;
-  border-radius: 20px 0px 20px 0px;
+  border-radius: 20px 0 20px 0;
   overflow: hidden;
   background: #ffe8dd;
   display: flex;
@@ -85,13 +135,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 18px;
   text-transform: uppercase;
   color: #b76e79;
 }
 
 .typeChipLabel {
-  font-size: 16px;
+  font-size: 13px;
   color: #444;
   text-align: center;
   line-height: 1.2;
@@ -100,19 +150,9 @@
 
 .typeChipActive {
   background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
   transform: translateY(-2px);
 }
-.breadcrumbLink {
-  cursor: pointer;
-  color: #e91e63;
-  font-weight: 500;
-}
-
-.breadcrumbLink:hover {
-  text-decoration: underline;
-}
-
 
 /* ------- FILTER & SORT ROW ------- */
 
@@ -123,7 +163,7 @@
   gap: 16px;
   margin-bottom: 20px;
   flex-wrap: wrap;
-  padding: 0px 98px;
+  padding: 0 98px;
 }
 
 .filterLeft {
@@ -135,25 +175,42 @@
 }
 
 .filterLabel {
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
   color: #555;
   text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .filterPill {
   border: none;
   background: transparent;
-  font-size: 14px;
-  color: #555;
+  font-size: 13px;
+  color: #666;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.06em;
   cursor: pointer;
   padding: 4px 0;
+  position: relative;
+}
+
+.filterPill::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 0;
+  height: 1px;
+  background: #b76e79;
+  transition: width 0.2s ease;
 }
 
 .filterPill:hover {
   color: #b76e79;
+}
+
+.filterPill:hover::after {
+  width: 100%;
 }
 
 .sortRight {
@@ -166,15 +223,40 @@
   font-size: 14px;
   text-transform: uppercase;
   color: #777;
+  letter-spacing: 0.08em;
 }
 
 .sortSelect {
   border-radius: 999px;
   border: 1px solid #e0cbb9;
   padding: 6px 18px;
-  font-size: 12px;
+  font-size: 14px;
   background: #fff;
   outline: none;
+}
+
+/* ------- COLLECTION META ------- */
+.productsGridWrapper {
+  padding: 0 98px;
+}
+
+.collectionMeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: #777;
+}
+
+.collectionCount {
+  font-weight: 600;
+  color: #4b091f;
+}
+
+.collectionInfo {
+  font-style: italic;
 }
 
 /* ------- PRODUCTS GRID ------- */
@@ -187,24 +269,47 @@
 
 .card {
   background: #ffffff;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
   position: relative;
   border: 1px solid #f0ddd0;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+  height: 90%;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.12);
+  border-color: #ecc5b2;
 }
 
 .discountTag {
   position: absolute;
   top: 10px;
   left: 10px;
-  background: #ff6b6b;
+  background: linear-gradient(135deg, #ff6b6b, #ff8f6b);
   color: #fff;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   padding: 4px 8px;
   border-radius: 999px;
+  z-index: 2;
+}
+
+.tagNew {
+  position: absolute;
+  top: 42px;
+  left: 10px;
+  background: #fff;
+  color: #b76e79;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 7px;
+  border-radius: 999px;
+  border: 1px solid #f3d2c1;
   z-index: 2;
 }
 
@@ -214,30 +319,43 @@
   right: 10px;
   z-index: 2;
   border: none;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   border-radius: 999px;
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .wishlistBtn svg {
-  font-size: 14px;
+  font-size: 15px;
   color: #b76e79;
+}
+
+.wishlistBtn:hover {
+  background: #ffe8ef;
+  transform: translateY(-1px);
 }
 
 .cardImageWrapper {
   width: 100%;
   background: #fff;
+  overflow: hidden;
+ 
 }
 
 .cardImage {
   width: 100%;
   display: block;
   object-fit: cover;
+  transition: transform 0.25s ease;
+}
+
+.card:hover .cardImage {
+  transform: scale(1.04);
 }
 
 .cardBody {
@@ -249,38 +367,92 @@
   flex: 1;
 }
 
+.brandRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .brand {
-  font-size: 11px;
+  font-size: 15px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.12em;
   color: #b76e79;
   margin-bottom: 2px;
 }
 
-.name {
+.genderBadge {
   font-size: 12px;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 999px;
+  border: 1px solid #f1d0cf;
+  color: #804353;
+  background: #fff6f5;
+}
+
+.name {
+  font-size: 14px;
   color: #333;
-  line-height: 1.3;
-  min-height: 32px;
+  font-weight: 600;
+  /* line-height: 1.3;
+  min-height: 32px; */
+}
+
+.description {
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 0px;
+  /* margin-top: 4px;
+  min-height: 30px; */
 }
 
 .priceRow {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 6px;
+  align-items: baseline;
+  gap: 6px;
+  /* margin-top: 8px; */
 }
 
-.price {
-  font-size: 13px;
-  font-weight: 600;
+.salePrice {
+  font-size: 16px;
+  font-weight: 700;
   color: #111;
 }
 
 .mrpStriked {
-  font-size: 11px;
+  font-size: 13px;
   color: #999;
   text-decoration: line-through;
+}
+
+.discountText {
+  font-size: 13px;
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+.taxText {
+  font-size: 12px;
+  color: #888;
+  margin-top: 2px;
+}
+
+.metaRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.metaPill {
+  font-size: 11px;
+  padding: 3px 6px;
+  border-radius: 999px;
+  background: #fff4f0;
+  color: #7e3e4c;
+  border: 1px solid #f7d8cd;
 }
 
 .colorsRow {
@@ -290,29 +462,66 @@
 }
 
 .colorDot {
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   border-radius: 999px;
   border: 1px solid rgba(0, 0, 0, 0.15);
 }
 
+.stockRow {
+  margin-top: 6px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.inStock {
+  color: #1b5e20;
+}
+
+.outOfStock {
+  color: #b71c1c;
+}
+
+/* Add to bag: full pill, slide on hover */
+
 .addToBagBtn {
   margin-top: 10px;
-  align-self: flex-start;
-  width: 32px;
-  height: 32px;
+  align-self: stretch;
+  height: 34px;
   border-radius: 999px;
   border: none;
-  background: #5a0028;
-  display: flex;
+  background: linear-gradient(135deg, #5a0028, #b2004a);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 6px;
   cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(90, 0, 40, 0.4);
+  transform: translateY(10px);
+  opacity: 0;
+  transition: transform 0.22s ease, opacity 0.22s ease, box-shadow 0.22s ease;
 }
 
 .addToBagIcon {
-  color: #fff;
   font-size: 16px;
+}
+
+.addToBagText {
+  font-size: 11px;
+}
+
+.card:hover .addToBagBtn {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.addToBagBtn:hover {
+  box-shadow: 0 6px 16px rgba(90, 0, 40, 0.6);
 }
 
 .noResults {
@@ -321,6 +530,15 @@
   padding: 40px 0;
   color: #777;
   font-size: 14px;
+}
+
+/* ---------- LOADING / ERROR ---------- */
+.loadingState,
+.errorState {
+  text-align: center;
+  font-size: 14px;
+  padding: 40px 0;
+  color: #555;
 }
 
 /* ---------- PAGINATION ---------- */
@@ -366,12 +584,23 @@
   cursor: default;
 }
 
-
 /* ------- RESPONSIVE ------- */
 
 @media (max-width: 1200px) {
   .productsGrid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .productsGridWrapper {
+    padding: 0 40px;
+  }
+
+  .filterSortRow {
+    padding: 0 40px;
+  }
+
+  .typeFilterWrapper {
+    padding: 0 40px 16px 40px;
   }
 }
 
@@ -387,11 +616,19 @@
   .sortRight {
     align-self: flex-end;
   }
+
+  .pageHeader {
+    align-items: flex-start;
+  }
 }
 
 @media (max-width: 600px) {
   .page {
     padding-inline: 12px;
+  }
+
+  .productsGridWrapper {
+    padding: 0;
   }
 
   .productsGrid {
@@ -401,11 +638,19 @@
 
   .filterSortRow {
     flex-direction: column;
-    padding: 0px;
+    padding: 0;
   }
 
   .filterLeft {
     justify-content: flex-start;
+  }
+
+  .typeFilterWrapper {
+    padding: 0 0 16px 0;
+  }
+
+  .pageHeader {
+    gap: 6px;
   }
 }
 
