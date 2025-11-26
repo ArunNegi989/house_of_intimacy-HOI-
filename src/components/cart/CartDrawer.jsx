@@ -23,67 +23,50 @@ const getImageUrl = (url) => {
 
 const FREE_SHIPPING_THRESHOLD = 999;
 
-// ---------- HELPERS ----------
-
 const getDiscountPercent = (mrp, price) => {
   if (!mrp || !price || mrp <= price) return 0;
   return Math.round(((mrp - price) / mrp) * 100);
 };
 
 /**
- * Normalize different price shapes into:
+ * Normalize product price into:
  *  { unitMrp, unitPrice, discountPercent }
  */
-const getUnitPriceInfo = (item) => {
+const getUnitPriceInfo = (prod) => {
+  if (!prod) return { unitMrp: 0, unitPrice: 0, discountPercent: 0 };
+
   let unitMrp = 0;
   let unitPrice = 0;
   let discountPercent = 0;
 
-  // 1) If price is an object (most likely your case)
-  if (item.price && typeof item.price === 'object') {
-    unitMrp =
-      item.price.mrp ||
-      item.price.mrpPrice ||
-      item.mrp ||
-      0;
+  const price = prod.price;
 
+  if (price && typeof price === 'object') {
+    unitMrp = price.mrp || price.mrpPrice || prod.mrp || 0;
     unitPrice =
-      item.price.sellingPrice ||
-      item.price.salePrice ||
-      item.price.finalPrice ||
-      item.price.price ||
-      item.salePrice ||
-      item.sellingPrice ||
-      item.priceValue ||
+      price.sellingPrice ||
+      price.sale ||
+      price.salePrice ||
+      price.finalPrice ||
+      price.price ||
+      prod.salePrice ||
+      prod.sellingPrice ||
+      prod.priceValue ||
       0;
 
-    // prefer backend discount if present
-    if (typeof item.price.discountPercent === 'number') {
-      discountPercent = item.price.discountPercent;
+    if (typeof price.discountPercent === 'number') {
+      discountPercent = price.discountPercent;
     } else {
       discountPercent = getDiscountPercent(unitMrp, unitPrice);
     }
   } else {
-    // 2) price is a number at top-level
-    unitMrp =
-      item.mrp ||
-      item.mrpPrice ||
-      item.priceMrp ||
-      0;
-
-    unitPrice =
-      item.salePrice ||
-      item.sellingPrice ||
-      item.price ||
-      0;
-
+    unitMrp = prod.mrp || prod.mrpPrice || prod.priceMrp || 0;
+    unitPrice = prod.salePrice || prod.sellingPrice || price || 0;
     discountPercent = getDiscountPercent(unitMrp, unitPrice);
   }
 
-  // avoid NaN
   if (!unitMrp && unitPrice) unitMrp = unitPrice;
   if (!unitPrice && unitMrp) unitPrice = unitMrp;
-
   if (!discountPercent) {
     discountPercent = getDiscountPercent(unitMrp, unitPrice);
   }
@@ -91,14 +74,8 @@ const getUnitPriceInfo = (item) => {
   return { unitMrp, unitPrice, discountPercent };
 };
 
-/**
- * Render color:
- * - if hex code (#xxxxxx) → show dot + optional label
- * - if normal text → show text
- */
 const renderColorInfo = (colorValue, colorLabel) => {
   const value = colorValue || colorLabel;
-
   if (!value) return 'Color not selected';
 
   if (typeof value === 'string' && value.startsWith('#')) {
@@ -118,8 +95,6 @@ const renderColorInfo = (colorValue, colorLabel) => {
   return value;
 };
 
-// ---------- COMPONENT ----------
-
 function CartDrawer({ isOpen, onClose }) {
   const navigate = useNavigate();
 
@@ -135,23 +110,33 @@ function CartDrawer({ isOpen, onClose }) {
 
   const [couponCode, setCouponCode] = useState('');
 
-  // subtotal using normalized price
+  // ✅ subtotal from cart lines
   const cartSubtotal = useMemo(
     () =>
-      cartItems.reduce((sum, item) => {
-        const { unitPrice } = getUnitPriceInfo(item);
-        const qty = item.quantity || 1;
+      cartItems.reduce((sum, line) => {
+        const prod = line.product || line;
+        const { unitPrice } = getUnitPriceInfo(prod);
+        const qty = line.quantity || 1;
         return sum + unitPrice * qty;
       }, 0),
     [cartItems],
   );
 
-  const totalItems = cartItems.length;
+  // ✅ total pieces (not just distinct lines)
+  const totalItems = useMemo(
+    () => cartItems.reduce((sum, line) => sum + (line.quantity || 1), 0),
+    [cartItems],
+  );
 
   const remainingForFreeShipping =
     FREE_SHIPPING_THRESHOLD - cartSubtotal > 0
       ? FREE_SHIPPING_THRESHOLD - cartSubtotal
       : 0;
+
+  const freeShippingProgress = Math.min(
+    (cartSubtotal / FREE_SHIPPING_THRESHOLD) * 100,
+    100,
+  );
 
   const handleCheckout = () => {
     onClose();
@@ -159,11 +144,17 @@ function CartDrawer({ isOpen, onClose }) {
   };
 
   const handleAddWishlistItem = (product) => {
-    if (addToCart) addToCart(product, 1);
+    if (!product) return;
+    addToCart(product, { quantity: 1 });
   };
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) onClose();
+  };
+
+  const handleContinueShopping = () => {
+    onClose();
+    navigate('/');
   };
 
   return (
@@ -175,11 +166,18 @@ function CartDrawer({ isOpen, onClose }) {
         {/* HEADER */}
         <div className={styles.header}>
           <div className={styles.headerLeft}>
-            <span className={styles.cartTitle}>Cart</span>
-            <span className={styles.itemCount}>
-              {totalItems} {totalItems === 1 ? 'item' : 'items'}
-            </span>
-            <span className={styles.headerDivider}>|</span>
+            <div className={styles.headerTitleRow}>
+              <span className={styles.cartTitle}>Your Bag</span>
+              <span className={styles.itemCount}>
+                {totalItems} {totalItems === 1 ? 'item' : 'items'}
+              </span>
+            </div>
+            <p className={styles.headerSubline}>
+              Free shipping on orders above ₹{FREE_SHIPPING_THRESHOLD}
+            </p>
+          </div>
+          <div className={styles.headerRight}>
+            <span className={styles.headerAmountLabel}>Subtotal</span>
             <span className={styles.headerAmount}>₹ {cartSubtotal}</span>
           </div>
           <button className={styles.closeBtn} onClick={onClose}>
@@ -193,35 +191,51 @@ function CartDrawer({ isOpen, onClose }) {
           <div className={styles.cartItemsWrapper}>
             {cartItems.length === 0 ? (
               <div className={styles.emptyState}>
-                Your bag is empty. Start shopping!
+                <div className={styles.emptyIcon}>🛍️</div>
+                <h3 className={styles.emptyTitle}>Your bag is empty</h3>
+                <p className={styles.emptyText}>
+                  Looks like you haven&apos;t added anything yet.
+                </p>
+                <button
+                  className={styles.emptyCta}
+                  onClick={handleContinueShopping}
+                >
+                  Continue Shopping
+                </button>
               </div>
             ) : (
-              cartItems.map((item) => {
-                const qty = item.quantity || 1;
+              cartItems.map((line, index) => {
+                const prod = line.product || line;
+                const qty = line.quantity || 1;
+
                 const { unitMrp, unitPrice, discountPercent } =
-                  getUnitPriceInfo(item);
+                  getUnitPriceInfo(prod);
 
                 const lineMrp = unitMrp * qty;
                 const linePrice = unitPrice * qty;
 
-                const colorLabel =
-                  item.colorLabel ||
-                  item.colorName ||
-                  item.shadeLabel;
                 const colorValue =
-                  item.color ||
-                  item.shade ||
-                  item.colorValue;
+                  line.color ||
+                  prod.color ||
+                  prod.shade ||
+                  prod.colorValue;
+                const colorLabel =
+                  line.colorLabel ||
+                  prod.colorLabel ||
+                  prod.colorName ||
+                  prod.shadeLabel;
 
                 return (
                   <div
-                    key={item._id || item.id}
+                    key={`${line.productId || prod._id || index}-${line.size || ''}-${line.color || ''}`}
                     className={styles.cartItem}
                   >
                     <div className={styles.itemImageWrap}>
                       <img
-                        src={getImageUrl(item.mainImage || item.image)}
-                        alt={item.name}
+                        src={getImageUrl(
+                          prod.mainImage || prod.image || line.image,
+                        )}
+                        alt={prod.name}
                         className={styles.itemImage}
                       />
                     </div>
@@ -229,59 +243,66 @@ function CartDrawer({ isOpen, onClose }) {
                     <div className={styles.itemContent}>
                       <div className={styles.itemTopRow}>
                         <div>
-                          {/* name */}
-                          <p className={styles.itemName}>{item.name}</p>
+                          <p className={styles.itemName}>{prod.name}</p>
 
-                          {/* brand · category · subcategory */}
                           <p className={styles.itemMetaLine}>
-                            {item.brand && <span>{item.brand}</span>}
-                            {item.category && (
-                              <span>
-                                {item.brand ? ' · ' : ''}
-                                {item.category}
+                            {prod.brand && (
+                              <span className={styles.itemBrand}>
+                                {prod.brand}
                               </span>
                             )}
-                            {item.subcategory && (
-                              <span> · {item.subcategory}</span>
+                            {prod.category && (
+                              <span className={styles.itemCategory}>
+                                {prod.brand ? ' · ' : ''}
+                                {prod.category}
+                              </span>
+                            )}
+                            {prod.subcategory && (
+                              <span className={styles.itemSubcategory}>
+                                {' '}
+                                · {prod.subcategory}
+                              </span>
                             )}
                           </p>
 
-                          {/* color | size | gender */}
                           <p className={styles.itemMeta}>
                             {renderColorInfo(colorValue, colorLabel)}
-                            {item.size && <> | {item.size}</>}
-                            {item.gender && <> | {item.gender}</>}
+                            {line.size && (
+                              <span className={styles.metaDivider}>•</span>
+                            )}
+                            {line.size && (
+                              <span className={styles.metaPill}>
+                                Size: {line.size}
+                              </span>
+                            )}
+                            {prod.gender && (
+                              <>
+                                <span className={styles.metaDivider}>•</span>
+                                <span className={styles.metaGender}>
+                                  {prod.gender}
+                                </span>
+                              </>
+                            )}
                           </p>
                         </div>
 
-                        {/* remove */}
                         <button
                           className={styles.removeBtn}
-                          onClick={() =>
-                            removeFromCart &&
-                            removeFromCart(item._id || item.id)
-                          }
+                          onClick={() => removeFromCart(index)}
                         >
                           <FiTrash2 />
                         </button>
                       </div>
 
-                      {/* price + qty */}
                       <div className={styles.itemPriceRow}>
                         <div className={styles.priceBlock}>
                           {lineMrp && lineMrp > linePrice ? (
                             <>
-                              <span className={styles.mrp}>
-                                ₹ {lineMrp}
-                              </span>
-                              <span className={styles.price}>
-                                ₹ {linePrice}
-                              </span>
+                              <span className={styles.mrp}>₹ {lineMrp}</span>
+                              <span className={styles.price}>₹ {linePrice}</span>
                             </>
                           ) : (
-                            <span className={styles.price}>
-                              ₹ {linePrice}
-                            </span>
+                            <span className={styles.price}>₹ {linePrice}</span>
                           )}
 
                           {discountPercent > 0 && (
@@ -292,7 +313,7 @@ function CartDrawer({ isOpen, onClose }) {
 
                           {qty > 1 && (
                             <span className={styles.perUnit}>
-                              (₹ {unitPrice} each)
+                              ₹ {unitPrice} / piece
                             </span>
                           )}
                         </div>
@@ -300,10 +321,7 @@ function CartDrawer({ isOpen, onClose }) {
                         <div className={styles.qtyControls}>
                           <button
                             className={styles.qtyBtn}
-                            onClick={() =>
-                              decrementQty &&
-                              decrementQty(item._id || item.id)
-                            }
+                            onClick={() => decrementQty(index)}
                             disabled={qty <= 1}
                           >
                             <FiMinus />
@@ -311,10 +329,7 @@ function CartDrawer({ isOpen, onClose }) {
                           <span className={styles.qtyValue}>{qty}</span>
                           <button
                             className={styles.qtyBtn}
-                            onClick={() =>
-                              incrementQty &&
-                              incrementQty(item._id || item.id)
-                            }
+                            onClick={() => incrementQty(index)}
                           >
                             <FiPlus />
                           </button>
@@ -322,10 +337,10 @@ function CartDrawer({ isOpen, onClose }) {
                       </div>
 
                       <p className={styles.returnInfo}>
-                        {item.returnInfo ||
-                          (item.isNonReturnable
-                            ? 'Non Returnable'
-                            : '14 days return available')}
+                        {prod.returnInfo ||
+                          (prod.isNonReturnable
+                            ? 'Non returnable item'
+                            : 'Easy 14-day returns')}
                       </p>
                     </div>
                   </div>
@@ -336,39 +351,46 @@ function CartDrawer({ isOpen, onClose }) {
 
           {/* COUPON */}
           <div className={styles.couponCard}>
-            <button className={styles.viewOffersBtn}>
-              <span>View available offers</span>
-              <FiChevronRight />
-            </button>
+            <div className={styles.couponHeader}>
+              <span className={styles.couponLabel}>Offers & Benefits</span>
+              <button className={styles.viewOffersBtn}>
+                <span>View available offers</span>
+                <FiChevronRight />
+              </button>
+            </div>
 
             <div className={styles.couponInputRow}>
               <input
                 type="text"
-                placeholder="Enter Discount Code"
+                placeholder="Enter discount code"
                 className={styles.couponInput}
                 value={couponCode}
                 onChange={(e) => setCouponCode(e.target.value)}
               />
-              <button className={styles.couponApplyBtn}>APPLY</button>
+              <button className={styles.couponApplyBtn}>Apply</button>
             </div>
 
             <p className={styles.couponHint}>
-              Please apply giftcard in the next step
+              Gift cards can be applied on the payment page.
             </p>
           </div>
 
           {/* WISHLIST SECTION */}
           {wishlistItems && wishlistItems.length > 0 && (
             <div className={styles.wishlistSection}>
-              <h3 className={styles.wishlistTitle}>Add from Wishlist</h3>
+              <div className={styles.wishlistHeader}>
+                <h3 className={styles.wishlistTitle}>Add from Wishlist</h3>
+                <span className={styles.wishlistCount}>
+                  {wishlistItems.length} saved
+                </span>
+              </div>
 
               <div className={styles.wishlistGrid}>
-                {wishlistItems.map((prod) => {
-                  const {
-                    unitMrp,
-                    unitPrice,
-                    discountPercent,
-                  } = getUnitPriceInfo(prod);
+                {wishlistItems.map((prod, idx) => {
+                  if (!prod || typeof prod !== 'object') return null;
+
+                  const { unitMrp, unitPrice, discountPercent } =
+                    getUnitPriceInfo(prod);
 
                   const colorLabel =
                     prod.colorLabel ||
@@ -381,7 +403,7 @@ function CartDrawer({ isOpen, onClose }) {
 
                   return (
                     <div
-                      key={prod._id || prod.id}
+                      key={prod._id || prod.id || idx}
                       className={styles.wishlistCard}
                     >
                       <div className={styles.wishlistImgWrap}>
@@ -396,7 +418,11 @@ function CartDrawer({ isOpen, onClose }) {
                         <p className={styles.wishlistName}>{prod.name}</p>
 
                         <p className={styles.wishlistMeta}>
-                          {prod.brand && <span>{prod.brand}</span>}
+                          {prod.brand && (
+                            <span className={styles.wishlistBrand}>
+                              {prod.brand}
+                            </span>
+                          )}
                           {prod.category && (
                             <span>
                               {prod.brand ? ' · ' : ''}
@@ -410,8 +436,22 @@ function CartDrawer({ isOpen, onClose }) {
 
                         <p className={styles.wishlistMetaSmall}>
                           {renderColorInfo(colorValue, colorLabel)}
-                          {prod.size && <> | {prod.size}</>}
-                          {prod.gender && <> | {prod.gender}</>}
+                          {prod.size && (
+                            <span className={styles.metaDivider}>•</span>
+                          )}
+                          {prod.size && (
+                            <span className={styles.metaPill}>
+                              Size: {prod.size}
+                            </span>
+                          )}
+                          {prod.gender && (
+                            <>
+                              <span className={styles.metaDivider}>•</span>
+                              <span className={styles.metaGender}>
+                                {prod.gender}
+                              </span>
+                            </>
+                          )}
                         </p>
 
                         <div className={styles.wishlistPriceRow}>
@@ -441,7 +481,7 @@ function CartDrawer({ isOpen, onClose }) {
                           className={styles.wishlistAddBtn}
                           onClick={() => handleAddWishlistItem(prod)}
                         >
-                          ADD TO BAG
+                          Add to bag
                         </button>
                       </div>
                     </div>
@@ -456,20 +496,32 @@ function CartDrawer({ isOpen, onClose }) {
 
         {/* FREE SHIPPING BAR */}
         <div className={styles.shippingBar}>
-          {remainingForFreeShipping > 0 ? (
-            <span>
-              Add ₹ {remainingForFreeShipping} more for free shipping !!
-            </span>
-          ) : (
-            <span>Eligible for free shipping !!</span>
-          )}
+          <div className={styles.shippingText}>
+            {remainingForFreeShipping > 0 ? (
+              <span>
+                Add <strong>₹ {remainingForFreeShipping}</strong> more for
+                free shipping
+              </span>
+            ) : (
+              <span>You&apos;re eligible for free shipping 🎉</span>
+            )}
+          </div>
+          <div className={styles.shippingProgress}>
+            <div
+              className={styles.shippingProgressFill}
+              style={{ width: `${freeShippingProgress}%` }}
+            />
+          </div>
         </div>
 
         {/* FOOTER */}
         <div className={styles.footer}>
+          <div className={styles.footerInfo}>
+            <span className={styles.footerLabel}>Total</span>
+            <span className={styles.footerAmount}>₹ {cartSubtotal}</span>
+          </div>
           <button className={styles.checkoutBtn} onClick={handleCheckout}>
-            <span>CHECK OUT</span>
-            <span>₹ {cartSubtotal}</span>
+            <span>Proceed to Checkout</span>
           </button>
         </div>
       </aside>

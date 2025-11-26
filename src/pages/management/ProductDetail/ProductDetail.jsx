@@ -11,26 +11,23 @@ import {
   FiMinus,
   FiShoppingBag,
 } from 'react-icons/fi';
-// ✅ NEW: filled heart icon
 import { FaHeart } from 'react-icons/fa';
 
 import styles from '../../../assets/styles/productcollection/ProductDetail.module.css';
 
 // ✅ Wishlist context
 import { WishlistContext } from '../../../contexts/WishlistContext';
-// ✅ NEW: Cart context
+// ✅ Cart context
 import { CartContext } from '../../../contexts/CartContext';
 
 const API_BASE_URL = 'http://localhost:8000';
 
-// helper: convert "/uploads/..." → "http://localhost:8000/uploads/..."
 const getImageUrl = (url) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
   return `${API_BASE_URL}${url}`;
 };
 
-// optional color map (known names → hex)
 const COLOR_MAP = {
   Black: '#000000',
   Purple: '#800080',
@@ -43,28 +40,19 @@ const COLOR_MAP = {
   Yellow: '#facc15',
 };
 
-// 🔎 helper: decode any color string (hex or name) into a usable CSS color
 const decodeColor = (value) => {
   if (!value) return '#e5e5e5';
 
   const str = String(value).trim();
-
-  // 1) if already hex (#rgb or #rrggbb)
   const hexRegex = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/;
-  if (hexRegex.test(str)) {
-    return str;
-  }
+  if (hexRegex.test(str)) return str;
 
-  // 2) try map (case-insensitive match)
   const lower = str.toLowerCase();
   const matchedKey = Object.keys(COLOR_MAP).find(
-    (k) => k.toLowerCase() === lower
+    (k) => k.toLowerCase() === lower,
   );
-  if (matchedKey) {
-    return COLOR_MAP[matchedKey];
-  }
+  if (matchedKey) return COLOR_MAP[matchedKey];
 
-  // 3) otherwise return the string itself – browser named color ho sakta hai
   return str || '#e5e5e5';
 };
 
@@ -72,12 +60,10 @@ function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // ✅ use wishlist context
   const { wishlistItems, toggleWishlist } = useContext(WishlistContext);
 
-  // ✅ use cart context
-const { addToCart, cartItems } = useContext(CartContext);
-
+  // ✅ from CartContext (note: we use product object + options)
+  const { addToCart, cartItems } = useContext(CartContext);
 
   const [product, setProduct] = useState(null);
   const [activeImage, setActiveImage] = useState('');
@@ -94,11 +80,9 @@ const { addToCart, cartItems } = useContext(CartContext);
 
   const [wishlist, setWishlist] = useState(false);
 
-  // ✅ qty + toast-like feedback
   const [qty, setQty] = useState(1);
   const [actionMessage, setActionMessage] = useState('');
 
-  // ✅ which accordion is open?
   const [activeAccordion, setActiveAccordion] = useState('description');
 
   // ---------- FETCH PRODUCT ----------
@@ -121,7 +105,6 @@ const { addToCart, cartItems } = useContext(CartContext);
         console.log('PRODUCT DATA 👉', data);
         setProduct(data);
 
-        // build image list from mainImage + galleryImages
         const gallery = Array.isArray(data.galleryImages)
           ? data.galleryImages
           : [];
@@ -131,19 +114,17 @@ const { addToCart, cartItems } = useContext(CartContext);
           setActiveImage(allImages[0]);
         }
 
-        // related by brand
         if (data.brand) {
           const relRes = await fetch(
             `${API_BASE_URL}/v1/products/brand/${encodeURIComponent(
-              data.brand
-            )}`
+              data.brand,
+            )}`,
           );
           const relData = await relRes.json();
           const filtered = relData.filter((p) => String(p._id) !== String(id));
           setRelatedProducts(filtered);
         }
 
-        // scroll to top when product changes
         window.scrollTo({ top: 0, behavior: 'smooth' });
       } catch (error) {
         console.error('Error fetching product', error);
@@ -155,7 +136,7 @@ const { addToCart, cartItems } = useContext(CartContext);
     fetchProduct();
   }, [id]);
 
-  // ✅ sync local `wishlist` boolean with global context whenever product or wishlistItems changes
+  // ✅ sync wishlist heart
   useEffect(() => {
     if (product && product._id) {
       setWishlist(wishlistItems.includes(product._id));
@@ -208,25 +189,20 @@ const { addToCart, cartItems } = useContext(CartContext);
     setSelectedColor(color);
   };
 
-  // ✅ UPDATED: also updates global wishlist + better message logic
   const handleWishlistToggle = () => {
     if (!product || !product._id) return;
 
     setWishlist((prev) => {
       const newState = !prev;
-
-      // update global wishlist
       toggleWishlist(product._id);
 
       setActionMessage(
-        newState ? 'Added to wishlist 💖' : 'Removed from wishlist'
+        newState ? 'Added to wishlist 💖' : 'Removed from wishlist',
       );
       setTimeout(() => setActionMessage(''), 2000);
 
       return newState;
     });
-
-    // yaha wishlist ke liye API call bhi kar sakte ho
   };
 
   const handleCheckPin = () => {
@@ -242,7 +218,6 @@ const { addToCart, cartItems } = useContext(CartContext);
       return;
     }
 
-    // Frontend demo: always deliverable 😄
     setPinError(false);
     setPinMessage(`Good news! Delivery is available to ${clean}.`);
   };
@@ -269,63 +244,8 @@ const { addToCart, cartItems } = useContext(CartContext);
     setQty((prev) => (prev > 1 ? prev - 1 : prev));
   };
 
-  // ✅ MAIN CHANGE: Add to Bag now uses CartContext
-const handleAddToBag = () => {
-  if (!selectedSize) {
-    setSizeError(true);
-    setActionMessage('Please select a size to continue');
-    setTimeout(() => setActionMessage(''), 2000);
-    const el = document.getElementById('size-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-    return;
-  }
-
-  // ✅ 1) Check: already same product + size + color bag me hai kya?
-  const alreadyInCart = cartItems.some(
-    (item) =>
-      item.productId === product._id &&
-      item.size === selectedSize &&
-      item.color === selectedColor
-  );
-
-  if (alreadyInCart) {
-    // ✅ Agar hai, toh dobara add NHI karna, sirf message show karo
-    setActionMessage('This item is already in your bag');
-    setTimeout(() => setActionMessage(''), 2000);
-    return;
-  }
-
-  // ✅ 2) Nahi hai toh ab add karo
-  const priceToUse = salePrice || mrp;
-  const imageToUse = activeImage || product.mainImage;
-
-  addToCart({
-    productId: product._id,
-    name: product.name,
-    brand: product.brand,
-    price: Number(priceToUse),
-    image: imageToUse,
-    size: selectedSize,
-    color: selectedColor,
-    qty,
-  });
-
-  console.log('ADD TO BAG 👉', {
-    productId: product._id,
-    size: selectedSize,
-    color: selectedColor,
-    qty,
-  });
-
-  setActionMessage('Added to bag 🛍️');
-  setTimeout(() => setActionMessage(''), 2000);
-};
-
-
-  const handleBuyNow = () => {
-    // same validation
+  // ✅ MAIN: Add to Bag – only once per product+size+color
+  const handleAddToBag = () => {
     if (!selectedSize) {
       setSizeError(true);
       setActionMessage('Please select a size to continue');
@@ -337,19 +257,55 @@ const handleAddToBag = () => {
       return;
     }
 
-    // Optionally: add to cart then go to checkout
-    const priceToUse = salePrice || mrp;
-    const imageToUse = activeImage || product.mainImage;
+    // ✅ check if same line already exists in cart
+    const alreadyInCart = cartItems.some(
+      (item) =>
+        item.productId === product._id &&
+        item.size === selectedSize &&
+        item.color === selectedColor,
+    );
 
-    addToCart({
+    if (alreadyInCart) {
+      setActionMessage('This item is already in your bag');
+      setTimeout(() => setActionMessage(''), 2000);
+      return;
+    }
+
+    // ✅ call CartContext.addToCart with (product, options)
+    addToCart(product, {
+      size: selectedSize,
+      color: selectedColor,
+      quantity: qty,
+    });
+
+    console.log('ADD TO BAG 👉', {
       productId: product._id,
-      name: product.name,
-      brand: product.brand,
-      price: Number(priceToUse),
-      image: imageToUse,
       size: selectedSize,
       color: selectedColor,
       qty,
+    });
+
+    setActionMessage('Added to bag 🛍️');
+    setTimeout(() => setActionMessage(''), 2000);
+  };
+
+  const handleBuyNow = () => {
+    if (!selectedSize) {
+      setSizeError(true);
+      setActionMessage('Please select a size to continue');
+      setTimeout(() => setActionMessage(''), 2000);
+      const el = document.getElementById('size-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
+    // ✅ add with same API
+    addToCart(product, {
+      size: selectedSize,
+      color: selectedColor,
+      quantity: qty,
     });
 
     console.log('BUY NOW 👉', {
@@ -359,10 +315,9 @@ const handleAddToBag = () => {
       qty,
     });
 
-    // navigate('/checkout'); // when checkout page is ready
+    // navigate('/checkout'); // when ready
   };
 
-  // ---------- META INFO FROM PRODUCT ----------
   const metaFields = [
     { label: 'Fabric', value: product.fabric },
     { label: 'Composition', value: product.composition },
@@ -376,7 +331,6 @@ const handleAddToBag = () => {
     { label: 'Care', value: product.care },
   ].filter((item) => !!item.value);
 
-  // ---------- FEATURE LIST (LEFT COLUMN) ----------
   const featureList =
     Array.isArray(product.features) && product.features.length > 0
       ? product.features
@@ -410,7 +364,7 @@ const handleAddToBag = () => {
         <span className={styles.breadcrumbCurrent}>{product.name}</span>
       </div>
 
-      {/* 🔔 small toast for actions */}
+      {/* 🔔 toast */}
       {actionMessage && (
         <div className={styles.actionToast}>{actionMessage}</div>
       )}
@@ -419,7 +373,6 @@ const handleAddToBag = () => {
         {/* ---------- LEFT: IMAGES ---------- */}
         <div className={styles.leftCol}>
           <div className={styles.galleryWrapper}>
-            {/* thumbnails */}
             <div className={styles.thumbsWrapper}>
               {imageList.map((img, index) => (
                 <button
@@ -435,7 +388,6 @@ const handleAddToBag = () => {
               ))}
             </div>
 
-            {/* main image */}
             <div className={styles.mainImageWrapper}>
               {activeImage && (
                 <img src={getImageUrl(activeImage)} alt={product.name} />
@@ -443,7 +395,6 @@ const handleAddToBag = () => {
             </div>
           </div>
 
-          {/* small trust badges under image */}
           <div className={styles.trustRow}>
             <div className={styles.trustItem}>
               <FiTruck />
@@ -480,7 +431,6 @@ const handleAddToBag = () => {
                 onClick={handleWishlistToggle}
                 title={wishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
               >
-                {/* ✅ Heart switches to filled red when in wishlist */}
                 {wishlist ? (
                   <FaHeart className={styles.heartFilled} />
                 ) : (
@@ -523,7 +473,6 @@ const handleAddToBag = () => {
             <div className={styles.taxNote}>Inclusive of all taxes.</div>
           </div>
 
-          {/* small line showing selections */}
           <div className={styles.chipRow}>
             {selectedColor && (
               <span className={styles.infoChip}>
@@ -537,7 +486,7 @@ const handleAddToBag = () => {
             )}
           </div>
 
-          {/* ---------- COLORS (array of strings) ---------- */}
+          {/* COLORS */}
           {Array.isArray(product.colors) && product.colors.length > 0 && (
             <div className={styles.section}>
               <div className={styles.sectionLabel}>
@@ -551,7 +500,7 @@ const handleAddToBag = () => {
               </div>
               <div className={styles.colorDots}>
                 {product.colors.map((c, idx) => {
-                  const colorValue = String(c).trim(); // e.g. "#F97316" or "Black"
+                  const colorValue = String(c).trim();
                   const bg = decodeColor(colorValue);
                   const isActive = selectedColor === colorValue;
 
@@ -571,7 +520,7 @@ const handleAddToBag = () => {
             </div>
           )}
 
-          {/* ---------- SIZES (strings OR objects) ---------- */}
+          {/* SIZES */}
           {Array.isArray(product.sizes) && product.sizes.length > 0 && (
             <div className={styles.section} id="size-section">
               <div className={styles.sectionLabelRow}>
@@ -596,7 +545,6 @@ const handleAddToBag = () => {
 
               <div className={styles.sizeList}>
                 {product.sizes.map((size, idx) => {
-                  // handle string OR {label, stock}
                   const label =
                     typeof size === 'string'
                       ? size
@@ -632,7 +580,7 @@ const handleAddToBag = () => {
             </div>
           )}
 
-          {/* ---------- QTY + ACTION ROW ---------- */}
+          {/* QTY + ACTION ROW */}
           <div className={styles.section}>
             <div className={styles.sectionLabel}>Quantity</div>
             <div className={styles.qtyRow}>
@@ -674,7 +622,7 @@ const handleAddToBag = () => {
             </div>
           </div>
 
-          {/* ---------- PINCODE CHECK ---------- */}
+          {/* PINCODE CHECK */}
           <div className={styles.section}>
             <div className={styles.sectionLabel}>
               Check Delivery Availability
@@ -707,7 +655,7 @@ const handleAddToBag = () => {
             )}
           </div>
 
-          {/* ---------- META DETAILS ---------- */}
+          {/* META */}
           {metaFields.length > 0 && (
             <div className={styles.section}>
               <div className={styles.sectionLabel}>Product Details</div>
@@ -724,9 +672,8 @@ const handleAddToBag = () => {
         </div>
       </div>
 
-      {/* ---------- ✅ BOTTOM: FEATURES + FAQ ACCORDION ---------- */}
+      {/* BOTTOM: FEATURES + ACCORDION */}
       <div className={`container ${styles.bottomInfoWrapper}`}>
-        {/* LEFT: Product Feature */}
         <div className={styles.featuresCol}>
           <h2 className={styles.infoHeading}>Product Feature</h2>
           <div className={styles.featureList}>
@@ -739,9 +686,7 @@ const handleAddToBag = () => {
           </div>
         </div>
 
-        {/* RIGHT: Accordion */}
         <div className={styles.accordionCol}>
-          {/* Product Description */}
           <div className={styles.accordionItem}>
             <button
               type="button"
@@ -763,7 +708,6 @@ const handleAddToBag = () => {
             )}
           </div>
 
-          {/* Shipping & Returns */}
           <div className={styles.accordionItem}>
             <button
               type="button"
@@ -789,7 +733,6 @@ const handleAddToBag = () => {
             )}
           </div>
 
-          {/* Manufacturing Details */}
           <div className={styles.accordionItem}>
             <button
               type="button"
@@ -817,7 +760,7 @@ const handleAddToBag = () => {
         </div>
       </div>
 
-      {/* ---------- PAIRS WELL WITH ---------- */}
+      {/* RELATED PRODUCTS */}
       {relatedProducts && relatedProducts.length > 0 && (
         <div className={styles.relatedWrapper}>
           <div className={styles.relatedHeader}>
@@ -875,7 +818,7 @@ const handleAddToBag = () => {
         </div>
       )}
 
-      {/* ✅ STICKY MOBILE BOTTOM BAR */}
+      {/* MOBILE STICKY BAR */}
       <div className={styles.mobileStickyBar}>
         <div className={styles.mobilePriceBlock}>
           {isOnSale && (
