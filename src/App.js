@@ -39,6 +39,7 @@ import ProductDetail from 'pages/management/ProductDetail/ProductDetail';
 import { WishlistProvider } from 'contexts/WishlistContext';
 import { CartProvider } from 'contexts/CartContext';
 import WishlistPage from 'pages/Wishlist/WishlistPage';
+import AllProducts from 'pages/allbrands/AllProducts';
 
 export default function Main() {
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
@@ -145,7 +146,7 @@ export default function Main() {
                 {/* HOME PAGE (public) */}
                 <Route path="/" element={<Home />} />
                 <Route path="/about-us" element={<AboutUs />} />
-
+                 <Route path="/products" element={<AllProducts />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password/:token" element={<ResetPassword />} />
               </Routes>

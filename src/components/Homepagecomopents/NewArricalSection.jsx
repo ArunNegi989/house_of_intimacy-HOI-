@@ -154,7 +154,7 @@ const NewArrival = () => {
 
         <div className={styles.contentRow}>
           {/* LEFT VIDEO SECTION */}
-          <div className={styles.leftPanel}>
+           <div className={styles.leftPanel}>
             <div className={styles.heroCard}>
               <video
                 className={styles.heroVideo}
@@ -169,9 +169,14 @@ const NewArrival = () => {
 
               <div className={styles.heroOverlay}></div>
 
-              <button type="button" className={styles.heroBtn}>
-                Shop Now
-              </button>
+              {/* 🔥 SHOP NOW NAVIGATES TO BRAND LISTING PAGE */}
+             <button
+  type="button"
+  className={styles.heroBtn}
+  onClick={() => navigate("/products")}  // 👈 OPEN ALL PRODUCTS PAGE
+>
+  Shop Now
+</button>
             </div>
           </div>
 

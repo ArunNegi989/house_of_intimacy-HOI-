@@ -1,7 +1,6 @@
-// src/context/WishlistContext.jsx
-import React, { createContext, useState, useEffect } from 'react';
+// src/contexts/WishlistContext.jsx
+import React, { createContext, useState, useEffect } from "react";
 
-// ✅ give a safe default value so useContext never returns undefined
 export const WishlistContext = createContext({
   wishlistItems: [],
   addToWishlist: () => {},
@@ -15,7 +14,7 @@ export const WishlistProvider = ({ children }) => {
   // Load from localStorage once
   useEffect(() => {
     try {
-      const stored = localStorage.getItem('wishlistItems');
+      const stored = localStorage.getItem("wishlistItems");
       if (stored) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed)) {
@@ -23,16 +22,16 @@ export const WishlistProvider = ({ children }) => {
         }
       }
     } catch (err) {
-      console.error('Error reading wishlist from storage', err);
+      console.error("Error reading wishlist from storage", err);
     }
   }, []);
 
   // Save to localStorage whenever wishlist changes
   useEffect(() => {
     try {
-      localStorage.setItem('wishlistItems', JSON.stringify(wishlistItems));
+      localStorage.setItem("wishlistItems", JSON.stringify(wishlistItems));
     } catch (err) {
-      console.error('Error saving wishlist to storage', err);
+      console.error("Error saving wishlist to storage", err);
     }
   }, [wishlistItems]);
 

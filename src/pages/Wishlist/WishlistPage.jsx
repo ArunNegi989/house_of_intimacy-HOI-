@@ -1,5 +1,5 @@
 // src/pages/Wishlist/WishlistPage.jsx
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -19,14 +19,14 @@ const getImageUrl = (url) => {
 
 function WishlistPage() {
   const { wishlistItems, removeFromWishlist } = useContext(WishlistContext);
-  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // whenever wishlistIds change → fetch product details
+  // 👉 Fetch products list once & then filter by wishlist IDs
   useEffect(() => {
     if (!wishlistItems || wishlistItems.length === 0) {
-      setProducts([]);
+      setAllProducts([]);
       return;
     }
 
@@ -36,16 +36,17 @@ function WishlistPage() {
       try {
         setLoading(true);
 
-        const responses = await Promise.all(
-          wishlistItems.map((id) =>
-            axios.get(`${API_BASE_URL}/v1/products/${id}`)
-          )
-        );
+        const res = await axios.get(`${API_BASE_URL}/v1/products`, {
+          params: {
+            page: 1,
+            limit: 200, // adjust as per your expected max
+          },
+        });
 
-        if (!cancelled) {
-          const prod = responses.map((res) => res.data?.data || res.data);
-          setProducts(prod);
-        }
+        if (cancelled) return;
+
+        const backendProducts = res.data?.data || [];
+        setAllProducts(backendProducts);
       } catch (err) {
         console.error("Error fetching wishlist products", err);
       } finally {
@@ -59,6 +60,12 @@ function WishlistPage() {
       cancelled = true;
     };
   }, [wishlistItems]);
+
+  // 👉 Only keep products whose _id is in wishlistItems
+  const products = useMemo(() => {
+    if (!wishlistItems || wishlistItems.length === 0) return [];
+    return allProducts.filter((p) => wishlistItems.includes(p._id));
+  }, [allProducts, wishlistItems]);
 
   const handleRemove = (e, id) => {
     e.stopPropagation();
@@ -125,7 +132,7 @@ function WishlistPage() {
                 <button
                   type="button"
                   className={styles.linkButton}
-                  onClick={() => navigate("/signup")}
+                  onClick={() => navigate("/auth/create_new_user")}
                 >
                   {" "}
                   create an account{" "}
