@@ -297,32 +297,47 @@ function ProductDetail() {
   };
 
   const handleBuyNow = () => {
-    if (!selectedSize) {
-      setSizeError(true);
-      setActionMessage('Please select a size to continue');
-      setTimeout(() => setActionMessage(''), 2000);
-    const el = document.getElementById('size-section');
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-      return;
-    }
+  if (!selectedSize) {
+    setSizeError(true);
+    setActionMessage('Please select a size to continue');
+    setTimeout(() => setActionMessage(''), 2000);
 
+    const el = document.getElementById('size-section');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    return;
+  }
+
+  // 1) Ensure this product is in cart with current options
+  const alreadyInCart = cartItems.some(
+    (item) =>
+      item.productId === product._id &&
+      item.size === selectedSize &&
+      item.color === selectedColor,
+  );
+
+  if (!alreadyInCart) {
     addToCart(product, {
       size: selectedSize,
       color: selectedColor,
       quantity: qty,
     });
 
-    console.log('BUY NOW 👉', {
+    console.log('BUY NOW (added to cart) 👉', {
       productId: product._id,
       size: selectedSize,
       color: selectedColor,
       qty,
     });
+  } else {
+    console.log('BUY NOW 👉 item already in bag, going to checkout');
+  }
 
-    // navigate('/checkout'); // when ready
-  };
+  // 2) Go to checkout page
+  navigate('/checkout');
+};
+
 
   const metaFields = [
     { label: 'Fabric', value: product.fabric },

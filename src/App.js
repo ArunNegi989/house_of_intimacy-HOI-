@@ -41,6 +41,7 @@ import WishlistPage from 'pages/Wishlist/WishlistPage';
 import AllProducts from 'pages/allbrands/AllProducts';
 import { Aboutus } from 'components/AboutUs';
 import { ContactUs } from 'components/ContactUs';
+import CheckoutPage from 'contexts/CheckoutPage';
 
 export default function Main() {
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
@@ -73,6 +74,15 @@ export default function Main() {
             <div style={{ flex: 1 }}>
               <Routes>
                 <Route path="/product/:id" element={<ProductDetail />} />
+               <Route
+  path="/checkout"
+  element={
+    <ProtectedRoute>
+      <CheckoutPage />
+    </ProtectedRoute>
+  }
+/>
+
 
                 {/* Auth layout (register, forgot, etc) */}
                 <Route path="auth/*" element={<AuthLayout />} />

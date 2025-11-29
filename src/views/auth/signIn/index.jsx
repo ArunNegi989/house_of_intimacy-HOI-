@@ -1,6 +1,6 @@
 // src/views/auth/signIn.jsx
 import React, { useState } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { Link as RouterLink } from "react-router-dom";
 import { Link, Text } from "@chakra-ui/react";
 
@@ -43,6 +43,7 @@ function SignIn() {
 
   const toast = useToast();
   const navigate = useNavigate();
+  const location = useLocation(); // ⭐ yaha se "from" milega
 
   const {
     register,
@@ -86,13 +87,22 @@ function SignIn() {
         isClosable: true,
       });
 
-      // 🧭 Redirect based on role
+      // 🧭 Redirect based on role + from state
       const role = (user.role || "").toLowerCase().trim();
+      const from = location.state?.from; // e.g. "/checkout"
 
       if (role === "admin") {
-        navigate("/admin/admin_dashboard");
+        // Admin ko hamesha dashboard pe le jao
+        navigate("/admin/admin_dashboard", { replace: true });
       } else {
-        navigate("/");
+        // Normal user:
+        // agar from mila (ProtectedRoute se) -> waha le jao (eg. /checkout)
+        // warna home page
+        if (from) {
+          navigate(from, { replace: true });
+        } else {
+          navigate("/", { replace: true });
+        }
       }
     } catch (err) {
       console.error("Login error:", err);
@@ -258,10 +268,10 @@ function SignIn() {
 
               <NavLink to="/auth/forgot-password">
                 <Text fontSize="sm" textAlign="right" mt={2}>
-  <Link as={RouterLink} to="/forgot-password" color="pink.500">
-    Forgot password?
-  </Link>
-</Text>
+                  <Link as={RouterLink} to="/forgot-password" color="pink.500">
+                    Forgot password?
+                  </Link>
+                </Text>
               </NavLink>
             </Flex>
 
