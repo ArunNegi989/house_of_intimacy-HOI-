@@ -60,7 +60,7 @@ export default function Footer() {
             <ul className={`list-unstyled ${styles["footer-links"]}`}>
               <li><Link to="/ContactUs" style={{ color: linkColor }}>Contact Us</Link></li>
               <li><Link to="/privacy-policy" style={{ color: linkColor }}>Privacy Policy</Link></li>
-              <li><Link to="/refund" style={{ color: linkColor }}>Refund Policy</Link></li>
+              <li><Link to="/refund-policy" style={{ color: linkColor }}>Refund Policy</Link></li>
               <li><Link to="/terms" style={{ color: linkColor }}>Terms Of Service</Link></li>
             </ul>
           </div>
