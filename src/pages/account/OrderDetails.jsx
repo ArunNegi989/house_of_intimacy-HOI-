@@ -10,6 +10,7 @@ import {
   FiXCircle,
 } from 'react-icons/fi';
 import axios from 'axios';
+import { useToast } from "@chakra-ui/react";
 
 import styles from '../../assets/styles/account/OrderDetails.module.css';
 
@@ -40,19 +41,19 @@ const formatStatus = (statusRaw = '') => {
   return { label: statusRaw || 'Unknown', key: 'other', icon: <FiClock /> };
 };
 
-// which statuses are allowed to cancel (request raise karna)
 const CANCELLABLE_STATUSES = ['PLACED', 'CONFIRMED', 'PROCESSING'];
 
 const OrderDetails = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
 
+  const toast = useToast();
+
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [cancelling, setCancelling] = useState(false);
   const [error, setError] = useState('');
 
-  // modal + reason state
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [cancelReasonText, setCancelReasonText] = useState('');
@@ -78,7 +79,7 @@ const OrderDetails = () => {
         });
 
         const data = res.data;
-        const fetchedOrder = data.order || data; // support both shapes
+        const fetchedOrder = data.order || data;
         setOrder(fetchedOrder);
       } catch (err) {
         console.error('Error fetching order details:', err);
@@ -127,7 +128,6 @@ const OrderDetails = () => {
     return (order.paymentMethod || '').toUpperCase();
   };
 
-  // totals based on your schema
   const getTotals = () => {
     if (!order) {
       return {
@@ -157,7 +157,6 @@ const OrderDetails = () => {
 
   const totals = getTotals();
 
-  // normalize shipping address for UI
   const shippingAddress = useMemo(() => {
     if (!order) return null;
 
@@ -168,7 +167,6 @@ const OrderDetails = () => {
 
     if (!addr) return null;
 
-    // tumhari schema: name, phone, addressLine1, addressLine2, city, state, pincode
     return {
       fullName: addr.name,
       phone: addr.phone,
@@ -184,20 +182,17 @@ const OrderDetails = () => {
     if (!order) return false;
     const s = (order.status || '').toUpperCase();
 
-    // agar already cancelRequested true hai ya status CANCELLED hai → button off
     if (order.cancelRequested) return false;
     if (s === 'CANCELLED') return false;
 
     return CANCELLABLE_STATUSES.includes(s);
   }, [order]);
 
-  // modal open handler
   const openCancelModal = () => {
     if (!canCancel || cancelling) return;
     setShowCancelModal(true);
   };
 
-  // modal close + reset
   const closeCancelModal = () => {
     if (cancelling) return;
     setShowCancelModal(false);
@@ -205,12 +200,20 @@ const OrderDetails = () => {
     setCancelReasonText('');
   };
 
-  // actual cancel REQUEST API (admin approve karega)
+  // 🔥 Updated with Toast
   const handleConfirmCancel = async () => {
     if (!order) return;
     if (!canCancel) return;
+
     if (!cancelReason) {
-      alert('Please select a reason for cancellation.');
+      toast({
+        title: "Select a reason",
+        description: "Please choose a cancellation reason.",
+        status: "warning",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
       return;
     }
 
@@ -235,16 +238,28 @@ const OrderDetails = () => {
 
       const updated = res.data.order || res.data;
       setOrder(updated);
-      alert(
-        'Your cancellation request has been submitted. You will be notified once it is processed.'
-      );
+
+      toast({
+        title: "Cancellation Request Submitted",
+        description:
+          "Your cancellation request has been sent. You will be notified shortly.",
+        status: "success",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
 
       closeCancelModal();
     } catch (err) {
       console.error('Error submitting cancellation request:', err);
-      setError(
-        'Unable to submit cancellation request right now. Please try again later.'
-      );
+      toast({
+        title: "Something went wrong",
+        description: "Could not submit cancellation request.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+        position: "top",
+      });
     } finally {
       setCancelling(false);
     }
@@ -253,7 +268,7 @@ const OrderDetails = () => {
   return (
     <div className={styles.page}>
       <div className={styles.inner}>
-        {/* Header row */}
+        {/* HEADER */}
         <div className={styles.headerRow}>
           <button
             type="button"
@@ -272,7 +287,7 @@ const OrderDetails = () => {
           </div>
         </div>
 
-        {/* Loading / Error states */}
+        {/* Loading State */}
         {loading && (
           <div className={styles.stateBox}>
             <div className={styles.spinner} />
@@ -280,6 +295,7 @@ const OrderDetails = () => {
           </div>
         )}
 
+        {/* Error */}
         {!loading && error && (
           <div className={styles.stateBox}>
             <p className={styles.stateTitle}>Something went wrong</p>
@@ -287,11 +303,12 @@ const OrderDetails = () => {
           </div>
         )}
 
+        {/* ORDER CONTENT */}
         {!loading && !error && order && (
           <div className={styles.contentGrid}>
-            {/* LEFT: order summary + address + actions */}
+            {/* LEFT COLUMN */}
             <div className={styles.leftColumn}>
-              {/* Summary card */}
+              {/* ORDER SUMMARY CARD */}
               <div className={styles.card}>
                 <div className={styles.cardHeader}>
                   <div>
@@ -365,7 +382,7 @@ const OrderDetails = () => {
                 </div>
               </div>
 
-              {/* Address card */}
+              {/* ADDRESS */}
               <div className={styles.card}>
                 <h2 className={styles.cardTitle}>Delivery Address</h2>
                 {shippingAddress ? (
@@ -376,14 +393,10 @@ const OrderDetails = () => {
                       </p>
                     )}
                     {shippingAddress.line1 && (
-                      <p className={styles.addressLine}>
-                        {shippingAddress.line1}
-                      </p>
+                      <p className={styles.addressLine}>{shippingAddress.line1}</p>
                     )}
                     {shippingAddress.line2 && (
-                      <p className={styles.addressLine}>
-                        {shippingAddress.line2}
-                      </p>
+                      <p className={styles.addressLine}>{shippingAddress.line2}</p>
                     )}
 
                     {(shippingAddress.city ||
@@ -410,22 +423,17 @@ const OrderDetails = () => {
                 )}
               </div>
 
-              {/* Cancel order */}
+              {/* CANCEL ORDER */}
               <div className={styles.card}>
                 <h2 className={styles.cardTitle}>Order Actions</h2>
                 {order.cancelRequested && order.status !== 'CANCELLED' ? (
-                  <>
-                    <p className={styles.cardText}>
-                      You&apos;ve requested to cancel this order. Our team is
-                      reviewing your request. You&apos;ll receive an update on your
-                      registered email.
-                    </p>
-                  </>
+                  <p className={styles.cardText}>
+                    You’ve already requested cancellation. You will receive an email update soon.
+                  </p>
                 ) : (
                   <>
                     <p className={styles.cardText}>
                       You can request cancellation before the order is shipped.
-                      Once dispatched, cancellation may not be possible.
                     </p>
 
                     <button
@@ -455,7 +463,7 @@ const OrderDetails = () => {
               </div>
             </div>
 
-            {/* RIGHT: items list */}
+            {/* RIGHT COLUMN - Items */}
             <div className={styles.rightColumn}>
               <div className={styles.card}>
                 <h2 className={styles.cardTitle}>Items in this order</h2>
@@ -473,13 +481,16 @@ const OrderDetails = () => {
                           : typeof item.price === 'number'
                           ? item.price
                           : null;
+
                       const unitMrp =
                         typeof item.mrp === 'number' ? item.mrp : null;
+
                       const qty = item.quantity || item.qty || 1;
+
                       const lineTotal =
                         typeof item.lineTotal === 'number'
                           ? item.lineTotal
-                          : unitPrice !== null
+                          : unitPrice
                           ? unitPrice * qty
                           : null;
 
@@ -515,6 +526,7 @@ const OrderDetails = () => {
                                   ₹ {unitPrice.toFixed(2)}
                                 </span>
                               )}
+
                               {unitMrp !== null &&
                                 unitPrice !== null &&
                                 unitMrp > unitPrice && (
@@ -522,6 +534,7 @@ const OrderDetails = () => {
                                     MRP ₹ {unitMrp.toFixed(2)}
                                   </span>
                                 )}
+
                               {lineTotal !== null && qty > 1 && (
                                 <span className={styles.itemLinePrice}>
                                   Line total: ₹ {lineTotal.toFixed(2)}
@@ -543,7 +556,7 @@ const OrderDetails = () => {
           <div className={styles.stateBox}>
             <p className={styles.stateTitle}>Order not found</p>
             <p className={styles.stateText}>
-              We couldn&apos;t find this order. It may have been removed.
+              We couldn't find this order. It may have been removed.
             </p>
           </div>
         )}
@@ -554,97 +567,36 @@ const OrderDetails = () => {
             <div className={styles.modal}>
               <h2 className={styles.modalTitle}>Cancel this order</h2>
               <p className={styles.modalSubtitle}>
-                Please tell us why you&apos;re cancelling this order.
+                Please tell us why you're cancelling this order.
               </p>
 
               <div className={styles.modalReasons}>
-                <label
-                  className={`${styles.modalReason} ${
-                    cancelReason === 'ORDERED_BY_MISTAKE'
-                      ? styles.modalReasonSelected
-                      : ''
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="cancelReason"
-                    value="ORDERED_BY_MISTAKE"
-                    checked={cancelReason === 'ORDERED_BY_MISTAKE'}
-                    onChange={(e) => setCancelReason(e.target.value)}
-                  />
-                  <span>I ordered by mistake</span>
-                </label>
-
-                <label
-                  className={`${styles.modalReason} ${
-                    cancelReason === 'FOUND_BETTER_PRICE'
-                      ? styles.modalReasonSelected
-                      : ''
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="cancelReason"
-                    value="FOUND_BETTER_PRICE"
-                    checked={cancelReason === 'FOUND_BETTER_PRICE'}
-                    onChange={(e) => setCancelReason(e.target.value)}
-                  />
-                  <span>Found a better price somewhere else</span>
-                </label>
-
-                <label
-                  className={`${styles.modalReason} ${
-                    cancelReason === 'DELIVERY_DELAY'
-                      ? styles.modalReasonSelected
-                      : ''
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="cancelReason"
-                    value="DELIVERY_DELAY"
-                    checked={cancelReason === 'DELIVERY_DELAY'}
-                    onChange={(e) => setCancelReason(e.target.value)}
-                  />
-                  <span>Delivery is taking too long</span>
-                </label>
-
-                <label
-                  className={`${styles.modalReason} ${
-                    cancelReason === 'CHANGE_ADDRESS'
-                      ? styles.modalReasonSelected
-                      : ''
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="cancelReason"
-                    value="CHANGE_ADDRESS"
-                    checked={cancelReason === 'CHANGE_ADDRESS'}
-                    onChange={(e) => setCancelReason(e.target.value)}
-                  />
-                  <span>I want to change address / details</span>
-                </label>
-
-                <label
-                  className={`${styles.modalReason} ${
-                    cancelReason === 'OTHER'
-                      ? styles.modalReasonSelected
-                      : ''
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="cancelReason"
-                    value="OTHER"
-                    checked={cancelReason === 'OTHER'}
-                    onChange={(e) => setCancelReason(e.target.value)}
-                  />
-                  <span>Something else</span>
-                </label>
+                {[
+                  ["ORDERED_BY_MISTAKE", "I ordered by mistake"],
+                  ["FOUND_BETTER_PRICE", "Found a better price somewhere else"],
+                  ["DELIVERY_DELAY", "Delivery is taking too long"],
+                  ["CHANGE_ADDRESS", "I want to change address / details"],
+                  ["OTHER", "Something else"],
+                ].map(([value, label]) => (
+                  <label
+                    key={value}
+                    className={`${styles.modalReason} ${
+                      cancelReason === value ? styles.modalReasonSelected : ""
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="cancelReason"
+                      value={value}
+                      checked={cancelReason === value}
+                      onChange={(e) => setCancelReason(e.target.value)}
+                    />
+                    <span>{label}</span>
+                  </label>
+                ))}
               </div>
 
-              {cancelReason === 'OTHER' && (
+              {cancelReason === "OTHER" && (
                 <textarea
                   className={styles.modalTextarea}
                   placeholder="Write your reason here…"
@@ -663,18 +615,20 @@ const OrderDetails = () => {
                 >
                   Back
                 </button>
+
                 <button
                   type="button"
                   className={styles.modalPrimaryBtn}
                   onClick={handleConfirmCancel}
                   disabled={!cancelReason || cancelling}
                 >
-                  {cancelling ? 'Submitting…' : 'Submit request'}
+                  {cancelling ? "Submitting…" : "Submit request"}
                 </button>
               </div>
             </div>
           </div>
         )}
+
       </div>
     </div>
   );
