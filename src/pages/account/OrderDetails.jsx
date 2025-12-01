@@ -26,7 +26,7 @@ const getImageUrl = (url) => {
 const formatStatus = (statusRaw = '') => {
   const s = statusRaw.toUpperCase();
 
-  if (s === 'PLACED' || s === 'PENDING')
+  if (s === 'PLACED')
     return { label: 'Order Placed', key: 'placed', icon: <FiClock /> };
   if (s === 'PROCESSING' || s === 'CONFIRMED')
     return { label: 'Processing', key: 'processing', icon: <FiPackage /> };
@@ -34,14 +34,14 @@ const formatStatus = (statusRaw = '') => {
     return { label: 'Shipped', key: 'shipped', icon: <FiTruck /> };
   if (s === 'DELIVERED')
     return { label: 'Delivered', key: 'delivered', icon: <FiCheckCircle /> };
-  if (s === 'CANCELLED' || s === 'CANCELED')
+  if (s === 'CANCELLED')
     return { label: 'Cancelled', key: 'cancelled', icon: <FiXCircle /> };
 
   return { label: statusRaw || 'Unknown', key: 'other', icon: <FiClock /> };
 };
 
-// which statuses are allowed to cancel
-const CANCELLABLE_STATUSES = ['PLACED', 'PENDING', 'PROCESSING', 'CONFIRMED'];
+// which statuses are allowed to cancel (request raise karna)
+const CANCELLABLE_STATUSES = ['PLACED', 'CONFIRMED', 'PROCESSING'];
 
 const OrderDetails = () => {
   const { orderId } = useParams();
@@ -52,7 +52,7 @@ const OrderDetails = () => {
   const [cancelling, setCancelling] = useState(false);
   const [error, setError] = useState('');
 
-  // 🔹 NEW: modal + reason state
+  // modal + reason state
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [cancelReason, setCancelReason] = useState('');
   const [cancelReasonText, setCancelReasonText] = useState('');
@@ -127,6 +127,7 @@ const OrderDetails = () => {
     return (order.paymentMethod || '').toUpperCase();
   };
 
+  // totals based on your schema
   const getTotals = () => {
     if (!order) {
       return {
@@ -137,33 +138,14 @@ const OrderDetails = () => {
       };
     }
 
-    const grandTotal =
-      typeof order.totalAmount === 'number'
-        ? order.totalAmount
-        : typeof order.grandTotal === 'number'
-        ? order.grandTotal
-        : typeof order.totalPrice === 'number'
-        ? order.totalPrice
-        : order.amount || 0;
-
-    const shipping =
-      typeof order.shippingFee === 'number'
-        ? order.shippingFee
-        : typeof order.deliveryFee === 'number'
-        ? order.deliveryFee
-        : 0;
-
     const subtotal =
-      typeof order.subtotal === 'number'
-        ? order.subtotal
-        : grandTotal - shipping;
-
+      typeof order.itemsTotal === 'number' ? order.itemsTotal : 0;
     const discount =
-      typeof order.discount === 'number'
-        ? order.discount
-        : typeof order.discountAmount === 'number'
-        ? order.discountAmount
-        : 0;
+      typeof order.discountTotal === 'number' ? order.discountTotal : 0;
+    const shipping =
+      typeof order.shippingFee === 'number' ? order.shippingFee : 0;
+    const grandTotal =
+      typeof order.grandTotal === 'number' ? order.grandTotal : subtotal + shipping;
 
     return {
       subtotal,
@@ -175,37 +157,47 @@ const OrderDetails = () => {
 
   const totals = getTotals();
 
+  // normalize shipping address for UI
   const shippingAddress = useMemo(() => {
     if (!order) return null;
 
-    // support different backend shapes
-    return (
+    const addr =
       order.shippingAddress ||
       order.address ||
-      order.deliveryAddress || {
-        fullName: order.name || '',
-        line1: '',
-        city: '',
-        state: '',
-        pincode: '',
-        phone: order.phone || '',
-      }
-    );
+      order.deliveryAddress || null;
+
+    if (!addr) return null;
+
+    // tumhari schema: name, phone, addressLine1, addressLine2, city, state, pincode
+    return {
+      fullName: addr.name,
+      phone: addr.phone,
+      line1: addr.addressLine1,
+      line2: addr.addressLine2,
+      city: addr.city,
+      state: addr.state,
+      pincode: addr.pincode,
+    };
   }, [order]);
 
   const canCancel = useMemo(() => {
     if (!order) return false;
     const s = (order.status || '').toUpperCase();
+
+    // agar already cancelRequested true hai ya status CANCELLED hai → button off
+    if (order.cancelRequested) return false;
+    if (s === 'CANCELLED') return false;
+
     return CANCELLABLE_STATUSES.includes(s);
   }, [order]);
 
-  // 🔹 modal open handler
+  // modal open handler
   const openCancelModal = () => {
     if (!canCancel || cancelling) return;
     setShowCancelModal(true);
   };
 
-  // 🔹 modal close + reset
+  // modal close + reset
   const closeCancelModal = () => {
     if (cancelling) return;
     setShowCancelModal(false);
@@ -213,12 +205,11 @@ const OrderDetails = () => {
     setCancelReasonText('');
   };
 
-  // 🔹 actual cancel API (called from modal submit)
+  // actual cancel REQUEST API (admin approve karega)
   const handleConfirmCancel = async () => {
     if (!order) return;
     if (!canCancel) return;
     if (!cancelReason) {
-      // basic validation
       alert('Please select a reason for cancellation.');
       return;
     }
@@ -233,7 +224,7 @@ const OrderDetails = () => {
       };
 
       const res = await axios.patch(
-        `${API_BASE_URL}/v1/orders/${order._id || order.orderId}/cancel`,
+        `${API_BASE_URL}/v1/orders/${order._id || order.orderId}/request-cancel`,
         payload,
         {
           headers: {
@@ -244,13 +235,16 @@ const OrderDetails = () => {
 
       const updated = res.data.order || res.data;
       setOrder(updated);
-      alert('Your order has been cancelled.');
+      alert(
+        'Your cancellation request has been submitted. You will be notified once it is processed.'
+      );
 
-      // close + reset modal
       closeCancelModal();
     } catch (err) {
-      console.error('Error cancelling order:', err);
-      setError('Unable to cancel this order right now. Please try again later.');
+      console.error('Error submitting cancellation request:', err);
+      setError(
+        'Unable to submit cancellation request right now. Please try again later.'
+      );
     } finally {
       setCancelling(false);
     }
@@ -376,16 +370,20 @@ const OrderDetails = () => {
                 <h2 className={styles.cardTitle}>Delivery Address</h2>
                 {shippingAddress ? (
                   <div className={styles.addressBlock}>
-                    {(shippingAddress.fullName || shippingAddress.name) && (
+                    {shippingAddress.fullName && (
                       <p className={styles.addressName}>
-                        {shippingAddress.fullName || shippingAddress.name}
+                        {shippingAddress.fullName}
                       </p>
                     )}
                     {shippingAddress.line1 && (
-                      <p className={styles.addressLine}>{shippingAddress.line1}</p>
+                      <p className={styles.addressLine}>
+                        {shippingAddress.line1}
+                      </p>
                     )}
                     {shippingAddress.line2 && (
-                      <p className={styles.addressLine}>{shippingAddress.line2}</p>
+                      <p className={styles.addressLine}>
+                        {shippingAddress.line2}
+                      </p>
                     )}
 
                     {(shippingAddress.city ||
@@ -394,7 +392,8 @@ const OrderDetails = () => {
                       <p className={styles.addressLine}>
                         {shippingAddress.city && `${shippingAddress.city}, `}
                         {shippingAddress.state && `${shippingAddress.state} `}
-                        {shippingAddress.pincode && `- ${shippingAddress.pincode}`}
+                        {shippingAddress.pincode &&
+                          `- ${shippingAddress.pincode}`}
                       </p>
                     )}
 
@@ -414,25 +413,43 @@ const OrderDetails = () => {
               {/* Cancel order */}
               <div className={styles.card}>
                 <h2 className={styles.cardTitle}>Order Actions</h2>
-                <p className={styles.cardText}>
-                  You can cancel your order before it is shipped. Once dispatched,
-                  cancellation may not be possible.
-                </p>
+                {order.cancelRequested && order.status !== 'CANCELLED' ? (
+                  <>
+                    <p className={styles.cardText}>
+                      You&apos;ve requested to cancel this order. Our team is
+                      reviewing your request. You&apos;ll receive an update on your
+                      registered email.
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <p className={styles.cardText}>
+                      You can request cancellation before the order is shipped.
+                      Once dispatched, cancellation may not be possible.
+                    </p>
 
-                <button
-                  type="button"
-                  className={`${styles.cancelBtn} ${
-                    (!canCancel || cancelling) ? styles.cancelBtnDisabled : ''
-                  }`}
-                  disabled={!canCancel || cancelling}
-                  onClick={openCancelModal}
-                >
-                  Cancel this order
-                </button>
+                    <button
+                      type="button"
+                      className={`${styles.cancelBtn} ${
+                        !canCancel || cancelling ? styles.cancelBtnDisabled : ''
+                      }`}
+                      disabled={!canCancel || cancelling}
+                      onClick={openCancelModal}
+                    >
+                      Request cancellation
+                    </button>
 
-                {!canCancel && (
+                    {!canCancel && order.status !== 'CANCELLED' && (
+                      <p className={styles.helpText}>
+                        This order cannot be cancelled in its current status.
+                      </p>
+                    )}
+                  </>
+                )}
+
+                {order.status === 'CANCELLED' && (
                   <p className={styles.helpText}>
-                    This order cannot be cancelled in its current status.
+                    This order has been cancelled.
                   </p>
                 )}
               </div>
@@ -449,51 +466,72 @@ const OrderDetails = () => {
 
                 {items.length > 0 && (
                   <div className={styles.itemsList}>
-                    {items.map((item, idx) => (
-                      <div
-                        key={item._id || item.productId || idx}
-                        className={styles.itemRow}
-                      >
-                        <div className={styles.itemImgWrap}>
-                          {item.image && (
-                            <img
-                              src={getImageUrl(item.image)}
-                              alt={item.name || item.productName || 'Product'}
-                              className={styles.itemImg}
-                            />
-                          )}
-                        </div>
+                    {items.map((item, idx) => {
+                      const unitPrice =
+                        typeof item.salePrice === 'number'
+                          ? item.salePrice
+                          : typeof item.price === 'number'
+                          ? item.price
+                          : null;
+                      const unitMrp =
+                        typeof item.mrp === 'number' ? item.mrp : null;
+                      const qty = item.quantity || item.qty || 1;
+                      const lineTotal =
+                        typeof item.lineTotal === 'number'
+                          ? item.lineTotal
+                          : unitPrice !== null
+                          ? unitPrice * qty
+                          : null;
 
-                        <div className={styles.itemInfo}>
-                          <div className={styles.itemName}>
-                            {item.name || item.productName || 'Product'}
-                          </div>
-
-                          <div className={styles.itemMeta}>
-                            {item.size && <span>Size: {item.size}</span>}
-                            {item.color && <span>Color: {item.color}</span>}
-                            <span>
-                              Qty: {item.quantity || item.qty || 1}
-                            </span>
-                          </div>
-
-                          <div className={styles.itemPriceRow}>
-                            {typeof item.price === 'number' && (
-                              <span className={styles.itemPrice}>
-                                ₹ {item.price.toFixed(2)}
-                              </span>
+                      return (
+                        <div
+                          key={item._id || item.productId || idx}
+                          className={styles.itemRow}
+                        >
+                          <div className={styles.itemImgWrap}>
+                            {item.image && (
+                              <img
+                                src={getImageUrl(item.image)}
+                                alt={item.name || item.productName || 'Product'}
+                                className={styles.itemImg}
+                              />
                             )}
-                            {typeof item.mrp === 'number' &&
-                              typeof item.price === 'number' &&
-                              item.mrp > item.price && (
-                                <span className={styles.itemMrp}>
-                                  MRP ₹ {item.mrp.toFixed(2)}
+                          </div>
+
+                          <div className={styles.itemInfo}>
+                            <div className={styles.itemName}>
+                              {item.name || item.productName || 'Product'}
+                            </div>
+
+                            <div className={styles.itemMeta}>
+                              {item.size && <span>Size: {item.size}</span>}
+                              {item.color && <span>Color: {item.color}</span>}
+                              <span>Qty: {qty}</span>
+                            </div>
+
+                            <div className={styles.itemPriceRow}>
+                              {unitPrice !== null && (
+                                <span className={styles.itemPrice}>
+                                  ₹ {unitPrice.toFixed(2)}
                                 </span>
                               )}
+                              {unitMrp !== null &&
+                                unitPrice !== null &&
+                                unitMrp > unitPrice && (
+                                  <span className={styles.itemMrp}>
+                                    MRP ₹ {unitMrp.toFixed(2)}
+                                  </span>
+                                )}
+                              {lineTotal !== null && qty > 1 && (
+                                <span className={styles.itemLinePrice}>
+                                  Line total: ₹ {lineTotal.toFixed(2)}
+                                </span>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -510,7 +548,7 @@ const OrderDetails = () => {
           </div>
         )}
 
-        {/* 🔹 CANCEL REASON MODAL */}
+        {/* CANCEL REASON MODAL */}
         {showCancelModal && (
           <div className={styles.modalOverlay}>
             <div className={styles.modal}>
@@ -631,7 +669,7 @@ const OrderDetails = () => {
                   onClick={handleConfirmCancel}
                   disabled={!cancelReason || cancelling}
                 >
-                  {cancelling ? 'Cancelling…' : 'Submit & cancel order'}
+                  {cancelling ? 'Submitting…' : 'Submit request'}
                 </button>
               </div>
             </div>
