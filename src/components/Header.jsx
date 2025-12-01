@@ -281,30 +281,42 @@ const Header = () => {
                 </button>
 
                 {userMenuOpen && (
-                  <div className={styles.userDropdown}>
-                    <button
-                      type="button"
-                      className={styles.userDropdownItem}
-                      onClick={() => {
-                        setUserMenuOpen(false);
-                        navigate('/account/profile');
-                      }}
-                    >
-                      My Account
-                    </button>
+  <div className={styles.userDropdown}>
+    <button
+      type="button"
+      className={styles.userDropdownItem}
+      onClick={() => {
+        setUserMenuOpen(false);
+        navigate('/account/profile');
+      }}
+    >
+      My Account
+    </button>
 
-                    <button
-                      type="button"
-                      className={styles.userDropdownItem}
-                      onClick={() => {
-                        setUserMenuOpen(false);
-                        setLogoutConfirmOpen(true);
-                      }}
-                    >
-                      Logout
-                    </button>
-                  </div>
-                )}
+    <button
+      type="button"
+      className={styles.userDropdownItem}
+      onClick={() => {
+        setUserMenuOpen(false);
+        navigate('/account/orders'); // ⭐ NEW - My Orders page
+      }}
+    >
+      My Orders
+    </button>
+
+    <button
+      type="button"
+      className={styles.userDropdownItem}
+      onClick={() => {
+        setUserMenuOpen(false);
+        setLogoutConfirmOpen(true);
+      }}
+    >
+      Logout
+    </button>
+  </div>
+)}
+
               </div>
             )}
 
