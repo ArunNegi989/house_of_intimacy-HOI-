@@ -1,107 +1,322 @@
-/* ===== Base footer wrapper ===== */
-.footerContainer {
-  max-width: 1560px;
-  padding: 0 ;
-  margin: 20px auto;
+.footer {
+  background: #fbdaed;
+  padding-top: 40px;
+  font-family: "Inter", sans-serif;
 }
-.site-footer {
-  width: 100%;
-  background: #f2fbfa;
-  color: #123;
-  font-family: "Inter", system-ui, sans-serif;
-  
+.newsletterSection button {
+      border: 1px solid !important;
+    background: linear-gradient(135deg, #e91e63 0%, #d63384 100%) !important;
+    color: #fff !important;
 }
-
-/* Make sure these sections don't collapse or shrink oddly */
-.footer-top,
-.footer-mid,
-.footer-bottom {
-  width: 100%;
+/* Logo */
+.logo {
+      height: 170px;
+    object-fit: contain;
+    width: 50%;
 }
 
-/* socials & small icons */
-.socials img,
-.payment-icons img {
-  height: 20px;
-  width: auto;
-  opacity: 0.95;
+.desc {
+  text-decoration: none;
+    color: #222;
+    font-size: 16px;
+    font-weight: 300;
+    text-transform: uppercase;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s 
+ease, border-color 0.2s 
+ease;
 }
 
-/* footer links */
-.footer-links a {
-  color: #334;
+/* Headings */
+.heading {
+  font-size: 25px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: #222;
+      padding-top: 40px;
+}
+
+/* List */
+.list {
+  list-style: none;
+  padding: 0;
+}
+
+.list li {
+ text-decoration: none;
+    color: #222;
+    font-size: 16px;
+    font-weight: 300;
+    text-transform: uppercase;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s 
+ease, border-color 0.2s 
+ease;
+}
+
+.list li a {
+  color: #333;
   text-decoration: none;
 }
 
-.footer-links a:hover {
+.list li a:hover {
   text-decoration: underline;
-}
-
-/* logo styling */
-.footer-logo {
-  height: 210px;
-  object-fit: contain;
-}
-
-/* payment icons */
-.payment-icons svg {
-  width: 90%;
-  height: 90%;
-  border-radius: 4px;
-  transition: transform 0.3s ease;
-}
-
-.payment-icons svg:hover {
-  transform: scale(1.1);
-}
-
-.fake-select {
-  background: transparent;
-  padding: 4px 8px;
-  border-radius: 6px;
-  color: #203232;
-  align-items: center;
-}
-
-/* newsletter */
-.newsletter .form-control {
-  min-width: 150px;
- 
-  
-}
-
-.subscribe-btn {
-  border-radius: 6px;
-}
-
-/* bottom links */
-.bottom-links a {
-  color: #556;
-  text-decoration: none;
-}
-
-/* social icons hover */
-.socials a svg {
-  transition: color 0.3s, transform 0.3s;
   color: #000;
 }
 
-.socials a:hover svg {
-  color: #e0231a;
-  transform: scale(1.1);
+/* Newsletter section */
+.newsletterSection {
+  text-align: center;
+  border-top: 3px solid #e91e63;
+  border-bottom: 1px solid #e2e2e2;
+  margin-top: 20px;
+}
+.newsletterSection input {
+  border: 1px solid #e91e63;
 }
 
-/* responsive */
-@media (max-width: 767px) {
-  .footer-top {
-    row-gap: 1.25rem;
+.newsletterSection input {
+  border-radius: 4px !important;
+}
+
+.newsletterSection button {
+  border-radius: 4px !important;
+}
+
+/* Bottom */
+.bottomText {
+  margin: 0;
+  color: #666;
+  font-size: 14px;
+}
+
+.bottomLink {
+  color: #666;
+  margin-left: 15px;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.bottomLink:hover {
+  text-decoration: underline;
+  color: #000;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .logo {
+    height: 80px;
   }
 
-  .footer-logo {
-    height: 58px;
+  .newsletterSection input {
+    width: 100%;
   }
 
-  .newsletter .form-control {
-    min-width: 100%;
+  .newsletterSection .input-group {
+    flex-direction: column;
+    gap: 10px;
   }
+
+  .newsletterSection button {
+    width: 100%;
+  }
+
+  .bottomText {
+    text-align: center;
+    margin-bottom: 10px;
+  }
+}
+@media (max-width: 499px) {
+   .logo {
+    height: 150px;
+    width: 100%;
+  }
+  .list li {
+    font-size: 14px !important;
+  }
+  .heading {
+  font-size: 20px;
+  }
+  .footer {
+  padding-top: 10px !important;
+  }
+}
+
+/* List */
+.list {
+  list-style: none;
+  padding: 0;
+}
+
+.list li {
+ text-decoration: none;
+    color: #222;
+    font-size: 16px;
+    font-weight: 300;
+    text-transform: uppercase;
+    padding-bottom: 4px;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s 
+ease, border-color 0.2s 
+ease;
+}
+
+.list li a {
+  color: #333;
+  text-decoration: none;
+}
+
+.list li a:hover {
+  text-decoration: underline;
+  color: #000;
+}
+
+/* Dropdown styles */
+.dropdownItem {
+  position: relative;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: linear-gradient(135deg, #fff 0%, #fef5f9 100%);
+  border: 2px solid #e91e63;
+  border-radius: 12px;
+  padding: 15px 0;
+  min-width: 220px;
+  list-style: none;
+  box-shadow: 0 8px 20px rgba(233, 30, 99, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-15px) scale(0.95);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 1000;
+}
+
+.dropdownItem:hover .dropdownMenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0) scale(1);
+}
+
+.dropdownMenu li {
+  padding: 0;
+  border-bottom: none;
+  text-transform: none;
+  font-size: 14px;
+  list-style: none;
+  position: relative;
+  margin: 0;
+}
+
+.dropdownMenu li::before {
+  content: "→";
+  position: absolute;
+  left: 15px;
+  color: #e91e63;
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+}
+
+.dropdownMenu li:hover::before {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.dropdownMenu li a {
+  display: block;
+  color: #444;
+  padding: 10px 20px 10px 40px;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  margin: 0 10px;
+  font-weight: 400;
+}
+
+.dropdownMenu li a:hover {
+  color: #e91e63;
+  background: rgba(233, 30, 99, 0.08);
+  text-decoration: none;
+  transform: translateX(5px);
+}
+
+/* Nested dropdown styles */
+.nestedDropdownItem {
+  position: relative;
+}
+
+.nestedDropdownItem::before {
+  content: "▸";
+  left: auto;
+  right: 20px;
+}
+
+.categoryTitle {
+  display: block;
+  color: #e91e63;
+  padding: 10px 40px 10px 40px;
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  border-radius: 8px;
+  margin: 0 10px;
+  transition: all 0.3s ease;
+}
+
+.nestedDropdownItem:hover .categoryTitle {
+  background: rgba(233, 30, 99, 0.1);
+}
+
+.nestedDropdownMenu {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  background: linear-gradient(135deg, #fff 0%, #fef5f9 100%);
+  border: 2px solid #e91e63;
+  border-radius: 12px;
+  padding: 10px 0;
+  min-width: 175px;
+  list-style: none;
+  box-shadow: 0 8px 20px rgba(233, 30, 99, 0.15);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-15px) scale(0.95);
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  z-index: 1001;
+  margin-left: 5px;
+}
+
+.nestedDropdownItem:hover .nestedDropdownMenu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0) scale(1);
+}
+
+.nestedDropdownMenu li {
+  padding: 0;
+  margin: 0;
+}
+
+.nestedDropdownMenu li::before {
+  content: "•";
+  position: absolute;
+  left: 15px;
+  color: #e91e63;
+  opacity: 1;
+  transform: translateX(0);
+  font-size: 18px;
+}
+
+.nestedDropdownMenu li a {
+  padding: 8px 20px 8px 35px;
+  font-size: 13px;
 }
