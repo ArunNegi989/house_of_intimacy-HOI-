@@ -42,6 +42,9 @@ function AdminOrdersList() {
   const [total, setTotal] = useState(0);
   const [limit] = useState(20);
 
+  // 👉 NEW: only for per-row status update
+  const [updatingId, setUpdatingId] = useState(null);
+
   const authToken =
     localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
 
@@ -51,7 +54,11 @@ function AdminOrdersList() {
       setLoading(true);
 
       const res = await axios.get(`${API_BASE_URL}/orders/admin/list`, {
-        params: { status: statusFilter, page, limit },
+        params: {
+          status: statusFilter === "ALL" ? undefined : statusFilter,
+          page,
+          limit,
+        },
         headers: {
           Authorization: `Bearer ${authToken}`,
         },
@@ -81,7 +88,10 @@ function AdminOrdersList() {
   const handleStatusChange = async (orderId, newStatus) => {
     try {
       if (!authToken) return;
-      setLoading(true);
+
+      // ❌ DO NOT setLoading(true) here
+      // ✅ Only mark this order as updating
+      setUpdatingId(orderId);
 
       await axios.patch(
         `${API_BASE_URL}/orders/admin/${orderId}/status`,
@@ -116,11 +126,16 @@ function AdminOrdersList() {
         duration: 3000,
       });
     } finally {
-      setLoading(false);
+      setUpdatingId(null);
     }
   };
 
   const totalPages = Math.ceil(total / limit) || 1;
+
+  const formatMoney = (val) => {
+    if (typeof val !== "number") return "0.00";
+    return val.toFixed(2);
+  };
 
   return (
     <Box p="6">
@@ -160,8 +175,9 @@ function AdminOrdersList() {
 
       <Box borderWidth="1px" borderRadius="lg" overflowX="auto" bg="white">
         {loading ? (
-          <Flex justify="center" align="center" p="10">
+          <Flex justify="center" align="center" p="10" gap="3">
             <Spinner />
+            <Text fontSize="sm">Loading orders...</Text>
           </Flex>
         ) : (
           <Table size="sm">
@@ -178,7 +194,7 @@ function AdminOrdersList() {
             </Thead>
             <Tbody>
               {orders.map((order) => (
-                <Tr key={order._id}>
+                <Tr key={order._id} opacity={updatingId === order._id ? 0.6 : 1}>
                   <Td>
                     <Text fontWeight="600" fontSize="sm">
                       {order.orderNumber || order._id.slice(-8)}
@@ -187,6 +203,7 @@ function AdminOrdersList() {
                       {order.items?.length || 0} items
                     </Text>
                   </Td>
+
                   <Td>
                     <Text fontSize="sm">
                       {order.shippingAddress?.name ||
@@ -197,19 +214,24 @@ function AdminOrdersList() {
                       {order.user?.email}
                     </Text>
                   </Td>
+
                   <Td isNumeric>
                     <Text fontSize="sm">
-                      ₹ {order.grandTotal?.toFixed(2)}
+                      ₹ {formatMoney(order.grandTotal)}
                     </Text>
-                    <Text fontSize="xs" color="green.500">
-                      Saved ₹ {order.totalSavings?.toFixed(2)}
-                    </Text>
+                    {order.totalSavings != null && (
+                      <Text fontSize="xs" color="green.500">
+                        Saved ₹ {formatMoney(order.totalSavings)}
+                      </Text>
+                    )}
                   </Td>
+
                   <Td>
                     <Badge colorScheme={statusColors[order.status] || "gray"}>
                       {order.status}
                     </Badge>
                   </Td>
+
                   <Td>
                     <Badge
                       colorScheme={
@@ -223,6 +245,7 @@ function AdminOrdersList() {
                       {order.paymentMethod} / {order.paymentStatus}
                     </Badge>
                   </Td>
+
                   <Td>
                     <Text fontSize="xs">
                       {new Date(order.createdAt).toLocaleString("en-IN", {
@@ -234,6 +257,7 @@ function AdminOrdersList() {
                       })}
                     </Text>
                   </Td>
+
                   <Td>
                     <Select
                       size="xs"
@@ -241,6 +265,7 @@ function AdminOrdersList() {
                       onChange={(e) =>
                         handleStatusChange(order._id, e.target.value)
                       }
+                      isDisabled={updatingId === order._id}
                     >
                       <option value="PLACED">PLACED</option>
                       <option value="CONFIRMED">CONFIRMED</option>
@@ -252,6 +277,11 @@ function AdminOrdersList() {
                       <option value="DELIVERED">DELIVERED</option>
                       <option value="CANCELLED">CANCELLED</option>
                     </Select>
+                    {updatingId === order._id && (
+                      <Text fontSize="xx-small" color="gray.500" mt="1">
+                        Updating...
+                      </Text>
+                    )}
                   </Td>
                 </Tr>
               ))}
@@ -269,14 +299,14 @@ function AdminOrdersList() {
           <Button
             size="xs"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
-            isDisabled={page === 1}
+            isDisabled={page === 1 || loading}
           >
             Prev
           </Button>
           <Button
             size="xs"
             onClick={() => setPage((p) => (p < totalPages ? p + 1 : p))}
-            isDisabled={page === totalPages}
+            isDisabled={page === totalPages || loading}
           >
             Next
           </Button>
