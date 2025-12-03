@@ -164,7 +164,7 @@ ${data.message}`;
     const encodedMessage = encodeURIComponent(message);
     
     // WhatsApp number (with country code, no + or spaces)
-    const whatsappNumber = '919548474311';
+    const whatsappNumber = '8476898395';
     
     // Create WhatsApp URL
     const whatsappURL = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;

@@ -170,7 +170,7 @@ export default function Main() {
                 {/* HOME PAGE (public) */}
                 <Route path="/" element={<Home />} />
                 <Route path="/about-us" element={<Aboutus />} />
-               <Route path='ContactUs' element={<ContactUs/>}/>
+               <Route path='/ContactUs' element={<ContactUs/>}/>
                  <Route path="/products" element={<AllProducts />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password/:token" element={<ResetPassword />} />

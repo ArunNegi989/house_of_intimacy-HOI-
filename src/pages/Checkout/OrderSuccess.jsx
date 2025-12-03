@@ -389,7 +389,7 @@ function OrderSuccess() {
             Need help?{" "}
             <button
               className={styles.inlineLink}
-              onClick={() => navigate("/contact")}
+              onClick={() => navigate("/ContactUs")}
             >
               Contact support
             </button>
