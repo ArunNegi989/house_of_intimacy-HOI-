@@ -680,36 +680,50 @@ function AdminOrdersList() {
                         </Tr>
                       </Thead>
                       <Tbody>
-                        {selectedOrder.items?.map((item) => (
-                          <Tr key={item._id || item.product}>
-                            <Td>
-                              <Text fontSize="sm" fontWeight="500">
-                                {item.name}
-                              </Text>
-                              <Text fontSize="xs" color="gray.500">
-                                ID: {item.product}
-                              </Text>
-                            </Td>
-                            <Td>
-                              <Text fontSize="sm">{item.color || "—"}</Text>
-                            </Td>
-                            <Td>
-                              <Text fontSize="sm">{item.size || "—"}</Text>
-                            </Td>
-                            <Td isNumeric>
-                              <Text fontSize="sm">{item.quantity}</Text>
-                            </Td>
-                            <Td isNumeric>
-                              <Text fontSize="sm">
-                                ₹{" "}
-                                {formatMoney(
-                                  item.lineTotal || item.salePrice || 0
-                                )}
-                              </Text>
-                            </Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
+  {selectedOrder.items?.map((item) => (
+    <Tr key={item._id || item.product}>
+      <Td>
+        <Text fontSize="sm" fontWeight="500">
+          {item.name}
+        </Text>
+        <Text fontSize="xs" color="gray.500">
+          ID: {item.product}
+        </Text>
+      </Td>
+
+      {/* 🔴 Color as a dot, not code */}
+      <Td>
+        {item.color ? (
+          <HStack spacing={2}>
+            <Box
+              w="18px"
+              h="18px"
+              borderRadius="full"
+              borderWidth="1px"
+              borderColor="gray.200"
+              bg={item.color}
+            />
+          </HStack>
+        ) : (
+          <Text fontSize="sm">—</Text>
+        )}
+      </Td>
+
+      <Td>
+        <Text fontSize="sm">{item.size || "—"}</Text>
+      </Td>
+      <Td isNumeric>
+        <Text fontSize="sm">{item.quantity}</Text>
+      </Td>
+      <Td isNumeric>
+        <Text fontSize="sm">
+          ₹ {formatMoney(item.lineTotal || item.salePrice || 0)}
+        </Text>
+      </Td>
+    </Tr>
+  ))}
+</Tbody>
+
                     </Table>
                   </Box>
                 </Box>
