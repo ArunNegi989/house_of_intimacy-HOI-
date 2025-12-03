@@ -8,9 +8,13 @@ import {
   FiCheckCircle,
   FiClock,
   FiXCircle,
+  FiCreditCard,   // ⭐ NEW
+  FiMapPin,       // ⭐ NEW
+  FiPhone,        // ⭐ NEW
+  FiInfo,         // ⭐ NEW
 } from 'react-icons/fi';
 import axios from 'axios';
-import { useToast } from "@chakra-ui/react";
+import { useToast } from '@chakra-ui/react';
 
 import styles from '../../assets/styles/account/OrderDetails.module.css';
 
@@ -102,6 +106,34 @@ const OrderDetails = () => {
     [order]
   );
 
+  // ⭐ NEW: status step ordering for timeline
+  const stepOrder = {
+    placed: 0,
+    processing: 1,
+    shipped: 2,
+    delivered: 3,
+    cancelled: 2,
+    other: 0,
+  };
+
+  const timelineSteps = useMemo(() => {
+    const isCancelled = orderStatusInfo.key === 'cancelled';
+    return [
+      { key: 'placed', label: 'Order placed' },
+      {
+        key: 'processing',
+        label: isCancelled ? 'Processing / Cancelled' : 'Processing',
+      },
+      { key: 'shipped', label: 'Shipped' },
+      {
+        key: 'delivered',
+        label: isCancelled ? 'Order cancelled' : 'Delivered',
+      },
+    ];
+  }, [orderStatusInfo.key]);
+
+  const currentStepIndex = stepOrder[orderStatusInfo.key] ?? 0;
+
   const getOrderIdDisplay = () => {
     if (!order) return '';
     return (
@@ -156,6 +188,7 @@ const OrderDetails = () => {
   };
 
   const totals = getTotals();
+  const savings = totals.discount > 0 ? totals.discount : 0; // ⭐ NEW
 
   const shippingAddress = useMemo(() => {
     if (!order) return null;
@@ -163,7 +196,8 @@ const OrderDetails = () => {
     const addr =
       order.shippingAddress ||
       order.address ||
-      order.deliveryAddress || null;
+      order.deliveryAddress ||
+      null;
 
     if (!addr) return null;
 
@@ -207,12 +241,12 @@ const OrderDetails = () => {
 
     if (!cancelReason) {
       toast({
-        title: "Select a reason",
-        description: "Please choose a cancellation reason.",
-        status: "warning",
+        title: 'Select a reason',
+        description: 'Please choose a cancellation reason.',
+        status: 'warning',
         duration: 3000,
         isClosable: true,
-        position: "top",
+        position: 'top',
       });
       return;
     }
@@ -240,25 +274,25 @@ const OrderDetails = () => {
       setOrder(updated);
 
       toast({
-        title: "Cancellation Request Submitted",
+        title: 'Cancellation Request Submitted',
         description:
-          "Your cancellation request has been sent. You will be notified shortly.",
-        status: "success",
+          'Your cancellation request has been sent. You will be notified shortly.',
+        status: 'success',
         duration: 3000,
         isClosable: true,
-        position: "top",
+        position: 'top',
       });
 
       closeCancelModal();
     } catch (err) {
       console.error('Error submitting cancellation request:', err);
       toast({
-        title: "Something went wrong",
-        description: "Could not submit cancellation request.",
-        status: "error",
+        title: 'Something went wrong',
+        description: 'Could not submit cancellation request.',
+        status: 'error',
         duration: 3000,
         isClosable: true,
-        position: "top",
+        position: 'top',
       });
     } finally {
       setCancelling(false);
@@ -282,7 +316,7 @@ const OrderDetails = () => {
           <div className={styles.headerText}>
             <h1 className={styles.title}>Order Details</h1>
             <p className={styles.subtitle}>
-              View all items, delivery address, and manage your order.
+              Track your order, view items and manage actions.
             </p>
           </div>
         </div>
@@ -316,6 +350,20 @@ const OrderDetails = () => {
                     <div className={styles.orderDate}>
                       Placed on {getOrderDate()}
                     </div>
+
+                    {/* ⭐ NEW chips row */}
+                    <div className={styles.summaryChips}>
+                      <span className={`${styles.chip} ${styles.chipSoft}`}>
+                        <FiPackage className={styles.chipIcon} />
+                        {items.length} item{items.length !== 1 ? 's' : ''}
+                      </span>
+                      {getPaymentMethod() && (
+                        <span className={`${styles.chip} ${styles.chipOutline}`}>
+                          <FiCreditCard className={styles.chipIcon} />
+                          {getPaymentMethod()}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
                   <div
@@ -330,18 +378,33 @@ const OrderDetails = () => {
                   </div>
                 </div>
 
-                <div className={styles.summaryRow}>
-                  <span className={styles.summaryLabel}>Items</span>
-                  <span className={styles.summaryValue}>
-                    {items.length} item{items.length !== 1 ? 's' : ''}
-                  </span>
-                </div>
+                {/* ⭐ NEW status timeline */}
+                <div className={styles.statusTimeline}>
+                  {timelineSteps.map((step, index) => {
+                    const isCancelled = orderStatusInfo.key === 'cancelled';
+                    const isActive = isCancelled
+                      ? index <= stepOrder.processing
+                      : index <= currentStepIndex;
 
-                <div className={styles.summaryRow}>
-                  <span className={styles.summaryLabel}>Payment</span>
-                  <span className={styles.summaryValue}>
-                    {getPaymentMethod()}
-                  </span>
+                    return (
+                      <div
+                        key={step.key}
+                        className={`${styles.statusStep} ${
+                          isActive ? styles.statusStepActive : ''
+                        }`}
+                      >
+                        <div className={styles.statusStepInner}>
+                          <div className={styles.statusStepCircle} />
+                          {index !== timelineSteps.length - 1 && (
+                            <div className={styles.statusStepBar} />
+                          )}
+                        </div>
+                        <div className={styles.statusStepLabel}>
+                          {step.label}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 {/* totals */}
@@ -374,17 +437,50 @@ const OrderDetails = () => {
 
                 <div className={styles.summaryDivider} />
 
-                <div className={`${styles.summaryRow} ${styles.summaryRowTotal}`}>
+                <div
+                  className={`${styles.summaryRow} ${styles.summaryRowTotal}`}
+                >
                   <span className={styles.summaryLabel}>Total</span>
                   <span className={styles.summaryValue}>
                     ₹ {totals.grandTotal.toFixed(2)}
                   </span>
                 </div>
+
+                {/* ⭐ NEW savings pill */}
+                {savings > 0 && (
+                  <div className={styles.savingsRow}>
+                    <span className={styles.savingsLabel}>
+                      You saved on this order
+                    </span>
+                    <span className={styles.savingsValue}>
+                      ₹ {savings.toFixed(2)}
+                    </span>
+                  </div>
+                )}
               </div>
 
               {/* ADDRESS */}
               <div className={styles.card}>
-                <h2 className={styles.cardTitle}>Delivery Address</h2>
+                <div className={styles.cardTitleRow}>
+                  <h2 className={styles.cardTitle}>Delivery Address</h2>
+
+                  {/* ⭐ NEW address tags */}
+                  {shippingAddress && (
+                    <div className={styles.addressTags}>
+                      <span className={styles.addressTag}>
+                        <FiMapPin />
+                        <span>Delivery</span>
+                      </span>
+                      {shippingAddress.phone && (
+                        <span className={styles.addressTag}>
+                          <FiPhone />
+                          <span>{shippingAddress.phone}</span>
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+
                 {shippingAddress ? (
                   <div className={styles.addressBlock}>
                     {shippingAddress.fullName && (
@@ -409,12 +505,6 @@ const OrderDetails = () => {
                           `- ${shippingAddress.pincode}`}
                       </p>
                     )}
-
-                    {shippingAddress.phone && (
-                      <p className={styles.addressLine}>
-                        Phone: {shippingAddress.phone}
-                      </p>
-                    )}
                   </div>
                 ) : (
                   <p className={styles.addressLine}>
@@ -428,7 +518,8 @@ const OrderDetails = () => {
                 <h2 className={styles.cardTitle}>Order Actions</h2>
                 {order.cancelRequested && order.status !== 'CANCELLED' ? (
                   <p className={styles.cardText}>
-                    You’ve already requested cancellation. You will receive an email update soon.
+                    You’ve already requested cancellation. You will receive an email
+                    update soon.
                   </p>
                 ) : (
                   <>
@@ -460,6 +551,13 @@ const OrderDetails = () => {
                     This order has been cancelled.
                   </p>
                 )}
+
+                {/* ⭐ NEW subtle info row */}
+                <p className={styles.supportText}>
+                  <FiInfo className={styles.supportIcon} />
+                  Once your request is approved, we’ll send confirmation by email
+                  and SMS.
+                </p>
               </div>
             </div>
 
@@ -572,16 +670,16 @@ const OrderDetails = () => {
 
               <div className={styles.modalReasons}>
                 {[
-                  ["ORDERED_BY_MISTAKE", "I ordered by mistake"],
-                  ["FOUND_BETTER_PRICE", "Found a better price somewhere else"],
-                  ["DELIVERY_DELAY", "Delivery is taking too long"],
-                  ["CHANGE_ADDRESS", "I want to change address / details"],
-                  ["OTHER", "Something else"],
+                  ['ORDERED_BY_MISTAKE', 'I ordered by mistake'],
+                  ['FOUND_BETTER_PRICE', 'Found a better price somewhere else'],
+                  ['DELIVERY_DELAY', 'Delivery is taking too long'],
+                  ['CHANGE_ADDRESS', 'I want to change address / details'],
+                  ['OTHER', 'Something else'],
                 ].map(([value, label]) => (
                   <label
                     key={value}
                     className={`${styles.modalReason} ${
-                      cancelReason === value ? styles.modalReasonSelected : ""
+                      cancelReason === value ? styles.modalReasonSelected : ''
                     }`}
                   >
                     <input
@@ -596,7 +694,7 @@ const OrderDetails = () => {
                 ))}
               </div>
 
-              {cancelReason === "OTHER" && (
+              {cancelReason === 'OTHER' && (
                 <textarea
                   className={styles.modalTextarea}
                   placeholder="Write your reason here…"
@@ -622,13 +720,12 @@ const OrderDetails = () => {
                   onClick={handleConfirmCancel}
                   disabled={!cancelReason || cancelling}
                 >
-                  {cancelling ? "Submitting…" : "Submit request"}
+                  {cancelling ? 'Submitting…' : 'Submit request'}
                 </button>
               </div>
             </div>
           </div>
         )}
-
       </div>
     </div>
   );

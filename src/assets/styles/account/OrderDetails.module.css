@@ -1,7 +1,8 @@
 /* src/assets/styles/account/OrderDetails.module.css */
 
 .page {
-  background: #faf5f8;
+  /* ⭐ NEW softer gradient background */
+  background: radial-gradient(circle at top left, #ffe4f3 0, #faf5f8 40%, #fdf2ff 100%);
   min-height: 100vh;
   padding: 24px 16px;
 }
@@ -26,15 +27,16 @@
   padding: 8px 12px;
   border-radius: 999px;
   border: 1px solid #e2e2e2;
-  background: white;
+  background: #ffffff;
   cursor: pointer;
   font-size: 14px;
-  transition: background 0.2s ease, transform 0.1s ease;
+  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.15s ease;
 }
 
 .backBtn:hover {
   background: #fef2f8;
   transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(214, 51, 132, 0.2);
 }
 
 .backBtn svg {
@@ -63,8 +65,9 @@
   margin-top: 40px;
   padding: 32px 24px;
   border-radius: 16px;
-  background: white;
+  background: #ffffff;
   text-align: center;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
 }
 
 .stateTitle {
@@ -111,10 +114,27 @@
 
 /* Card */
 .card {
-  background: white;
+  position: relative;
+  background: #ffffff;
   border-radius: 16px;
   padding: 18px 16px;
-  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+  border: 1px solid #f3e6ee;
+  overflow: hidden;
+}
+
+/* subtle top accent border */
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border-top: 3px solid rgba(214, 51, 132, 0.5);
+  pointer-events: none;
+}
+
+.card > * {
+  position: relative;
 }
 
 .cardTitle {
@@ -122,6 +142,13 @@
   font-weight: 600;
   margin-bottom: 10px;
   color: #111827;
+}
+
+.cardTitleRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
 }
 
 .cardText {
@@ -147,9 +174,44 @@
 .orderDate {
   font-size: 13px;
   color: #6b7280;
+  margin-top: 2px;
 }
 
-/* summary grid under header */
+/* ⭐ NEW chips below order id */
+.summaryChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 11px;
+  border: 1px solid transparent;
+}
+
+.chipSoft {
+  background: #fdf2f8;
+  color: #9d174d;
+  border-color: #fbcfe8;
+}
+
+.chipOutline {
+  background: #ffffff;
+  color: #4b5563;
+  border-color: #e5e7eb;
+}
+
+.chipIcon {
+  font-size: 13px;
+}
+
+/* summary grid under header - unused but kept */
 .summaryGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -198,9 +260,9 @@
   margin: 8px 0;
 }
 
-/* savings row */
+/* ⭐ savings row */
 .savingsRow {
-  margin-top: 8px;
+  margin-top: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -295,7 +357,7 @@
   height: 12px;
   border-radius: 999px;
   border: 2px solid #e5e7eb;
-  background: white;
+  background: #ffffff;
   flex-shrink: 0;
 }
 
@@ -340,6 +402,28 @@
   margin-bottom: 2px;
 }
 
+/* ⭐ NEW address tags row */
+.addressTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.addressTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  background: #f3f4f6;
+  color: #4b5563;
+}
+
+.addressTag svg {
+  font-size: 13px;
+}
+
 /* Notes */
 .notesText {
   font-size: 14px;
@@ -361,7 +445,8 @@
   background: #d63384;
   color: white;
   font-weight: 500;
-  transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.1s ease;
+  transition: background 0.2s ease, transform 0.1s ease,
+    box-shadow 0.1s ease;
 }
 
 .cancelBtn:hover {
@@ -383,10 +468,19 @@
   margin-top: 6px;
 }
 
+/* ⭐ Updated: support text with icon */
 .supportText {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
   font-size: 12px;
   color: #6b7280;
   margin-top: 8px;
+}
+
+.supportIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .supportHighlight {
@@ -409,6 +503,15 @@
   padding: 10px;
   border-radius: 12px;
   background: #f9fafb;
+  transition: transform 0.12s ease, box-shadow 0.12s ease,
+    background 0.12s ease;
+}
+
+/* ⭐ small hover */
+.itemRow:hover {
+  transform: translateY(-1px);
+  background: #ffffff;
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.06);
 }
 
 .itemImgWrap {
@@ -470,6 +573,7 @@
   font-size: 12px;
   color: #4b5563;
 }
+
 /* ==== CANCEL REASON MODAL ==== */
 
 .modalOverlay {
