@@ -76,15 +76,25 @@ function OrderSuccess() {
     return order.shippingAddress || order.address || null;
   }, [order]);
 
-  const grandTotal = useMemo(() => {
-    if (!order) return null;
-    return (
-      order?.totals?.grandTotal ||
-      order?.paymentSummary?.grandTotal ||
-      order?.totalAmount ||
-      null
-    );
-  }, [order]);
+ const grandTotal = useMemo(() => {
+  if (!order) return null;
+
+  // 1) direct key from backend
+  if (order.grandTotal != null) return order.grandTotal;
+
+  // 2) if in nested objects (for future safety)
+  if (order.totals?.grandTotal != null) return order.totals.grandTotal;
+  if (order.paymentSummary?.grandTotal != null) return order.paymentSummary.grandTotal;
+  if (order.totalAmount != null) return order.totalAmount;
+
+  // 3) last fallback: calculate from itemsTotal + shippingFee
+  if (order.itemsTotal != null && order.shippingFee != null) {
+    return Number(order.itemsTotal) + Number(order.shippingFee);
+  }
+
+  return null;
+}, [order]);
+
 
   const paymentMethodLabel = useMemo(() => {
     if (!order) return "";

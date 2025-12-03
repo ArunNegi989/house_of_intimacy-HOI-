@@ -16,7 +16,21 @@ import {
   Button,
   Spinner,
   useToast,
+  IconButton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalCloseButton,
+  Divider,
+  Stack,
+  Grid,
+  GridItem,
+  HStack,
 } from "@chakra-ui/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons"; // 👈 NEW
+import { FiEye } from "react-icons/fi";
 import axios from "axios";
 
 const API_BASE_URL =
@@ -40,10 +54,14 @@ function AdminOrdersList() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [total, setTotal] = useState(0);
-  const [limit] = useState(20);
+  const [limit] = useState(10);
 
-  // 👉 NEW: only for per-row status update
+  // 👉 per-row status update loader
   const [updatingId, setUpdatingId] = useState(null);
+
+  // 👉 Modal state
+  const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState(null);
 
   const authToken =
     localStorage.getItem("authToken") || sessionStorage.getItem("authToken");
@@ -89,8 +107,6 @@ function AdminOrdersList() {
     try {
       if (!authToken) return;
 
-      // ❌ DO NOT setLoading(true) here
-      // ✅ Only mark this order as updating
       setUpdatingId(orderId);
 
       await axios.patch(
@@ -137,182 +153,572 @@ function AdminOrdersList() {
     return val.toFixed(2);
   };
 
+  // 🔍 Modal helpers
+  const openDetailsModal = (order) => {
+    setSelectedOrder(order);
+    setIsDetailsOpen(true);
+  };
+
+  const closeDetailsModal = () => {
+    setSelectedOrder(null);
+    setIsDetailsOpen(false);
+  };
+
   return (
-    <Box p="6">
-      <Flex justify="space-between" align="center" mb="4">
-        <Box>
-          <Heading size="md">Orders</Heading>
-          <Text fontSize="sm" color="gray.500">
-            View and manage all customer orders
-          </Text>
+    <>
+      <Box p="6" mt="20">
+        <Flex justify="space-between" align="center" mb="4">
+          <Box>
+            <Heading size="md">Orders</Heading>
+            <Text fontSize="sm" color="gray.500">
+              View and manage all customer orders
+            </Text>
+          </Box>
+
+          {/* FILTER BY STATUS */}
+          <Flex align="center" gap="3">
+            <Text fontSize="sm" color="gray.600">
+              Filter by status:
+            </Text>
+            <Select
+              size="sm"
+              maxW="220px"
+              value={statusFilter}
+              onChange={(e) => {
+                setPage(1);
+                setStatusFilter(e.target.value);
+              }}
+            >
+              <option value="ALL">All</option>
+              <option value="PLACED">Placed</option>
+              <option value="CONFIRMED">Confirmed</option>
+              <option value="PROCESSING">Processing</option>
+              <option value="SHIPPED">Shipped</option>
+              <option value="OUT_FOR_DELIVERY">Out for delivery</option>
+              <option value="DELIVERED">Delivered</option>
+              <option value="CANCELLED">Cancelled</option>
+            </Select>
+          </Flex>
+        </Flex>
+
+        <Box borderWidth="1px" borderRadius="lg" overflowX="auto" bg="white">
+          {loading ? (
+            <Flex justify="center" align="center" p="10" gap="3">
+              <Spinner />
+              <Text fontSize="sm">Loading orders...</Text>
+            </Flex>
+          ) : (
+            <Table size="sm">
+              <Thead bg="gray.50">
+                <Tr>
+                  <Th>Order</Th>
+                  <Th>Customer</Th>
+                  <Th isNumeric>Total</Th>
+                  <Th>Status</Th>
+                  <Th>Payment</Th>
+                  <Th>Date</Th>
+                  <Th>Details</Th>
+                  <Th>Update</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {orders.map((order) => (
+                  <Tr
+                    key={order._id}
+                    opacity={updatingId === order._id ? 0.6 : 1}
+                  >
+                    <Td>
+                      <Text fontWeight="600" fontSize="sm">
+                        {order.orderNumber || order._id.slice(-8)}
+                      </Text>
+                      <Text fontSize="xs" color="gray.500">
+                        {order.items?.length || 0} items
+                      </Text>
+                    </Td>
+
+                    <Td>
+                      <Text fontSize="sm">
+                        {order.shippingAddress?.name ||
+                          order.user?.name ||
+                          "Customer"}
+                      </Text>
+                      <Text fontSize="xs" color="gray.500">
+                        {order.user?.email}
+                      </Text>
+                    </Td>
+
+                    <Td isNumeric>
+                      <Text fontSize="sm">
+                        ₹ {formatMoney(order.grandTotal)}
+                      </Text>
+                      {order.totalSavings != null && (
+                        <Text fontSize="xs" color="green.500">
+                          Saved ₹ {formatMoney(order.totalSavings)}
+                        </Text>
+                      )}
+                    </Td>
+
+                    <Td>
+                      <Badge colorScheme={statusColors[order.status] || "gray"}>
+                        {order.status}
+                      </Badge>
+                    </Td>
+
+                    <Td>
+                      <Badge
+                        colorScheme={
+                          order.paymentStatus === "PAID"
+                            ? "green"
+                            : order.paymentStatus === "FAILED"
+                            ? "red"
+                            : "yellow"
+                        }
+                      >
+                        {order.paymentMethod} / {order.paymentStatus}
+                      </Badge>
+                    </Td>
+
+                    <Td>
+                      <Text fontSize="xs">
+                        {new Date(order.createdAt).toLocaleString("en-IN", {
+                          day: "2-digit",
+                          month: "short",
+                          year: "numeric",
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </Text>
+                    </Td>
+
+                    {/* 👁 Eye button for details */}
+                    <Td>
+                      <IconButton
+                        aria-label="View order details"
+                        icon={<FiEye />}
+                        size="sm"
+                        variant="outline"
+                        onClick={() => openDetailsModal(order)}
+                      />
+                    </Td>
+
+                    <Td>
+                      <Select
+                        size="xs"
+                        value={order.status}
+                        onChange={(e) =>
+                          handleStatusChange(order._id, e.target.value)
+                        }
+                        isDisabled={updatingId === order._id}
+                      >
+                        <option value="PLACED">PLACED</option>
+                        <option value="CONFIRMED">CONFIRMED</option>
+                        <option value="PROCESSING">PROCESSING</option>
+                        <option value="SHIPPED">SHIPPED</option>
+                        <option value="OUT_FOR_DELIVERY">
+                          OUT_FOR_DELIVERY
+                        </option>
+                        <option value="DELIVERED">DELIVERED</option>
+                        <option value="CANCELLED">CANCELLED</option>
+                      </Select>
+                      {updatingId === order._id && (
+                        <Text fontSize="xx-small" color="gray.500" mt="1">
+                          Updating...
+                        </Text>
+                      )}
+                    </Td>
+                  </Tr>
+                ))}
+              </Tbody>
+            </Table>
+          )}
         </Box>
 
-        {/* FILTER BY STATUS */}
-        <Flex align="center" gap="3">
-          <Text fontSize="sm" color="gray.600">
-            Filter by status:
-          </Text>
-          <Select
-            size="sm"
-            maxW="220px"
-            value={statusFilter}
-            onChange={(e) => {
-              setPage(1);
-              setStatusFilter(e.target.value);
-            }}
-          >
-            <option value="ALL">All</option>
-            <option value="PLACED">Placed</option>
-            <option value="CONFIRMED">Confirmed</option>
-            <option value="PROCESSING">Processing</option>
-            <option value="SHIPPED">Shipped</option>
-            <option value="OUT_FOR_DELIVERY">Out for delivery</option>
-            <option value="DELIVERED">Delivered</option>
-            <option value="CANCELLED">Cancelled</option>
-          </Select>
+        {/* 🎨 Pagination – centered & pretty */}
+        <Flex justify="center" mt="6">
+          <Stack spacing={2} align="center">
+            <Text fontSize="xs" color="gray.500">
+              Showing page <b>{page}</b> of <b>{totalPages}</b> ({total} orders)
+            </Text>
+
+            <HStack
+              spacing={3}
+              px={4}
+              py={2}
+              borderRadius="full"
+              bg="gray.50"
+              boxShadow="sm"
+              borderWidth="1px"
+              borderColor="gray.200"
+            >
+              <Button
+                size="xs"
+                variant="ghost"
+                leftIcon={<ChevronLeftIcon />}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                isDisabled={page === 1 || loading}
+              >
+                Prev
+              </Button>
+
+              <Box
+                fontSize="xs"
+                px={3}
+                py={1}
+                borderRadius="full"
+                bg="white"
+                borderWidth="1px"
+                borderColor="pink.200"
+                color="pink.600"
+                minW="80px"
+                textAlign="center"
+              >
+                Page {page}
+              </Box>
+
+              <Button
+                size="xs"
+                variant="ghost"
+                rightIcon={<ChevronRightIcon />}
+                onClick={() =>
+                  setPage((p) => (p < totalPages ? p + 1 : p))
+                }
+                isDisabled={page === totalPages || loading}
+              >
+                Next
+              </Button>
+            </HStack>
+          </Stack>
         </Flex>
-      </Flex>
+      </Box>
 
-      <Box borderWidth="1px" borderRadius="lg" overflowX="auto" bg="white">
-        {loading ? (
-          <Flex justify="center" align="center" p="10" gap="3">
-            <Spinner />
-            <Text fontSize="sm">Loading orders...</Text>
-          </Flex>
-        ) : (
-          <Table size="sm">
-            <Thead bg="gray.50">
-              <Tr>
-                <Th>Order</Th>
-                <Th>Customer</Th>
-                <Th isNumeric>Total</Th>
-                <Th>Status</Th>
-                <Th>Payment</Th>
-                <Th>Date</Th>
-                <Th>Update</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              {orders.map((order) => (
-                <Tr key={order._id} opacity={updatingId === order._id ? 0.6 : 1}>
-                  <Td>
-                    <Text fontWeight="600" fontSize="sm">
-                      {order.orderNumber || order._id.slice(-8)}
-                    </Text>
-                    <Text fontSize="xs" color="gray.500">
-                      {order.items?.length || 0} items
-                    </Text>
-                  </Td>
+      {/* 🔍 Order Details Modal - same attractive design */}
+      <Modal
+        isOpen={isDetailsOpen}
+        onClose={closeDetailsModal}
+        size="4xl"
+        isCentered
+      >
+        <ModalOverlay bg="blackAlpha.400" backdropFilter="blur(4px)" />
+        <ModalContent
+          borderRadius="2xl"
+          overflow="hidden"
+          bg="gray.50"
+          boxShadow="2xl"
+        >
+          <ModalHeader
+            py={4}
+            px={6}
+            borderBottomWidth="1px"
+            borderColor="gray.100"
+            bg="white"
+          >
+            <Flex justify="space-between" align="center">
+              <Box>
+                <Text fontSize="xs" textTransform="uppercase" color="gray.500">
+                  Order Details
+                </Text>
+                <Text fontWeight="700" fontSize="lg">
+                  {selectedOrder?.orderNumber ||
+                    (selectedOrder?._id && `#${selectedOrder._id.slice(-8)}`)}
+                </Text>
+              </Box>
 
-                  <Td>
-                    <Text fontSize="sm">
-                      {order.shippingAddress?.name ||
-                        order.user?.name ||
-                        "Customer"}
-                    </Text>
-                    <Text fontSize="xs" color="gray.500">
-                      {order.user?.email}
-                    </Text>
-                  </Td>
+              {selectedOrder && (
+                <HStack spacing={2} align="center">
+                  <Badge
+                    px={3}
+                    py={1}
+                    borderRadius="full"
+                    fontSize="xs"
+                    colorScheme={statusColors[selectedOrder.status] || "gray"}
+                  >
+                    {selectedOrder.status}
+                  </Badge>
 
-                  <Td isNumeric>
-                    <Text fontSize="sm">
-                      ₹ {formatMoney(order.grandTotal)}
-                    </Text>
-                    {order.totalSavings != null && (
-                      <Text fontSize="xs" color="green.500">
-                        Saved ₹ {formatMoney(order.totalSavings)}
-                      </Text>
-                    )}
-                  </Td>
-
-                  <Td>
-                    <Badge colorScheme={statusColors[order.status] || "gray"}>
-                      {order.status}
-                    </Badge>
-                  </Td>
-
-                  <Td>
+                  {selectedOrder.paymentMethod && (
                     <Badge
+                      px={3}
+                      py={1}
+                      borderRadius="full"
+                      fontSize="xs"
                       colorScheme={
-                        order.paymentStatus === "PAID"
+                        selectedOrder.paymentStatus === "PAID"
                           ? "green"
-                          : order.paymentStatus === "FAILED"
+                          : selectedOrder.paymentStatus === "FAILED"
                           ? "red"
                           : "yellow"
                       }
                     >
-                      {order.paymentMethod} / {order.paymentStatus}
+                      {selectedOrder.paymentMethod} •{" "}
+                      {selectedOrder.paymentStatus}
                     </Badge>
-                  </Td>
+                  )}
+                </HStack>
+              )}
+            </Flex>
+          </ModalHeader>
 
-                  <Td>
-                    <Text fontSize="xs">
-                      {new Date(order.createdAt).toLocaleString("en-IN", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </Text>
-                  </Td>
+          <ModalCloseButton top="12px" right="12px" />
 
-                  <Td>
-                    <Select
-                      size="xs"
-                      value={order.status}
-                      onChange={(e) =>
-                        handleStatusChange(order._id, e.target.value)
-                      }
-                      isDisabled={updatingId === order._id}
-                    >
-                      <option value="PLACED">PLACED</option>
-                      <option value="CONFIRMED">CONFIRMED</option>
-                      <option value="PROCESSING">PROCESSING</option>
-                      <option value="SHIPPED">SHIPPED</option>
-                      <option value="OUT_FOR_DELIVERY">
-                        OUT_FOR_DELIVERY
-                      </option>
-                      <option value="DELIVERED">DELIVERED</option>
-                      <option value="CANCELLED">CANCELLED</option>
-                    </Select>
-                    {updatingId === order._id && (
-                      <Text fontSize="xx-small" color="gray.500" mt="1">
-                        Updating...
+          <ModalBody p={6} bg="gray.50">
+            {selectedOrder && (
+              <Stack spacing={5}>
+                {/* Top summary strip */}
+                <Box
+                  p={4}
+                  borderRadius="lg"
+                  bgGradient="linear(to-r, pink.50, purple.50)"
+                  borderWidth="1px"
+                  borderColor="pink.100"
+                >
+                  <Flex justify="space-between" align="center" gap={4}>
+                    <Box>
+                      <Text fontSize="xs" color="gray.700">
+                        Placed On
                       </Text>
-                    )}
-                  </Td>
-                </Tr>
-              ))}
-            </Tbody>
-          </Table>
-        )}
-      </Box>
+                      <Text fontSize="sm" fontWeight="600">
+                        {new Date(selectedOrder.createdAt).toLocaleString(
+                          "en-IN",
+                          {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          }
+                        )}
+                      </Text>
+                    </Box>
 
-      {/* Pagination */}
-      <Flex justify="space-between" align="center" mt="4">
-        <Text fontSize="xs" color="gray.500">
-          Showing page {page} of {totalPages} ({total} orders)
-        </Text>
-        <Flex gap="2">
-          <Button
-            size="xs"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            isDisabled={page === 1 || loading}
-          >
-            Prev
-          </Button>
-          <Button
-            size="xs"
-            onClick={() => setPage((p) => (p < totalPages ? p + 1 : p))}
-            isDisabled={page === totalPages || loading}
-          >
-            Next
-          </Button>
-        </Flex>
-      </Flex>
-    </Box>
+                    <Box textAlign="right">
+                      <Text fontSize="xs" color="gray.700">
+                        Grand Total
+                      </Text>
+                      <Text fontSize="lg" fontWeight="700">
+                        ₹ {formatMoney(selectedOrder.grandTotal)}
+                      </Text>
+                      {selectedOrder.discountTotal > 0 && (
+                        <Text fontSize="xs" color="green.700">
+                          You saved ₹{" "}
+                          {formatMoney(selectedOrder.discountTotal)}
+                        </Text>
+                      )}
+                    </Box>
+                  </Flex>
+                </Box>
+
+                {/* Grid: Customer + Amount */}
+                <Grid templateColumns={{ base: "1fr", md: "2fr 1.4fr" }} gap={4}>
+                  {/* Left: Customer & Shipping */}
+                  <GridItem>
+                    <Box
+                      bg="white"
+                      borderRadius="lg"
+                      borderWidth="1px"
+                      borderColor="gray.100"
+                      p={4}
+                    >
+                      <Text fontSize="sm" fontWeight="700" mb={2}>
+                        Customer & Shipping
+                      </Text>
+                      <Divider mb={3} />
+
+                      <Stack spacing={1}>
+                        <Text fontSize="sm">
+                          <strong>Name:</strong>{" "}
+                          {selectedOrder.shippingAddress?.name ||
+                            selectedOrder.user?.name}
+                        </Text>
+
+                        {selectedOrder.shippingAddress?.phone && (
+                          <Text fontSize="sm">
+                            <strong>Phone:</strong>{" "}
+                            {selectedOrder.shippingAddress.phone}
+                          </Text>
+                        )}
+
+                        {selectedOrder.user?.email && (
+                          <Text fontSize="sm">
+                            <strong>Email:</strong> {selectedOrder.user.email}
+                          </Text>
+                        )}
+                      </Stack>
+
+                      <Box mt={3}>
+                        <Text fontSize="sm" fontWeight="600" mb={1}>
+                          Shipping Address
+                        </Text>
+                        <Box
+                          fontSize="xs"
+                          color="gray.700"
+                          p={3}
+                          borderRadius="md"
+                          bg="gray.50"
+                          borderWidth="1px"
+                          borderColor="gray.100"
+                        >
+                          <Text>
+                            {selectedOrder.shippingAddress?.addressLine1}
+                            {selectedOrder.shippingAddress?.addressLine2 && (
+                              <>
+                                , {selectedOrder.shippingAddress.addressLine2}
+                              </>
+                            )}
+                          </Text>
+                          {selectedOrder.shippingAddress?.landmark && (
+                            <Text>
+                              {selectedOrder.shippingAddress.landmark}
+                            </Text>
+                          )}
+                          <Text>
+                            {selectedOrder.shippingAddress?.city},{" "}
+                            {selectedOrder.shippingAddress?.state} -{" "}
+                            {selectedOrder.shippingAddress?.pincode}
+                          </Text>
+                        </Box>
+                      </Box>
+                    </Box>
+                  </GridItem>
+
+                  {/* Right: Amount + Payment + IDs */}
+                  <GridItem>
+                    <Box
+                      bg="white"
+                      borderRadius="lg"
+                      borderWidth="1px"
+                      borderColor="gray.100"
+                      p={4}
+                    >
+                      <Text fontSize="sm" fontWeight="700" mb={2}>
+                        Amount Summary
+                      </Text>
+                      <Divider mb={3} />
+
+                      <Stack spacing={1}>
+                        <Flex justify="space-between" fontSize="sm">
+                          <Text>Items Total</Text>
+                          <Text>₹ {formatMoney(selectedOrder.itemsTotal)}</Text>
+                        </Flex>
+
+                        <Flex justify="space-between" fontSize="sm">
+                          <Text>MRP Total</Text>
+                          <Text>₹ {formatMoney(selectedOrder.mrpTotal)}</Text>
+                        </Flex>
+
+                        <Flex justify="space-between" fontSize="sm">
+                          <Text>Discount</Text>
+                          <Text>
+                            - ₹ {formatMoney(selectedOrder.discountTotal)}
+                          </Text>
+                        </Flex>
+
+                        <Flex justify="space-between" fontSize="sm">
+                          <Text>Shipping Fee</Text>
+                          <Text>₹ {formatMoney(selectedOrder.shippingFee)}</Text>
+                        </Flex>
+
+                        <Divider my={2} />
+
+                        <Flex
+                          justify="space-between"
+                          fontSize="md"
+                          fontWeight="700"
+                        >
+                          <Text>Grand Total</Text>
+                          <Text>₹ {formatMoney(selectedOrder.grandTotal)}</Text>
+                        </Flex>
+                      </Stack>
+
+                      {/* Payment + IDs */}
+                      <Box mt={4}>
+                        {selectedOrder.paymentMethod && (
+                          <Text fontSize="sm">
+                            <strong>Payment:</strong>{" "}
+                            {selectedOrder.paymentMethod} /{" "}
+                            {selectedOrder.paymentStatus}
+                          </Text>
+                        )}
+                        {selectedOrder.paymentId && (
+                          <Text fontSize="xs" color="gray.600">
+                            <strong>Payment ID:</strong>{" "}
+                            {selectedOrder.paymentId}
+                          </Text>
+                        )}
+                        {selectedOrder.razorpayOrderId && (
+                          <Text fontSize="xs" color="gray.600">
+                            <strong>Gateway Order ID:</strong>{" "}
+                            {selectedOrder.razorpayOrderId}
+                          </Text>
+                        )}
+                      </Box>
+                    </Box>
+                  </GridItem>
+                </Grid>
+
+                {/* Items list */}
+                <Box
+                  bg="white"
+                  borderRadius="lg"
+                  borderWidth="1px"
+                  borderColor="gray.100"
+                  p={4}
+                >
+                  <Text fontSize="sm" fontWeight="700" mb={2}>
+                    Items ({selectedOrder.items?.length || 0})
+                  </Text>
+                  <Divider mb={3} />
+
+                  <Box maxH="260px" overflowY="auto">
+                    <Table size="sm" variant="simple">
+                      <Thead bg="gray.50" position="sticky" top={0} zIndex={1}>
+                        <Tr>
+                          <Th>Product</Th>
+                          <Th>Color</Th>
+                          <Th>Size</Th>
+                          <Th isNumeric>Qty</Th>
+                          <Th isNumeric>Line Total</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {selectedOrder.items?.map((item) => (
+                          <Tr key={item._id || item.product}>
+                            <Td>
+                              <Text fontSize="sm" fontWeight="500">
+                                {item.name}
+                              </Text>
+                              <Text fontSize="xs" color="gray.500">
+                                ID: {item.product}
+                              </Text>
+                            </Td>
+                            <Td>
+                              <Text fontSize="sm">{item.color || "—"}</Text>
+                            </Td>
+                            <Td>
+                              <Text fontSize="sm">{item.size || "—"}</Text>
+                            </Td>
+                            <Td isNumeric>
+                              <Text fontSize="sm">{item.quantity}</Text>
+                            </Td>
+                            <Td isNumeric>
+                              <Text fontSize="sm">
+                                ₹{" "}
+                                {formatMoney(
+                                  item.lineTotal || item.salePrice || 0
+                                )}
+                              </Text>
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </Box>
+                </Box>
+              </Stack>
+            )}
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+    </>
   );
 }
 
