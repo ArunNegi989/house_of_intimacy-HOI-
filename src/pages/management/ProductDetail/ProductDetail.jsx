@@ -81,6 +81,9 @@ function ProductDetail() {
   const [pinMessage, setPinMessage] = useState('');
   const [pinError, setPinError] = useState(false);
 
+  // ⭐ NEW: COD allowed (Dehradun pincode check)
+  const [isDehradunPincode, setIsDehradunPincode] = useState(null);
+
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [sizeError, setSizeError] = useState(false);
@@ -108,6 +111,8 @@ function ProductDetail() {
         setColorError(false); // ⭐ reset on product change
         setPin('');
         setPinMessage('');
+        setPinError(false);
+        setIsDehradunPincode(null);
         setActionMessage('');
         setQty(1);
 
@@ -221,9 +226,11 @@ function ProductDetail() {
     });
   };
 
-  const handleCheckPin = () => {
+  // ⭐ UPDATED: call backend /v1/shipping/check-pincode/:pin
+  const handleCheckPin = async () => {
     setPinMessage('');
     setPinError(false);
+    setIsDehradunPincode(null);
 
     const clean = pin.trim();
     const valid = /^[0-9]{6}$/.test(clean);
@@ -234,8 +241,30 @@ function ProductDetail() {
       return;
     }
 
-    setPinError(false);
-    setPinMessage(`Good news! Delivery is available to ${clean}.`);
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/v1/shipping/check-pincode/${clean}`,
+      );
+      const data = await res.json();
+
+      // data = { pincode, codAllowed, message }
+      setIsDehradunPincode(data.codAllowed);
+
+      if (!data.codAllowed) {
+        setPinError(true);
+      } else {
+        setPinError(false);
+      }
+
+      setPinMessage(data.message || '');
+    } catch (err) {
+      console.error('Pincode check error', err);
+      setPinError(true);
+      setPinMessage(
+        'Unable to check this pincode right now. Please try again.',
+      );
+      setIsDehradunPincode(null);
+    }
   };
 
   const handleSizeGuide = () => {
@@ -721,6 +750,9 @@ function ProductDetail() {
                 }
               >
                 {pinMessage}
+                {isDehradunPincode && (
+                  <span> COD is available for this pincode.</span>
+                )}
               </div>
             )}
             {!pinMessage && (
