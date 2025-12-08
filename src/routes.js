@@ -19,6 +19,7 @@ import EditProducts from 'pages/management/products/[id]';
 import AdminOrdersList from 'views/admin/orders/AdminOrdersList';
 import AdminOrderDetail from 'views/admin/orders/AdminOrdersList';
 import AdminPlacedOrdersList from 'views/admin/orders/AdminPlacedOrdersList';
+import { AllBlogs } from 'pages/management/Blogs';
 
 const routes = [
   {
@@ -90,6 +91,14 @@ const routes = [
     path: '/orders/:id',
     component: <AdminOrderDetail />,
     showInSidebar: false, // hidden
+  },
+  {
+    name: 'Blogs',
+    layout: '/admin',
+    path: '/Blogs',
+    icon: <FaClipboardList />,
+    component: <AllBlogs />,
+    showInSidebar: true, // sidebar me dikhana hai
   },
 ];
 
