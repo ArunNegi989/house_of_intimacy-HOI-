@@ -49,6 +49,7 @@ import MyOrders from 'pages/account/MyOrders';
 import OrderDetails from 'pages/account/OrderDetails';
 import OrderSuccess from 'pages/Checkout/OrderSuccess';
 import ScrollToTop from 'components/ScrollToTop';
+import { BlogDetails } from 'components/BlogDetails';
 
 export default function Main() {
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
@@ -105,6 +106,7 @@ export default function Main() {
                   path="/order-success/:orderId"
                   element={<OrderSuccess />}
                 />
+                <Route path="/BlogDetails" element={<BlogDetails/>} />
 
                 {/* 🔐 ADMIN LAYOUT – now uses AdminRoute */}
                 <Route
