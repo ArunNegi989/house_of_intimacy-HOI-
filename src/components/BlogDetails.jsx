@@ -291,7 +291,7 @@ export function BlogDetails() {
     </div>
     </section>
     {/* ******FAQ******* */}
-    <section className='FAQ' >
+    {/* <section className='FAQ' >
          <div style={styles.FaqContainer}>
         <div style={styles.content}>
           <div style={styles.header}>
@@ -363,7 +363,7 @@ export function BlogDetails() {
           </div>
         </div>
       </div>
-      </section>
+      </section> */}
 
       {/* Conclusion */}
       <section className={Style.Conclusion}>
