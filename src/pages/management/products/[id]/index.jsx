@@ -1,4 +1,4 @@
-// src/pages/management/products/edit.jsx (or add-new-edit path)
+// src/pages/management/products/edit.jsx
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
@@ -12,6 +12,8 @@ import {
   Select,
   Switch,
   Tag,
+  TagLabel,
+  TagCloseButton,
   Heading,
   SimpleGrid,
   NumberInput,
@@ -74,6 +76,14 @@ const EditProducts = () => {
   const [currentColor, setCurrentColor] = useState("#000000");
   const [selectedColors, setSelectedColors] = useState([]);
 
+  // ⭐ Product Features (multiple points)
+  const [featurePoints, setFeaturePoints] = useState([]);
+  const [featureInput, setFeatureInput] = useState("");
+
+  // ⭐ Shipping & Returns points
+  const [shippingPoints, setShippingPoints] = useState([]);
+  const [shippingInput, setShippingInput] = useState("");
+
   const [loadingProduct, setLoadingProduct] = useState(true);
 
   const cardBg = useColorModeValue("white", "gray.900");
@@ -114,6 +124,48 @@ const EditProducts = () => {
     setSelectedColors((prev) => {
       const updated = prev.filter((c) => c !== hex);
       setValue("colors", updated.join(","), { shouldValidate: true });
+      return updated;
+    });
+  };
+
+  // 👉 Add feature point
+  const handleAddFeature = () => {
+    const trimmed = featureInput.trim();
+    if (!trimmed) return;
+
+    setFeaturePoints((prev) => {
+      const updated = [...prev, trimmed];
+      setValue("features", updated.join("||"), { shouldValidate: true });
+      return updated;
+    });
+    setFeatureInput("");
+  };
+
+  const handleRemoveFeature = (index) => {
+    setFeaturePoints((prev) => {
+      const updated = prev.filter((_, i) => i !== index);
+      setValue("features", updated.join("||"), { shouldValidate: true });
+      return updated;
+    });
+  };
+
+  // 👉 Add Shipping & Returns point
+  const handleAddShippingPoint = () => {
+    const trimmed = shippingInput.trim();
+    if (!trimmed) return;
+
+    setShippingPoints((prev) => {
+      const updated = [...prev, trimmed];
+      setValue("shippingInfo", updated.join("||"), { shouldValidate: true });
+      return updated;
+    });
+    setShippingInput("");
+  };
+
+  const handleRemoveShippingPoint = (index) => {
+    setShippingPoints((prev) => {
+      const updated = prev.filter((_, i) => i !== index);
+      setValue("shippingInfo", updated.join("||"), { shouldValidate: true });
       return updated;
     });
   };
@@ -211,6 +263,18 @@ const EditProducts = () => {
           setValue("collections", p.collections.join(", "));
         }
 
+        // ⭐ FEATURES
+        if (Array.isArray(p.features)) {
+          setFeaturePoints(p.features);
+          setValue("features", p.features.join("||"));
+        }
+
+        // ⭐ SHIPPING & RETURNS
+        if (Array.isArray(p.shippingAndReturns)) {
+          setShippingPoints(p.shippingAndReturns);
+          setValue("shippingInfo", p.shippingAndReturns.join("||"));
+        }
+
         // SEO
         if (p.seo) {
           setValue("metaTitle", p.seo.metaTitle || "");
@@ -286,6 +350,20 @@ const EditProducts = () => {
           .filter(Boolean)
       : [];
 
+    const featuresArray = data.features
+      ? data.features
+          .split("||")
+          .map((f) => f.trim())
+          .filter(Boolean)
+      : [];
+
+    const shippingArray = data.shippingInfo
+      ? data.shippingInfo
+          .split("||")
+          .map((s) => s.trim())
+          .filter(Boolean)
+      : [];
+
     // Build FormData
     const formData = new FormData();
 
@@ -339,6 +417,8 @@ const EditProducts = () => {
     formData.append("tags", JSON.stringify(tagsArray));
     formData.append("colors", JSON.stringify(colorsArray));
     formData.append("collections", JSON.stringify(collectionsArray));
+    formData.append("features", JSON.stringify(featuresArray));
+    formData.append("shippingAndReturns", JSON.stringify(shippingArray));
 
     formData.append(
       "seo",
@@ -1071,6 +1151,111 @@ const EditProducts = () => {
                 </FormControl>
               </SimpleGrid>
 
+              {/* ⭐ NEW: Product Features & Shipping/Returns (same as add form) */}
+              <SimpleGrid columns={[1, 2]} gap={4} mt={4}>
+                {/* Product Features */}
+                <FormControl>
+                  <FormLabel>Product Features (multiple points)</FormLabel>
+
+                  {/* Hidden field for RHF */}
+                  <Input
+                    type="hidden"
+                    {...register("features")}
+                    value={featurePoints.join("||")}
+                    readOnly
+                  />
+
+                  <Flex gap={2} mb={2}>
+                    <Input
+                      size="sm"
+                      value={featureInput}
+                      onChange={(e) => setFeatureInput(e.target.value)}
+                      placeholder="Add a feature point (e.g. Soft breathable cotton)"
+                    />
+                    <Button
+                      size="sm"
+                      colorScheme="purple"
+                      onClick={handleAddFeature}
+                    >
+                      Add
+                    </Button>
+                  </Flex>
+
+                  <Flex wrap="wrap" gap={2}>
+                    {featurePoints.length === 0 && (
+                      <Text fontSize="xs" color="gray.400">
+                        Abhi koi feature add nahi hua hai.
+                      </Text>
+                    )}
+
+                    {featurePoints.map((point, idx) => (
+                      <Tag
+                        key={idx}
+                        borderRadius="full"
+                        variant="subtle"
+                        colorScheme="pink"
+                      >
+                        <TagLabel>{point}</TagLabel>
+                        <TagCloseButton
+                          onClick={() => handleRemoveFeature(idx)}
+                        />
+                      </Tag>
+                    ))}
+                  </Flex>
+                </FormControl>
+
+                {/* Shipping & Returns */}
+                <FormControl>
+                  <FormLabel>Shipping & Returns (points)</FormLabel>
+
+                  {/* Hidden field for RHF */}
+                  <Input
+                    type="hidden"
+                    {...register("shippingInfo")}
+                    value={shippingPoints.join("||")}
+                    readOnly
+                  />
+
+                  <Flex gap={2} mb={2}>
+                    <Input
+                      size="sm"
+                      value={shippingInput}
+                      onChange={(e) => setShippingInput(e.target.value)}
+                      placeholder="e.g. Free shipping above ₹999"
+                    />
+                    <Button
+                      size="sm"
+                      colorScheme="purple"
+                      onClick={handleAddShippingPoint}
+                    >
+                      Add
+                    </Button>
+                  </Flex>
+
+                  <Flex wrap="wrap" gap={2}>
+                    {shippingPoints.length === 0 && (
+                      <Text fontSize="xs" color="gray.400">
+                        Abhi koi shipping/return point add nahi hua hai.
+                      </Text>
+                    )}
+
+                    {shippingPoints.map((point, idx) => (
+                      <Tag
+                        key={idx}
+                        borderRadius="full"
+                        variant="subtle"
+                        colorScheme="blue"
+                      >
+                        <TagLabel>{point}</TagLabel>
+                        <TagCloseButton
+                          onClick={() => handleRemoveShippingPoint(idx)}
+                        />
+                      </Tag>
+                    ))}
+                  </Flex>
+                </FormControl>
+              </SimpleGrid>
+
               <Divider my={6} />
 
               {/* SEO */}
@@ -1167,7 +1352,7 @@ const EditProducts = () => {
                     src={imagePreview}
                     alt={nameWatch}
                     objectFit="cover"
-                     objectPosition="top"   
+                    objectPosition="top"
                     w="100%"
                     h="100%"
                   />

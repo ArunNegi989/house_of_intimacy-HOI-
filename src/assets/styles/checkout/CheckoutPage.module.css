@@ -1,3 +1,5 @@
+/* src/assets/styles/checkout/CheckoutPage.module.css */
+
 /* ---------- PAGE WRAPPER ---------- */
 
 .pageWrapper {
@@ -219,7 +221,7 @@
   outline: none;
   background: #f9fafb;
   transition: border-color 0.16s ease, background 0.16s ease,
-    box-shadow 0.16s ease, transform 0.10s ease;
+    box-shadow 0.16s ease, transform 0.1s ease;
 }
 
 .formGroup input::placeholder {
@@ -249,7 +251,7 @@
   margin-bottom: 8px;
   color: #be123c;
   text-transform: uppercase;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.1em;
 }
 
 .savedList {
@@ -259,18 +261,31 @@
   margin-bottom: 6px;
 }
 
+/* prettier address cards */
 .addressCard {
   display: flex;
   align-items: flex-start;
   gap: 8px;
   padding: 10px 11px;
-  border-radius: 14px;
+  border-radius: 16px;
   border: 1px solid #e5e7eb;
   cursor: pointer;
   transition: border-color 0.16s ease, box-shadow 0.16s ease,
     background 0.16s ease, transform 0.12s ease;
   font-size: 13px;
-  background: #ffffff;
+  background: linear-gradient(135deg, #ffffff, #f9fafb);
+  position: relative;
+  overflow: hidden;
+}
+
+.addressCard::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at top left, #fee2e2, transparent 55%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
 }
 
 .addressCard input[type='radio'] {
@@ -280,22 +295,32 @@
 
 .addressCard:hover {
   border-color: #fb7185;
-  box-shadow: 0 10px 25px rgba(190, 24, 93, 0.18);
+  box-shadow: 0 12px 30px rgba(190, 24, 93, 0.18);
   transform: translateY(-1px);
+}
+
+.addressCard:hover::before {
+  opacity: 1;
 }
 
 .addressCardActive {
   border-color: #111827;
   background: radial-gradient(circle at top left, #111827, #020617);
   color: #e5e7eb;
-  box-shadow: 0 14px 32px rgba(15, 23, 42, 0.8);
+  box-shadow: 0 16px 36px rgba(15, 23, 42, 0.9);
+}
+
+.addressCardActive::before {
+  background: radial-gradient(circle at bottom right, #ec4899, transparent 55%);
+  opacity: 0.5;
 }
 
 .addressCardActive .addressText {
   color: #e5e7eb;
 }
 
-.addressCardActive .addressLabel {
+.addressCardActive .addressLabel,
+.addressCardActive .addressName {
   color: #fef2f2;
 }
 
@@ -305,15 +330,75 @@
   gap: 4px;
 }
 
-.addressLabelRow {
+/* header row inside address card */
+.addressHeaderRow {
   display: flex;
   justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+}
+
+.addressLabelRow {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+/* type + default pills */
+.addressTypePills {
+  display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 2px;
+}
+
+.addressTypeChip {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #fdf2f8;
+  color: #be185d;
+  border: 1px solid rgba(244, 114, 182, 0.5);
+}
+
+.addressCardActive .addressTypeChip {
+  background: rgba(15, 23, 42, 0.6);
+  color: #f9a8d4;
+  border-color: rgba(248, 250, 252, 0.18);
+}
+
+.defaultBadge {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #15803d;
+  border: 1px solid #6ee7b7;
+}
+
+.addressCardActive .defaultBadge {
+  background: rgba(22, 163, 74, 0.18);
+  color: #bbf7d0;
+  border-color: rgba(187, 247, 208, 0.6);
 }
 
 .addressLabel {
   font-size: 13px;
   font-weight: 600;
+  color: #111827;
+}
+
+.addressName {
+  font-size: 13px;
+  font-weight: 500;
   color: #111827;
 }
 
@@ -329,6 +414,32 @@
   color: #9ca3af;
   text-transform: uppercase;
   letter-spacing: 0.12em;
+}
+
+/* delete button in saved address */
+
+.addressDeleteBtn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease, transform 0.12s ease, color 0.15s ease;
+  color: #9ca3af;
+  margin-left: auto;
+}
+
+.addressDeleteBtn:hover {
+  background: rgba(248, 113, 113, 0.12);
+  color: #b91c1c;
+  transform: scale(1.08) translateY(-1px);
+}
+
+.addressDeleteIcon {
+  font-size: 16px;
 }
 
 /* ---------- SAVE ADDRESS BUTTON ---------- */
@@ -424,6 +535,16 @@
 .itemRow {
   display: flex;
   gap: 10px;
+  padding: 8px 8px;
+  border-radius: 14px;
+  transition: background 0.16s ease, transform 0.12s ease,
+    box-shadow 0.16s ease;
+}
+
+.itemRow:hover {
+  background: #f9fafb;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
 }
 
 .itemImgWrapper {
@@ -599,7 +720,7 @@
   border: 1px solid #bbf7d0;
 }
 
-/* ---------- EMPTY STATE ---------- */
+/* ---------- EMPTY / LOADING STATE ---------- */
 
 .emptyState {
   margin-top: 120px;
@@ -618,6 +739,12 @@
   margin-bottom: 16px;
 }
 
+.loadingState {
+  margin: 80px 0;
+  text-align: center;
+  font-size: 14px;
+  color: #6b7280;
+}
 
 /* ---------- EXTRA PRODUCT DETAIL STYLES ---------- */
 
@@ -686,10 +813,11 @@
 }
 
 .colorDot {
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  border: 1px solid #e5e7eb;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  display: inline-block;
+  border: 1px solid #ccc;
 }
 
 /* order savings row in summary */
@@ -708,8 +836,40 @@
   color: #16a34a;
   font-weight: 500;
 }
+
 .readOnlyInput {
   background: #f3f4f6;
   color: #6b7280;
   cursor: not-allowed;
+}
+
+/* For color wrapper */
+.colorWrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* For cart delete button (right side) */
+
+.deleteBtn {
+  border: none;
+  background: rgba(248, 250, 252, 0.8);
+  font-size: 17px;
+  cursor: pointer;
+  color: #9ca3af;
+  margin-left: 8px;
+  align-self: flex-start;
+  padding: 6px;
+  border-radius: 999px;
+  box-shadow: 0 6px 14px rgba(15, 23, 42, 0.18);
+  transition: transform 0.16s ease, box-shadow 0.16s ease,
+    background 0.16s ease, color 0.16s ease;
+}
+
+.deleteBtn:hover {
+  color: #be123c;
+  background: #fef2f2;
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 10px 24px rgba(190, 24, 93, 0.35);
 }

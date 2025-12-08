@@ -1,0 +1,385 @@
+/* src/assets/styles/checkout/OrderSuccess.module.css */
+
+.page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(circle at top, #ffe4f3 0, #fff6fb 35%, #ffffff 80%);
+  padding: 24px 16px;
+}
+
+.container {
+  width: 100%;
+  max-width: 520px;
+}
+
+.card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 32px 24px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.06);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(circle at top left, rgba(214, 51, 132, 0.08), transparent 60%);
+  pointer-events: none;
+}
+
+/* ICON */
+.iconWrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #fff3f9;
+  margin: 0 auto 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgba(214, 51, 132, 0.2);
+}
+
+.icon {
+  font-size: 36px;
+  color: #d63384;
+}
+
+/* TEXT */
+.title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 8px 0 4px;
+  color: #222222;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: #555555;
+  margin-bottom: 20px;
+}
+
+/* INFO BOX */
+.infoBox {
+  background: #fff8fc;
+  border-radius: 16px;
+  padding: 16px 16px 12px;
+  text-align: left;
+  border: 1px solid rgba(214, 51, 132, 0.1);
+  margin-bottom: 24px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+
+/* When we need label + multi-line value (address) */
+.infoRowColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.addressText {
+  font-size: 13px;
+  color: #444444;
+  line-height: 1.5;
+}
+
+.label {
+  font-size: 13px;
+  color: #777777;
+}
+
+.value {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222222;
+}
+
+.valueMono {
+  font-size: 13px;
+  font-weight: 600;
+  color: #222222;
+  font-family: "SF Mono", ui-monospace, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+.statusPill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: #e6f6ed;
+  color: #147a3d;
+  font-weight: 600;
+}
+
+.tipText {
+  font-size: 12px;
+  color: #666666;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+/* LOADING / ERROR TEXT */
+.loadingText {
+  font-size: 14px;
+  color: #555555;
+}
+
+.errorText {
+  font-size: 14px;
+  color: #d63333;
+  margin-bottom: 12px;
+}
+
+/* ITEMS CARD */
+.itemsCard {
+  margin-top: 16px;
+  padding: 16px 14px 10px;
+  border-radius: 16px;
+  border: 1px solid #f0e0ea;
+  background: #fffefe;
+  text-align: left;
+}
+
+.itemsTitle {
+  font-size: 15px;
+  font-weight: 600;
+  color: #222222;
+  margin-bottom: 10px;
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 260px; /* scroll if too many items */
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.emptyItemsText {
+  font-size: 13px;
+  color: #777777;
+}
+
+/* ITEM ROW: IMAGE LEFT, DETAILS RIGHT */
+.itemRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.itemRow:last-child {
+  border-bottom: none;
+}
+
+/* LEFT SIDE IMAGE */
+.itemImgWrapper {
+  width: 80px;
+  height: 110px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f6f6f6;
+  flex-shrink: 0;
+}
+
+.itemImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* RIGHT SIDE DETAILS */
+.itemInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.itemBrand {
+  font-size: 12px;
+  font-weight: 600;
+  color: #777777;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.itemName {
+  font-size: 14px;
+  font-weight: 600;
+  color: #222222;
+}
+
+.itemMeta {
+  font-size: 12px;
+  color: #555555;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.itemPriceRow {
+  margin-top: 4px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.itemLineTotal {
+  color: #d63384;
+  font-weight: 700;
+}
+
+/* BUTTONS */
+.buttonsRow {
+  display: flex;
+  gap: 12px;
+  margin-top: 18px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.primaryBtn,
+.secondaryBtn {
+  padding: 10px 18px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+
+.primaryBtn {
+  background: #d63384;
+  color: #ffffff;
+  box-shadow: 0 10px 20px rgba(214, 51, 132, 0.25);
+}
+
+.primaryBtn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 30px rgba(214, 51, 132, 0.3);
+}
+
+.secondaryBtn {
+  background: #ffffff;
+  color: #d63384;
+  border: 1px solid rgba(214, 51, 132, 0.3);
+}
+
+.secondaryBtn:hover {
+  background: #fff3f9;
+}
+
+/* FOOTER NOTE */
+.footerNote {
+  font-size: 12px;
+  color: #777777;
+}
+
+.inlineLink {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  font-size: 12px;
+  color: #d63384;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.colorMeta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.colorSwatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  display: inline-block;
+}
+
+.colorLabel {
+  font-size: 12px;
+  color: #444;
+}
+
+
+/* RESPONSIVE */
+@media (max-width: 480px) {
+  .card {
+    padding: 24px 18px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+  }
+
+  .infoBox {
+    padding: 14px 12px 10px;
+  }
+
+  .itemImgWrapper {
+    width: 70px;
+    height: 95px;
+  }
+
+  .itemRow {
+    gap: 10px;
+  }
+}
+/* Make the whole card a bit wider so 2 columns fit */
+.container {
+  width: 100%;
+  max-width: 900px;   /* was 520px */
+}
+
+/* Row that holds left (items) + right (info) */
+.contentRow {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  margin-top: 16px;
+}
+
+/* Left = items list, Right = order summary */
+.leftCol {
+  flex: 1.4;
+}
+
+.rightCol {
+  flex: 1;
+}
+
+/* On small screens: stack vertically */
+@media (max-width: 768px) {
+  .contentRow {
+    flex-direction: column;
+  }
+
+  .leftCol,
+  .rightCol {
+    width: 100%;
+  }
+}

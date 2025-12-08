@@ -65,13 +65,11 @@ function ProductDetail() {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: 'auto', // instant jump to top
+      behavior: 'auto',
     });
   }, []);
 
   const { wishlistItems, toggleWishlist } = useContext(WishlistContext);
-
-  // ✅ from CartContext (note: we use product object + options)
   const { addToCart, cartItems } = useContext(CartContext);
 
   const [product, setProduct] = useState(null);
@@ -83,9 +81,13 @@ function ProductDetail() {
   const [pinMessage, setPinMessage] = useState('');
   const [pinError, setPinError] = useState(false);
 
+  // ⭐ NEW: COD allowed (Dehradun pincode check)
+  const [isDehradunPincode, setIsDehradunPincode] = useState(null);
+
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [sizeError, setSizeError] = useState(false);
+  const [colorError, setColorError] = useState(false); // ⭐ NEW
 
   const [wishlist, setWishlist] = useState(false);
 
@@ -106,8 +108,11 @@ function ProductDetail() {
         setSelectedColor(null);
         setSelectedSize(null);
         setSizeError(false);
+        setColorError(false); // ⭐ reset on product change
         setPin('');
         setPinMessage('');
+        setPinError(false);
+        setIsDehradunPincode(null);
         setActionMessage('');
         setQty(1);
 
@@ -189,6 +194,11 @@ function ProductDetail() {
     : [];
   const imageList = [product.mainImage, ...gallery].filter(Boolean);
 
+  // helpful flags
+  const hasColors =
+    Array.isArray(product.colors) && product.colors.length > 0;
+  const hasSizes = Array.isArray(product.sizes) && product.sizes.length > 0;
+
   // ---------- HANDLERS ----------
   const handleSizeSelect = (size) => {
     setSelectedSize(size);
@@ -197,6 +207,7 @@ function ProductDetail() {
 
   const handleColorSelect = (color) => {
     setSelectedColor(color);
+    setColorError(false); // ⭐ clear color error on select
   };
 
   const handleWishlistToggle = () => {
@@ -215,9 +226,11 @@ function ProductDetail() {
     });
   };
 
-  const handleCheckPin = () => {
+  // ⭐ UPDATED: call backend /v1/shipping/check-pincode/:pin
+  const handleCheckPin = async () => {
     setPinMessage('');
     setPinError(false);
+    setIsDehradunPincode(null);
 
     const clean = pin.trim();
     const valid = /^[0-9]{6}$/.test(clean);
@@ -228,11 +241,32 @@ function ProductDetail() {
       return;
     }
 
-    setPinError(false);
-    setPinMessage(`Good news! Delivery is available to ${clean}.`);
+    try {
+      const res = await fetch(
+        `${API_BASE_URL}/v1/shipping/check-pincode/${clean}`,
+      );
+      const data = await res.json();
+
+      // data = { pincode, codAllowed, message }
+      setIsDehradunPincode(data.codAllowed);
+
+      if (!data.codAllowed) {
+        setPinError(true);
+      } else {
+        setPinError(false);
+      }
+
+      setPinMessage(data.message || '');
+    } catch (err) {
+      console.error('Pincode check error', err);
+      setPinError(true);
+      setPinMessage(
+        'Unable to check this pincode right now. Please try again.',
+      );
+      setIsDehradunPincode(null);
+    }
   };
 
-  // ⭐ CHANGED: open modal instead of new tab
   const handleSizeGuide = () => {
     setIsSizeGuideOpen(true);
   };
@@ -253,9 +287,23 @@ function ProductDetail() {
     setQty((prev) => (prev > 1 ? prev - 1 : prev));
   };
 
-  // ✅ MAIN: Add to Bag – only once per product+size+color
+  // ✅ MAIN: Add to Bag – size & color (if available) are mandatory
   const handleAddToBag = () => {
-    if (!selectedSize) {
+    setSizeError(false);
+    setColorError(false);
+
+    if (hasColors && !selectedColor) {
+      setColorError(true);
+      setActionMessage('Please select a color to continue');
+      setTimeout(() => setActionMessage(''), 2000);
+      const el = document.getElementById('color-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
+
+    if (hasSizes && !selectedSize) {
       setSizeError(true);
       setActionMessage('Please select a size to continue');
       setTimeout(() => setActionMessage(''), 2000);
@@ -297,47 +345,59 @@ function ProductDetail() {
   };
 
   const handleBuyNow = () => {
-  if (!selectedSize) {
-    setSizeError(true);
-    setActionMessage('Please select a size to continue');
-    setTimeout(() => setActionMessage(''), 2000);
+    setSizeError(false);
+    setColorError(false);
 
-    const el = document.getElementById('size-section');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (hasColors && !selectedColor) {
+      setColorError(true);
+      setActionMessage('Please select a color to continue');
+      setTimeout(() => setActionMessage(''), 2000);
+      const el = document.getElementById('color-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
     }
-    return;
-  }
 
-  // 1) Ensure this product is in cart with current options
-  const alreadyInCart = cartItems.some(
-    (item) =>
-      item.productId === product._id &&
-      item.size === selectedSize &&
-      item.color === selectedColor,
-  );
+    if (hasSizes && !selectedSize) {
+      setSizeError(true);
+      setActionMessage('Please select a size to continue');
+      setTimeout(() => setActionMessage(''), 2000);
+      const el = document.getElementById('size-section');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
 
-  if (!alreadyInCart) {
-    addToCart(product, {
-      size: selectedSize,
-      color: selectedColor,
-      quantity: qty,
-    });
+    // 1) Ensure this product is in cart with current options
+    const alreadyInCart = cartItems.some(
+      (item) =>
+        item.productId === product._id &&
+        item.size === selectedSize &&
+        item.color === selectedColor,
+    );
 
-    console.log('BUY NOW (added to cart) 👉', {
-      productId: product._id,
-      size: selectedSize,
-      color: selectedColor,
-      qty,
-    });
-  } else {
-    console.log('BUY NOW 👉 item already in bag, going to checkout');
-  }
+    if (!alreadyInCart) {
+      addToCart(product, {
+        size: selectedSize,
+        color: selectedColor,
+        quantity: qty,
+      });
 
-  // 2) Go to checkout page
-  navigate('/checkout');
-};
+      console.log('BUY NOW (added to cart) 👉', {
+        productId: product._id,
+        size: selectedSize,
+        color: selectedColor,
+        qty,
+      });
+    } else {
+      console.log('BUY NOW 👉 item already in bag, going to checkout');
+    }
 
+    // 2) Go to checkout page
+    navigate('/checkout');
+  };
 
   const metaFields = [
     { label: 'Fabric', value: product.fabric },
@@ -349,9 +409,10 @@ function ProductDetail() {
     { label: 'Closure', value: product.closureType },
     { label: 'Pattern', value: product.pattern },
     { label: 'Occasion', value: product.occasion },
-    { label: 'Care', value: product.care },
+    { label: 'Care', value: product.careInstructions }, // ✅ fixed
   ].filter((item) => !!item.value);
 
+  // ⭐ Features from backend or fallback
   const featureList =
     Array.isArray(product.features) && product.features.length > 0
       ? product.features
@@ -361,6 +422,17 @@ function ProductDetail() {
           'Satin trims for a luxurious elegant look',
           'Decorative gold trim detailing',
           'Extended side lace detailing for a sensual coverage',
+        ];
+
+  // ⭐ Shipping & Returns from backend or fallback
+  const shippingList =
+    Array.isArray(product.shippingAndReturns) &&
+    product.shippingAndReturns.length > 0
+      ? product.shippingAndReturns
+      : [
+          'Orders are usually dispatched within 24 hours.',
+          'Delivery time varies between 2–7 working days depending on your pincode.',
+          'Easy 7-day return policy from the date of delivery. Products must be unused, unwashed and with all tags attached.',
         ];
 
   return (
@@ -508,17 +580,25 @@ function ProductDetail() {
           </div>
 
           {/* COLORS */}
-          {Array.isArray(product.colors) && product.colors.length > 0 && (
-            <div className={styles.section}>
-              <div className={styles.sectionLabel}>
-                Color
-                {selectedColor && (
-                  <span className={styles.sectionSubLabel}>
-                    {' '}
-                    — {selectedColor}
-                  </span>
-                )}
+          {hasColors && (
+            <div className={styles.section} id="color-section">
+              <div className={styles.sectionLabelRow}>
+                <div>
+                  <span className={styles.sectionLabel}>Color</span>
+                  {selectedColor && (
+                    <span className={styles.sectionSubLabel}>
+                      {' '}
+                      — {selectedColor}
+                    </span>
+                  )}
+                  {colorError && (
+                    <span className={styles.sizeErrorText}>
+                      &nbsp;— Please select a color
+                    </span>
+                  )}
+                </div>
               </div>
+
               <div className={styles.colorDots}>
                 {product.colors.map((c, idx) => {
                   const colorValue = String(c).trim();
@@ -542,7 +622,7 @@ function ProductDetail() {
           )}
 
           {/* SIZES */}
-          {Array.isArray(product.sizes) && product.sizes.length > 0 && (
+          {hasSizes && (
             <div className={styles.section} id="size-section">
               <div className={styles.sectionLabelRow}>
                 <div>
@@ -553,7 +633,6 @@ function ProductDetail() {
                     </span>
                   )}
                 </div>
-                {/* button will still only show if sizeGuideUrl is present in DB */}
                 {product.sizeGuideUrl && (
                   <button
                     className={styles.sizeGuideBtn}
@@ -627,7 +706,10 @@ function ProductDetail() {
               <button
                 type="button"
                 className={`${styles.addToBag} ${
-                  !selectedSize ? styles.addToBagDisabled : ''
+                  (hasSizes && !selectedSize) ||
+                  (hasColors && !selectedColor)
+                    ? styles.addToBagDisabled
+                    : ''
                 }`}
                 onClick={handleAddToBag}
               >
@@ -668,6 +750,9 @@ function ProductDetail() {
                 }
               >
                 {pinMessage}
+                {isDehradunPincode && (
+                  <span> COD is available for this pincode.</span>
+                )}
               </div>
             )}
             {!pinMessage && (
@@ -743,14 +828,9 @@ function ProductDetail() {
             </button>
             {activeAccordion === 'shipping' && (
               <div className={styles.accordionBody}>
-                <p>
-                  Orders are usually dispatched within 24 hours. Delivery time
-                  varies between 2–7 working days depending on your pincode.
-                </p>
-                <p>
-                  Easy 7-day return policy from the date of delivery. Products
-                  must be unused, unwashed and with all tags attached.
-                </p>
+                {shippingList.map((point, idx) => (
+                  <p key={idx}>{point}</p>
+                ))}
               </div>
             )}
           </div>
@@ -876,7 +956,7 @@ function ProductDetail() {
         >
           <div
             className={styles.sizeGuideModal}
-            onClick={(e) => e.stopPropagation()} // prevent overlay close
+            onClick={(e) => e.stopPropagation()}
           >
             <button
               type="button"

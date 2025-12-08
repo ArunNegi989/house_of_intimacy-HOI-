@@ -6,28 +6,40 @@ import React, {
   useEffect,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiLock } from 'react-icons/fi';
+import { FiArrowLeft, FiLock, FiTrash2 } from 'react-icons/fi';
+import axios from 'axios';
+import { useToast } from '@chakra-ui/react';
 
 import { CartContext } from '../contexts/CartContext';
 import styles from '../assets/styles/checkout/CheckoutPage.module.css';
 
-const API_BASE_URL = 'http://localhost:8000';
+// Files (images) ke liye
+const FILE_BASE_URL = 'http://localhost:8000';
+// Backend API root
+const API_ROOT = 'http://localhost:8000/v1';
 
 const getImageUrl = (url) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  return `${API_BASE_URL}${url}`;
+  return `${FILE_BASE_URL}${url}`;
 };
+
+// ✅ Token helper
+const getToken = () => localStorage.getItem('authToken');
+
+// small helper for duplicate check
+const normalize = (str) => (str || '').trim().toLowerCase();
 
 function CheckoutPage() {
   const navigate = useNavigate();
-  const { cartItems } = useContext(CartContext);
+  const toast = useToast();
+  const { cartItems, clearCart, removeFromCart } = useContext(CartContext);
 
   // ---------- CONTACT STATE ----------
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
-  const [isEmailLocked, setIsEmailLocked] = useState(false); // 👈 NEW
+  const [isEmailLocked, setIsEmailLocked] = useState(false);
 
   // ---------- NEW ADDRESS FORM STATE ----------
   const [addressLine1, setAddressLine1] = useState('');
@@ -35,71 +47,77 @@ function CheckoutPage() {
   const [city, setCity] = useState('');
   const [state, setStateVal] = useState('');
   const [pincode, setPincode] = useState('');
+  const [landmark, setLandmark] = useState('');
+  const [addressType, setAddressType] = useState('home'); // 'home' | 'work' | 'other'
 
-  // ---------- MULTIPLE ADDRESSES ----------
+  // ---------- MULTIPLE ADDRESSES (BACKEND) ----------
   const [addresses, setAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState(null);
-
-  // Load saved addresses from localStorage (optional but useful)
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('hoi_addresses');
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          setAddresses(parsed);
-          if (parsed.length > 0) {
-            setSelectedAddressId(parsed[0].id);
-          }
-        }
-      }
-    } catch (err) {
-      console.error('Error reading addresses from localStorage', err);
-    }
-  }, []);
-
-  // Save addresses whenever they change
-  useEffect(() => {
-    try {
-      localStorage.setItem('hoi_addresses', JSON.stringify(addresses));
-    } catch (err) {
-      console.error('Error saving addresses to localStorage', err);
-    }
-  }, [addresses]);
-
-  // ---------- LOAD LOGGED-IN USER (EMAIL LOCKED, NAME/PHONE EDITABLE) ----------
-  useEffect(() => {
-    try {
-      // 👉 change 'hoi_user' if your login uses a different key
-      const storedUser = localStorage.getItem('hoi_user');
-      if (!storedUser) return;
-
-      const user = JSON.parse(storedUser);
-
-      // email: fill + lock
-      if (user.email) {
-        setEmail(user.email);
-        setIsEmailLocked(true);
-      }
-
-      // name: prefill but editable
-      if (user.fullName || user.name) {
-        setFullName(user.fullName || user.name);
-      }
-
-      // phone: prefill but editable
-      if (user.phone || user.mobile || user.contactNumber) {
-        setPhone(user.phone || user.mobile || user.contactNumber);
-      }
-    } catch (err) {
-      console.error('Error reading logged-in user from localStorage', err);
-    }
-  }, []);
 
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [error, setError] = useState('');
   const [placingOrder, setPlacingOrder] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [loadingUser, setLoadingUser] = useState(true);
+
+  // ---------- INIT: CHECK LOGIN + FETCH USER + ADDRESSES ----------
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+
+    const headers = { Authorization: `Bearer ${token}` };
+
+    const fetchAll = async () => {
+      try {
+        // 1) Logged-in user
+        const userRes = await axios.get(`${API_ROOT}/users/userdata`, {
+          headers,
+        });
+
+        const user = userRes.data?.user || {};
+
+        setFullName(user.name || user.fullName || '');
+        setEmail(user.email || '');
+        setPhone(user.phone || user.mobile || user.contactNumber || '');
+        if (user.email) setIsEmailLocked(true);
+
+        // 2) Addresses
+        try {
+          const addrRes = await axios.get(`${API_ROOT}/users/addresses`, {
+            headers,
+          });
+
+          const list = Array.isArray(addrRes.data)
+            ? addrRes.data
+            : addrRes.data.addresses || [];
+
+          setAddresses(list);
+
+          // try to select default first
+          const defaultAddr = list.find((a) => a.isDefault);
+          if (defaultAddr) {
+            setSelectedAddressId(defaultAddr._id);
+          } else if (list.length > 0) {
+            setSelectedAddressId(list[0]._id);
+          }
+        } catch (addrErr) {
+          console.error('Fetch addresses error:', addrErr);
+        }
+      } catch (err) {
+        console.error('Checkout init error:', err);
+        if (err.response && err.response.status === 401) {
+          navigate('/login');
+        }
+      } finally {
+        setLoadingUser(false);
+      }
+    };
+
+    fetchAll();
+  }, [navigate]);
 
   // ---------- ORDER TOTALS ----------
   const subtotal = useMemo(() => {
@@ -123,8 +141,8 @@ function CheckoutPage() {
   const shippingCharge = subtotal >= 799 ? 0 : 49; // example rule
   const grandTotal = subtotal + shippingCharge;
 
-  // ---------- ADD / SAVE ADDRESS ----------
-  const handleSaveAddress = () => {
+  // ---------- SAVE ADDRESS (BACKEND) ----------
+  const handleSaveAddress = async () => {
     setError('');
     setSuccessMessage('');
 
@@ -136,24 +154,227 @@ function CheckoutPage() {
       setError('Please fill City, State and Pincode to save this address.');
       return;
     }
+    if (!fullName.trim() || !phone.trim()) {
+      setError('Please fill your name and phone before saving address.');
+      return;
+    }
 
-    const newAddress = {
-      id: Date.now(),
-      label: `Address ${addresses.length + 1}`,
+    // 🔹 DUPLICATE CHECK (frontend)
+    const isDuplicate = addresses.some(
+      (a) =>
+        normalize(a.addressLine1) === normalize(addressLine1) &&
+        normalize(a.addressLine2) === normalize(addressLine2) &&
+        normalize(a.city) === normalize(city) &&
+        normalize(a.state) === normalize(state) &&
+        normalize(a.pincode) === normalize(pincode),
+    );
+
+    if (isDuplicate) {
+      const msg = 'This address is already saved in your account.';
+      setError(msg);
+      toast({
+        title: 'Duplicate address',
+        description: msg,
+        status: 'warning',
+        duration: 4000,
+        isClosable: true,
+        position: 'top',
+      });
+      return;
+    }
+
+    const token = getToken();
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    const headers = { Authorization: `Bearer ${token}` };
+
+    const newAddressPayload = {
+      name: fullName.trim(),
+      phone: phone.trim(),
+      pincode: pincode.trim(),
       addressLine1: addressLine1.trim(),
       addressLine2: addressLine2.trim(),
       city: city.trim(),
       state: state.trim(),
-      pincode: pincode.trim(),
+      landmark: landmark.trim() || undefined,
+      addressType,
     };
 
-    setAddresses((prev) => [...prev, newAddress]);
-    setSelectedAddressId(newAddress.id);
-    setSuccessMessage('Address saved successfully ✅');
+    try {
+      const res = await axios.post(
+        `${API_ROOT}/users/addresses`,
+        newAddressPayload,
+        { headers },
+      );
+
+      let updatedAddresses;
+      if (Array.isArray(res.data)) {
+        updatedAddresses = res.data;
+      } else if (Array.isArray(res.data.addresses)) {
+        updatedAddresses = res.data.addresses;
+      } else {
+        updatedAddresses = [...addresses, res.data];
+      }
+
+      setAddresses(updatedAddresses);
+      const last = updatedAddresses[updatedAddresses.length - 1];
+      setSelectedAddressId(last?._id || null);
+
+      // ✅ clear form after successful save
+      setAddressLine1('');
+      setAddressLine2('');
+      setCity('');
+      setStateVal('');
+      setPincode('');
+      setLandmark('');
+      setAddressType('home');
+
+      setSuccessMessage('Address saved successfully ✅');
+      toast({
+        title: 'Address saved',
+        description: 'Your new address has been added.',
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+        position: 'top',
+      });
+    } catch (err) {
+      console.error('Save address error:', err);
+      const msg =
+        err.response?.data?.message ||
+        'Failed to save address. Please try again.';
+      setError(msg);
+      toast({
+        title: 'Save failed',
+        description: msg,
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+        position: 'top',
+      });
+    }
   };
 
-  // ---------- PLACE ORDER ----------
-  const handlePlaceOrder = (e) => {
+  // ---------- DELETE SAVED ADDRESS (BACKEND) ----------
+  const handleDeleteAddress = async (addressId, e) => {
+    // label click ko block karne ke liye
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
+    setError('');
+    setSuccessMessage('');
+
+    const token = getToken();
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    const headers = { Authorization: `Bearer ${token}` };
+
+    try {
+      const res = await axios.delete(
+        `${API_ROOT}/users/addresses/${addressId}`,
+
+        { headers },
+      );
+
+      // backend returns updated addresses
+      const updated = Array.isArray(res.data)
+        ? res.data
+        : res.data.addresses || [];
+
+      setAddresses(updated);
+
+      // if deleted one was selected, pick default or first
+      if (selectedAddressId === addressId) {
+        const defaultAddr = updated.find((a) => a.isDefault);
+        if (defaultAddr) {
+          setSelectedAddressId(defaultAddr._id);
+        } else if (updated.length > 0) {
+          setSelectedAddressId(updated[0]._id);
+        } else {
+          setSelectedAddressId(null);
+        }
+      }
+
+      setSuccessMessage('Address deleted successfully ✅');
+      toast({
+        title: 'Address deleted',
+        description: 'The address has been removed from your account.',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      });
+    } catch (err) {
+      console.error('Delete address error:', err);
+      const msg =
+        err.response?.data?.message ||
+        'Failed to delete address. Please try again.';
+      setError(msg);
+      toast({
+        title: 'Delete failed',
+        description: msg,
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+        position: 'top',
+      });
+    }
+  };
+
+  // ---------- BUILD ITEMS PAYLOAD FOR BACKEND ----------
+  const buildItemsPayload = () => {
+    if (!cartItems || cartItems.length === 0) return [];
+
+    return cartItems.map((item) => {
+      const productId =
+        item.productId || item._id || item.product?._id || item.id;
+
+      return {
+        productId,
+        quantity: item.quantity || 1,
+        color: item.color || item.selectedColor || null,
+        size:
+          typeof item.size === 'string' ? item.size : item.size?.label || null,
+      };
+    });
+  };
+
+  // ---------- DELETE SINGLE ITEM FROM CART (ORDER SUMMARY) ----------
+  const handleDeleteItem = (lineIndex) => {
+    try {
+      if (typeof removeFromCart !== 'function') {
+        console.warn('removeFromCart not available in CartContext');
+        return;
+      }
+
+      removeFromCart(lineIndex);
+      toast({
+        title: 'Item removed',
+        status: 'info',
+        duration: 2000,
+        isClosable: true,
+        position: 'top',
+      });
+    } catch (err) {
+      console.error('Delete item error:', err);
+      toast({
+        title: 'Failed to remove item',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+        position: 'top',
+      });
+    }
+  };
+
+  // ---------- PLACE ORDER (BACKEND) ----------
+  const handlePlaceOrder = async (e) => {
     e.preventDefault();
     setError('');
     setSuccessMessage('');
@@ -182,18 +403,24 @@ function CheckoutPage() {
     let shippingAddress = null;
 
     if (selectedAddressId) {
-      // Use saved address
-      shippingAddress = addresses.find(
-        (addr) => addr.id === selectedAddressId,
-      );
-      if (!shippingAddress) {
-        setError(
-          'Please select a valid saved address or use a new address.',
-        );
+      const addr = addresses.find((a) => a._id === selectedAddressId);
+      if (!addr) {
+        setError('Please select a valid saved address.');
         return;
       }
+
+      shippingAddress = {
+        name: addr.name,
+        phone: addr.phone,
+        pincode: addr.pincode,
+        addressLine1: addr.addressLine1,
+        addressLine2: addr.addressLine2,
+        city: addr.city,
+        state: addr.state,
+        landmark: addr.landmark,
+        addressType: addr.addressType || 'home',
+      };
     } else {
-      // Use address from form (not saved)
       if (!addressLine1.trim()) {
         setError('Please enter your address.');
         return;
@@ -204,45 +431,89 @@ function CheckoutPage() {
       }
 
       shippingAddress = {
-        label: 'Current Address',
+        name: fullName.trim(),
+        phone: phone.trim(),
+        pincode: pincode.trim(),
         addressLine1: addressLine1.trim(),
         addressLine2: addressLine2.trim(),
         city: city.trim(),
         state: state.trim(),
-        pincode: pincode.trim(),
+        landmark: landmark.trim() || undefined,
+        addressType,
       };
     }
 
-    setPlacingOrder(true);
+    const itemsPayload = buildItemsPayload();
+    if (!itemsPayload.length) {
+      setError('Unable to prepare order items.');
+      return;
+    }
+
+    const token = getToken();
+    if (!token) {
+      navigate('/login');
+      return;
+    }
+    const headers = { Authorization: `Bearer ${token}` };
+
+    let paymentMethodForApi = 'COD';
+    if (paymentMethod === 'cod') paymentMethodForApi = 'COD';
+    else paymentMethodForApi = 'ONLINE';
 
     const orderPayload = {
-      customer: {
-        fullName,
-        email,
-        phone,
-      },
-      address: shippingAddress,
-      paymentMethod,
-      items: cartItems,
-      amounts: {
-        subtotal,
-        shippingCharge,
-        grandTotal,
-      },
+      items: itemsPayload,
+      shippingAddress,
+      paymentMethod: paymentMethodForApi,
     };
 
-    console.log('ORDER PAYLOAD 👉', orderPayload);
+    try {
+      setPlacingOrder(true);
 
-    // TODO: yaha future me backend API call karege (POST /orders)
-    setTimeout(() => {
-      setPlacingOrder(false);
+      const res = await axios.post(`${API_ROOT}/orders`, orderPayload, {
+        headers,
+      });
+
+      const createdOrder = res.data;
       setSuccessMessage('Order placed successfully 🎉');
-      // if you have clearCart() in CartContext, call here
-      // clearCart();
-      // navigate('/'); // or navigate('/order-success');
-    }, 1000);
+
+      if (typeof clearCart === 'function') {
+        clearCart();
+      }
+
+      toast({
+        title: 'Order placed',
+        description: 'Thank you for shopping with us!',
+        status: 'success',
+        duration: 4000,
+        isClosable: true,
+        position: 'top',
+      });
+
+      if (createdOrder && createdOrder._id) {
+        navigate(`/order-success/${createdOrder._id}`);
+      } else {
+        navigate('/account/my-orders');
+      }
+    } catch (err) {
+      console.error('Place order error:', err);
+      const msg =
+        err.response?.data?.message ||
+        'Failed to place order. Please try again.';
+      setError(msg);
+      toast({
+        title: 'Order failed',
+        description: msg,
+        status: 'error',
+        duration: 4000,
+        isClosable: true,
+        position: 'top',
+      });
+    } finally {
+      setPlacingOrder(false);
+    }
   };
 
+  // ---------- EMPTY CART STATE ----------
   if (!cartItems || cartItems.length === 0) {
     return (
       <div className={styles.pageWrapper}>
@@ -257,6 +528,14 @@ function CheckoutPage() {
             Back to shopping
           </button>
         </div>
+      </div>
+    );
+  }
+
+  if (loadingUser) {
+    return (
+      <div className={styles.pageWrapper}>
+        <div className={styles.loadingState}>Loading your details...</div>
       </div>
     );
   }
@@ -328,16 +607,16 @@ function CheckoutPage() {
           <section className={styles.card}>
             <h2 className={styles.sectionTitle}>Shipping Address</h2>
 
-            {/* SAVED ADDRESSES */}
+            {/* SAVED ADDRESSES (BACKEND) */}
             {addresses.length > 0 && (
               <div className={styles.savedAddresses}>
                 <h3 className={styles.savedTitle}>Saved addresses</h3>
                 <div className={styles.savedList}>
                   {addresses.map((addr) => (
                     <label
-                      key={addr.id}
+                      key={addr._id}
                       className={`${styles.addressCard} ${
-                        selectedAddressId === addr.id
+                        selectedAddressId === addr._id
                           ? styles.addressCardActive
                           : ''
                       }`}
@@ -345,23 +624,52 @@ function CheckoutPage() {
                       <input
                         type="radio"
                         name="savedAddress"
-                        value={addr.id}
-                        checked={selectedAddressId === addr.id}
-                        onChange={() => setSelectedAddressId(addr.id)}
+                        value={addr._id}
+                        checked={selectedAddressId === addr._id}
+                        onChange={() => setSelectedAddressId(addr._id)}
                       />
                       <div className={styles.addressContent}>
-                        <div className={styles.addressLabelRow}>
-                          <span className={styles.addressLabel}>
-                            {addr.label}
-                          </span>
+                        <div className={styles.addressHeaderRow}>
+                          <div className={styles.addressLabelRow}>
+                            <div className={styles.addressTypePills}>
+                              <span className={styles.addressTypeChip}>
+                                {addr.addressType
+                                  ? addr.addressType.toUpperCase()
+                                  : 'HOME'}
+                              </span>
+                              {addr.isDefault && (
+                                <span className={styles.defaultBadge}>
+                                  Default
+                                </span>
+                              )}
+                            </div>
+
+                            <span className={styles.addressName}>
+                              {addr.name} • {addr.phone}
+                            </span>
+                          </div>
+
+                          {/* DELETE BUTTON */}
+                          <button
+                            type="button"
+                            className={styles.addressDeleteBtn}
+                            onClick={(e) => handleDeleteAddress(addr._id, e)}
+                          >
+                            <FiTrash2 className={styles.addressDeleteIcon} />
+                          </button>
                         </div>
+
                         <div className={styles.addressText}>
                           {addr.addressLine1}
-                          {addr.addressLine2
-                            ? `, ${addr.addressLine2}`
-                            : ''}
+                          {addr.addressLine2 ? `, ${addr.addressLine2}` : ''}
                           <br />
                           {addr.city}, {addr.state} - {addr.pincode}
+                          {addr.landmark ? (
+                            <>
+                              <br />
+                              Landmark: {addr.landmark}
+                            </>
+                          ) : null}
                         </div>
                       </div>
                     </label>
@@ -381,7 +689,6 @@ function CheckoutPage() {
                 value={addressLine1}
                 onChange={(e) => {
                   setAddressLine1(e.target.value);
-                  // if user is typing new address, unselect saved
                   setSelectedAddressId(null);
                 }}
                 placeholder="Flat / House No. / Street"
@@ -437,6 +744,32 @@ function CheckoutPage() {
               </div>
             </div>
 
+            <div className={styles.formGrid}>
+              <div className={styles.formGroup}>
+                <label>Landmark</label>
+                <input
+                  type="text"
+                  value={landmark}
+                  onChange={(e) => {
+                    setLandmark(e.target.value);
+                    setSelectedAddressId(null);
+                  }}
+                  placeholder="Near XYZ (optional)"
+                />
+              </div>
+              <div className={styles.formGroup}>
+                <label>Address Type</label>
+                <select
+                  value={addressType}
+                  onChange={(e) => setAddressType(e.target.value)}
+                >
+                  <option value="home">Home</option>
+                  <option value="work">Work</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+            </div>
+
             <button
               type="button"
               className={styles.saveAddressBtn}
@@ -468,7 +801,7 @@ function CheckoutPage() {
                   checked={paymentMethod === 'upi'}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 />
-                <span>UPI / Wallets</span>
+                <span>UPI / Wallets (Online)</span>
               </label>
               <label className={styles.radioOption}>
                 <input
@@ -478,7 +811,7 @@ function CheckoutPage() {
                   checked={paymentMethod === 'card'}
                   onChange={(e) => setPaymentMethod(e.target.value)}
                 />
-                <span>Credit / Debit Card</span>
+                <span>Credit / Debit Card (Online)</span>
               </label>
             </div>
           </section>
@@ -503,10 +836,8 @@ function CheckoutPage() {
             <h2 className={styles.sectionTitle}>Order Summary</h2>
             <div className={styles.itemsList}>
               {cartItems.map((item, idx) => {
-                const itemName =
-                  item.name || item.product?.name || 'Product';
-                const itemBrand =
-                  item.brand || item.product?.brand || '';
+                const itemName = item.name || item.product?.name || 'Product';
+                const itemBrand = item.brand || item.product?.brand || '';
                 const img =
                   item.image ||
                   item.product?.mainImage ||
@@ -522,25 +853,31 @@ function CheckoutPage() {
                       0,
                   ) || 0;
                 const qty = Number(item.quantity ?? 1);
+                const sizeLabel =
+                  typeof item.size === 'string'
+                    ? item.size
+                    : item.size?.label || '';
 
                 return (
                   <div key={idx} className={styles.itemRow}>
                     <div className={styles.itemImgWrapper}>
-                      {img && (
-                        <img src={getImageUrl(img)} alt={itemName} />
-                      )}
+                      {img && <img src={getImageUrl(img)} alt={itemName} />}
                     </div>
                     <div className={styles.itemInfo}>
                       {itemBrand && (
-                        <div className={styles.itemBrand}>
-                          {itemBrand}
-                        </div>
+                        <div className={styles.itemBrand}>{itemBrand}</div>
                       )}
                       <div className={styles.itemName}>{itemName}</div>
                       <div className={styles.itemMeta}>
-                        {item.size && <span>Size: {item.size}</span>}
+                        {sizeLabel && <span>Size: {sizeLabel}</span>}
                         {item.color && (
-                          <span>Color: {item.color}</span>
+                          <span className={styles.colorWrapper}>
+                            Color:
+                            <span
+                              className={styles.colorDot}
+                              style={{ backgroundColor: item.color }}
+                            />
+                          </span>
                         )}
                       </div>
                       <div className={styles.itemPriceRow}>
@@ -552,6 +889,15 @@ function CheckoutPage() {
                         </span>
                       </div>
                     </div>
+
+                    {/* DELETE BUTTON ON RIGHT */}
+                    <button
+                      type="button"
+                      className={styles.deleteBtn}
+                      onClick={() => handleDeleteItem(idx)}
+                    >
+                      <FiTrash2 />
+                    </button>
                   </div>
                 );
               })}
