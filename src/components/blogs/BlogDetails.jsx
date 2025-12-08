@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import axios from "axios";
-import Style from "../assets/styles/BlogDetails.module.css";
-import Photo from "../assets/images/fake/DSC05179.JPG";
+import Style from "../../assets/styles/BlogDetails.module.css";
+import Photo from "../../assets/images/fake/DSC05179.JPG";
 
 const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
 const apiRoot = baseUrl.replace(/\/v1$/, "");

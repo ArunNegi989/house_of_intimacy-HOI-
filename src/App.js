@@ -49,7 +49,7 @@ import MyOrders from 'pages/account/MyOrders';
 import OrderDetails from 'pages/account/OrderDetails';
 import OrderSuccess from 'pages/Checkout/OrderSuccess';
 import ScrollToTop from 'components/ScrollToTop';
-import { BlogDetails } from 'components/BlogDetails';
+import { BlogDetails } from 'components/blogs/BlogDetails';
 import { AllBlogs } from 'components/blogs/AllBlogs';
 
 export default function Main() {

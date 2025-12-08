@@ -7,9 +7,9 @@ import ShopByCategory from '../../components/Homepagecomopents/ShopByCategory.js
 import NewArrival from '../../components/Homepagecomopents/NewArricalSection.jsx';
 import JockeyColorSlider from '../../components/Homepagecomopents/JockeyColorSlider.jsx';
 import BlogCards from '../../components/Homepagecomopents/Blogs.jsx';
-import ProductSection1 from './ProductSection1.jsx';
 import { Vamikadetails } from './Vamikadetails.jsx';
 import { Reviewssection } from './Reviews.jsx';
+import ProductSection from './Productsection.jsx';
 
 export default function Home() {
   return (
@@ -21,7 +21,7 @@ export default function Home() {
       <JockeyColorSlider />
       <ShopByCategory />
       <Vamikadetails />
-      <ProductSection1 />
+      <ProductSection />
       <BlogCards />
       <Reviewssection />
       <VideoPlayer />
