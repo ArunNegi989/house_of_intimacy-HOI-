@@ -1,18 +1,18 @@
 // src/pages/AllBlogs.jsx
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
-import Style from "../../assets/styles/AllBlogs.module.css";
-import Photo from "../../assets/images/fake/DSC05179.JPG"; // fallback image
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import Style from '../../assets/styles/AllBlogs.module.css';
+import Photo from '../../assets/images/fake/DSC05179.JPG'; // fallback image
 
-const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
-const apiRoot = baseUrl.replace(/\/v1$/, "");
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
+const apiRoot = baseUrl.replace(/\/v1$/, '');
 const BLOGS_PER_PAGE = 12;
 
 export function AllBlogs() {
   const [blogs, setBlogs] = useState([]); // current page blogs
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
 
   const [totalBlogs, setTotalBlogs] = useState(0);
@@ -20,10 +20,10 @@ export function AllBlogs() {
 
   // 🔹 helper: strip HTML from introParagraph to show clean text snippet
   const stripHtml = (html) => {
-    if (!html) return "";
-    const tmp = document.createElement("div");
+    if (!html) return '';
+    const tmp = document.createElement('div');
     tmp.innerHTML = html;
-    return tmp.textContent || tmp.innerText || "";
+    return tmp.textContent || tmp.innerText || '';
   };
 
   // 🔹 fetch blogs from backend (server-side pagination)
@@ -31,30 +31,30 @@ export function AllBlogs() {
     const fetchBlogs = async () => {
       try {
         setLoading(true);
-        setError("");
+        setError('');
 
         const res = await axios.get(
-          `${baseUrl}/myblogs/allblogs?page=${currentPage}&limit=${BLOGS_PER_PAGE}`
+          `${baseUrl}/myblogs/allblogs?page=${currentPage}&limit=${BLOGS_PER_PAGE}`,
         );
 
         const payload = res.data || {};
         const list = payload.blogs || [];
 
         // only published blogs on frontend
-        const published = list.filter((b) => b.status === "published");
+        const published = list.filter((b) => b.status === 'published');
 
         setBlogs(published);
         setTotalBlogs(payload.total || published.length);
         setTotalPages(
           payload.pagination?.totalPages ||
             payload.pages ||
-            Math.max(1, Math.ceil((payload.total || 0) / BLOGS_PER_PAGE))
+            Math.max(1, Math.ceil((payload.total || 0) / BLOGS_PER_PAGE)),
         );
       } catch (err) {
-        console.error("AllBlogs fetch error:", err);
+        console.error('AllBlogs fetch error:', err);
         setError(
           err.response?.data?.message ||
-            "Failed to load blogs. Please try again."
+            'Failed to load blogs. Please try again.',
         );
       } finally {
         setLoading(false);
@@ -67,7 +67,7 @@ export function AllBlogs() {
   const handlePageChange = (page) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -125,19 +125,19 @@ export function AllBlogs() {
                     : null;
 
                   const dateStr = created
-                    ? created.toLocaleDateString("en-IN", {
-                        day: "2-digit",
-                        month: "short",
-                        year: "numeric",
+                    ? created.toLocaleDateString('en-IN', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
                       })
-                    : "";
+                    : '';
 
                   const timeStr = created
-                    ? created.toLocaleTimeString("en-IN", {
-                        hour: "2-digit",
-                        minute: "2-digit",
+                    ? created.toLocaleTimeString('en-IN', {
+                        hour: '2-digit',
+                        minute: '2-digit',
                       })
-                    : "";
+                    : '';
 
                   const featureImageUrl = blog.featureImage
                     ? `${apiRoot}${blog.featureImage}`
@@ -147,19 +147,19 @@ export function AllBlogs() {
                     blog.metaDescription || stripHtml(blog.introParagraph);
                   const snippet =
                     rawSnippet && rawSnippet.length > 170
-                      ? rawSnippet.slice(0, 170) + "..."
+                      ? rawSnippet.slice(0, 170) + '...'
                       : rawSnippet;
 
                   const day = created
-                    ? created.toLocaleDateString("en-IN", {
-                        day: "2-digit",
+                    ? created.toLocaleDateString('en-IN', {
+                        day: '2-digit',
                       })
-                    : "";
+                    : '';
                   const month = created
-                    ? created.toLocaleDateString("en-IN", {
-                        month: "short",
+                    ? created.toLocaleDateString('en-IN', {
+                        month: 'short',
                       })
-                    : "";
+                    : '';
 
                   return (
                     <div
@@ -181,9 +181,7 @@ export function AllBlogs() {
                             {dateStr && (
                               <div className={Style.dateBadge}>
                                 <span className={Style.dateDay}>{day}</span>
-                                <span className={Style.dateMonth}>
-                                  {month}
-                                </span>
+                                <span className={Style.dateMonth}>{month}</span>
                               </div>
                             )}
                             <div className={Style.cardImageOverlay}>
@@ -210,9 +208,7 @@ export function AllBlogs() {
                             </h2>
 
                             {snippet && (
-                              <p className={Style.cardDescription}>
-                                {snippet}
-                              </p>
+                              <p className={Style.cardDescription}>{snippet}</p>
                             )}
 
                             <div className={Style.cardFooter}>
@@ -248,13 +244,13 @@ export function AllBlogs() {
                         key={page}
                         type="button"
                         className={`${Style.pageNumberBtn} ${
-                          page === currentPage ? Style.activePage : ""
+                          page === currentPage ? Style.activePage : ''
                         }`}
                         onClick={() => handlePageChange(page)}
                       >
                         {page}
                       </button>
-                    )
+                    ),
                   )}
                 </div>
 

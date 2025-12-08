@@ -1,31 +1,33 @@
-.HeadHomes{
+.HeadHomes {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 30px;
   font-weight: 600;
-  color:black ;
+  color: black;
   margin-bottom: 30px;
   letter-spacing: 0.5px;
   text-align: center;
   border-bottom: 3px solid #d63384;
-    /* margin: 0px 728px 25px; */
+  /* margin: 0px 728px 25px; */
   text-transform: uppercase;
 
 }
-.HeadHome{
+
+.HeadHome {
   font-family: 'Playfair Display', Georgia, serif;
   font-size: 30px;
   font-weight: 600;
-  color:black ;
+  color: black;
   margin-bottom: 30px;
   letter-spacing: 0.5px;
   text-align: center;
   border-bottom: 3px solid #d63384;
-    margin: 0px 728px 25px;
+  margin: 0px 728px 25px;
   text-transform: uppercase;
 
 }
-.ParaHome{
- font-family: 'Lato', 'Helvetica Neue', sans-serif;
+
+.ParaHome {
+  font-family: 'Lato', 'Helvetica Neue', sans-serif;
   font-size: 18px;
   line-height: 1.9;
   color: black;
@@ -34,17 +36,20 @@
   /* margin-left: auto; */
   margin-right: auto;
 }
-.homePadding{
+
+.homePadding {
   padding: 60px 40px;
   background-color: #ffeeec;
   background-image: url('../images/back1.png');
 }
-.HomePadding{
+
+.HomePadding {
   padding: 60px 40px;
   background-color: #ffffff;
   /* background-image: url('../images/back.png'); */
 }
-.HomeImg{
+
+.HomeImg {
   border: 3px solid #d63384;
 }
 
@@ -58,7 +63,7 @@
   border-radius: 10px;
   text-align: center;
   position: relative;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   font-family: "Poppins", sans-serif;
 }
 

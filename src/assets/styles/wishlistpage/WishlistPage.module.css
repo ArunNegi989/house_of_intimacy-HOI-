@@ -157,8 +157,7 @@
   color: #222;
 }
 
-.toolbarRight {
-}
+.toolbarRight {}
 
 .toolbarLabel {
   white-space: nowrap;
@@ -297,7 +296,8 @@
 .imageWrapper {
   position: relative;
   width: 100%;
-  padding-top: 130%; /* ratio for image */
+  padding-top: 130%;
+  /* ratio for image */
   overflow: hidden;
 }
 
@@ -328,11 +328,9 @@
 .overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.55),
-    rgba(0, 0, 0, 0.05)
-  );
+  background: linear-gradient(to top,
+      rgba(0, 0, 0, 0.55),
+      rgba(0, 0, 0, 0.05));
   opacity: 0;
   display: flex;
   align-items: flex-end;
@@ -517,7 +515,8 @@
   font-size: 12px;
   color: #777;
   line-height: 1.4;
-  max-height: 3.2em; /* ~2 lines */
+  max-height: 3.2em;
+  /* ~2 lines */
   overflow: hidden;
 }
 

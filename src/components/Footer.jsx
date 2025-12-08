@@ -1,16 +1,14 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import styles from "../assets/styles/Footer.module.css";
-import logo from "../assets/images/logo.png";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import styles from '../assets/styles/Footer.module.css';
+import logo from '../assets/images/logo.png';
 
 export default function Footer() {
   return (
     <footer className={`${styles.footer}`}>
       <div className="container">
-
         {/* TOP SECTION */}
         <div className="row gy-4">
-
           {/* Logo */}
           <div className="col-lg-3 col-md-6 text-center text-md-start">
             <img src={logo} alt="Logo" className={styles.logo} />
@@ -34,12 +32,24 @@ export default function Footer() {
           <div className="col-lg-3 col-md-6 col-6">
             <h5 className={styles.heading}>Quick Links</h5>
             <ul className={styles.list}>
-              <li><Link to="/about-us">About Us</Link></li>
-               <li><Link to="/Blog">Blogs</Link></li>
-              <li><Link to="/FAQ">FAQs</Link></li>
-              <li><Link to="/terms">Terms and Condition</Link></li>
-              <li><Link to="/privacy-policy">Privacy and Policy</Link></li>
-              <li><Link to="/refund-policy">Return and Refund policy</Link></li>
+              <li>
+                <Link to="/about-us">About Us</Link>
+              </li>
+              <li>
+                <Link to="/Blog">Blogs</Link>
+              </li>
+              <li>
+                <Link to="/FAQ">FAQs</Link>
+              </li>
+              <li>
+                <Link to="/terms">Terms and Condition</Link>
+              </li>
+              <li>
+                <Link to="/privacy-policy">Privacy and Policy</Link>
+              </li>
+              <li>
+                <Link to="/refund-policy">Return and Refund policy</Link>
+              </li>
             </ul>
           </div>
 
@@ -54,28 +64,52 @@ export default function Footer() {
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Preference</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/preference/padded">Padded</Link></li>
-                      <li><Link to="/bra/preference/non-padded">Non-Padded</Link></li>
-                      <li><Link to="/bra/preference/wired">Wired</Link></li>
-                      <li><Link to="/bra/preference/wireless">Wireless</Link></li>
+                      <li>
+                        <Link to="/bra/preference/padded">Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/non-padded">Non-Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wired">Wired</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wireless">Wireless</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Style</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/style/push-up">Push-Up</Link></li>
-                      <li><Link to="/bra/style/balconette">Balconette</Link></li>
-                      <li><Link to="/bra/style/bralette">Bralette</Link></li>
-                      <li><Link to="/bra/style/sports">Sports Bra</Link></li>
+                      <li>
+                        <Link to="/bra/style/push-up">Push-Up</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/balconette">Balconette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/bralette">Bralette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/sports">Sports Bra</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Pattern</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/pattern/lace">Lace</Link></li>
-                      <li><Link to="/bra/pattern/mesh">Mesh</Link></li>
-                      <li><Link to="/bra/pattern/satin">Satin</Link></li>
-                      <li><Link to="/bra/pattern/cotton">Cotton</Link></li>
+                      <li>
+                        <Link to="/bra/pattern/lace">Lace</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/mesh">Mesh</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/satin">Satin</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/cotton">Cotton</Link>
+                      </li>
                     </ul>
                   </li>
                 </ul>
@@ -86,28 +120,52 @@ export default function Footer() {
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Preference</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/preference/padded">Padded</Link></li>
-                      <li><Link to="/bra/preference/non-padded">Non-Padded</Link></li>
-                      <li><Link to="/bra/preference/wired">Wired</Link></li>
-                      <li><Link to="/bra/preference/wireless">Wireless</Link></li>
+                      <li>
+                        <Link to="/bra/preference/padded">Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/non-padded">Non-Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wired">Wired</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wireless">Wireless</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Style</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/style/push-up">Push-Up</Link></li>
-                      <li><Link to="/bra/style/balconette">Balconette</Link></li>
-                      <li><Link to="/bra/style/bralette">Bralette</Link></li>
-                      <li><Link to="/bra/style/sports">Sports Bra</Link></li>
+                      <li>
+                        <Link to="/bra/style/push-up">Push-Up</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/balconette">Balconette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/bralette">Bralette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/sports">Sports Bra</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Pattern</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/pattern/lace">Lace</Link></li>
-                      <li><Link to="/bra/pattern/mesh">Mesh</Link></li>
-                      <li><Link to="/bra/pattern/satin">Satin</Link></li>
-                      <li><Link to="/bra/pattern/cotton">Cotton</Link></li>
+                      <li>
+                        <Link to="/bra/pattern/lace">Lace</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/mesh">Mesh</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/satin">Satin</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/cotton">Cotton</Link>
+                      </li>
                     </ul>
                   </li>
                 </ul>
@@ -118,28 +176,52 @@ export default function Footer() {
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Preference</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/preference/padded">Padded</Link></li>
-                      <li><Link to="/bra/preference/non-padded">Non-Padded</Link></li>
-                      <li><Link to="/bra/preference/wired">Wired</Link></li>
-                      <li><Link to="/bra/preference/wireless">Wireless</Link></li>
+                      <li>
+                        <Link to="/bra/preference/padded">Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/non-padded">Non-Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wired">Wired</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wireless">Wireless</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Style</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/style/push-up">Push-Up</Link></li>
-                      <li><Link to="/bra/style/balconette">Balconette</Link></li>
-                      <li><Link to="/bra/style/bralette">Bralette</Link></li>
-                      <li><Link to="/bra/style/sports">Sports Bra</Link></li>
+                      <li>
+                        <Link to="/bra/style/push-up">Push-Up</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/balconette">Balconette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/bralette">Bralette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/sports">Sports Bra</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Pattern</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/pattern/lace">Lace</Link></li>
-                      <li><Link to="/bra/pattern/mesh">Mesh</Link></li>
-                      <li><Link to="/bra/pattern/satin">Satin</Link></li>
-                      <li><Link to="/bra/pattern/cotton">Cotton</Link></li>
+                      <li>
+                        <Link to="/bra/pattern/lace">Lace</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/mesh">Mesh</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/satin">Satin</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/cotton">Cotton</Link>
+                      </li>
                     </ul>
                   </li>
                 </ul>
@@ -150,28 +232,52 @@ export default function Footer() {
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Preference</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/preference/padded">Padded</Link></li>
-                      <li><Link to="/bra/preference/non-padded">Non-Padded</Link></li>
-                      <li><Link to="/bra/preference/wired">Wired</Link></li>
-                      <li><Link to="/bra/preference/wireless">Wireless</Link></li>
+                      <li>
+                        <Link to="/bra/preference/padded">Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/non-padded">Non-Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wired">Wired</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wireless">Wireless</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Style</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/style/push-up">Push-Up</Link></li>
-                      <li><Link to="/bra/style/balconette">Balconette</Link></li>
-                      <li><Link to="/bra/style/bralette">Bralette</Link></li>
-                      <li><Link to="/bra/style/sports">Sports Bra</Link></li>
+                      <li>
+                        <Link to="/bra/style/push-up">Push-Up</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/balconette">Balconette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/bralette">Bralette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/sports">Sports Bra</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Pattern</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/pattern/lace">Lace</Link></li>
-                      <li><Link to="/bra/pattern/mesh">Mesh</Link></li>
-                      <li><Link to="/bra/pattern/satin">Satin</Link></li>
-                      <li><Link to="/bra/pattern/cotton">Cotton</Link></li>
+                      <li>
+                        <Link to="/bra/pattern/lace">Lace</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/mesh">Mesh</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/satin">Satin</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/cotton">Cotton</Link>
+                      </li>
                     </ul>
                   </li>
                 </ul>
@@ -182,28 +288,52 @@ export default function Footer() {
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Preference</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/preference/padded">Padded</Link></li>
-                      <li><Link to="/bra/preference/non-padded">Non-Padded</Link></li>
-                      <li><Link to="/bra/preference/wired">Wired</Link></li>
-                      <li><Link to="/bra/preference/wireless">Wireless</Link></li>
+                      <li>
+                        <Link to="/bra/preference/padded">Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/non-padded">Non-Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wired">Wired</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wireless">Wireless</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Style</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/style/push-up">Push-Up</Link></li>
-                      <li><Link to="/bra/style/balconette">Balconette</Link></li>
-                      <li><Link to="/bra/style/bralette">Bralette</Link></li>
-                      <li><Link to="/bra/style/sports">Sports Bra</Link></li>
+                      <li>
+                        <Link to="/bra/style/push-up">Push-Up</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/balconette">Balconette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/bralette">Bralette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/sports">Sports Bra</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Pattern</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/pattern/lace">Lace</Link></li>
-                      <li><Link to="/bra/pattern/mesh">Mesh</Link></li>
-                      <li><Link to="/bra/pattern/satin">Satin</Link></li>
-                      <li><Link to="/bra/pattern/cotton">Cotton</Link></li>
+                      <li>
+                        <Link to="/bra/pattern/lace">Lace</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/mesh">Mesh</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/satin">Satin</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/cotton">Cotton</Link>
+                      </li>
                     </ul>
                   </li>
                 </ul>
@@ -214,28 +344,52 @@ export default function Footer() {
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Preference</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/preference/padded">Padded</Link></li>
-                      <li><Link to="/bra/preference/non-padded">Non-Padded</Link></li>
-                      <li><Link to="/bra/preference/wired">Wired</Link></li>
-                      <li><Link to="/bra/preference/wireless">Wireless</Link></li>
+                      <li>
+                        <Link to="/bra/preference/padded">Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/non-padded">Non-Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wired">Wired</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wireless">Wireless</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Style</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/style/push-up">Push-Up</Link></li>
-                      <li><Link to="/bra/style/balconette">Balconette</Link></li>
-                      <li><Link to="/bra/style/bralette">Bralette</Link></li>
-                      <li><Link to="/bra/style/sports">Sports Bra</Link></li>
+                      <li>
+                        <Link to="/bra/style/push-up">Push-Up</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/balconette">Balconette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/bralette">Bralette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/sports">Sports Bra</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Pattern</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/pattern/lace">Lace</Link></li>
-                      <li><Link to="/bra/pattern/mesh">Mesh</Link></li>
-                      <li><Link to="/bra/pattern/satin">Satin</Link></li>
-                      <li><Link to="/bra/pattern/cotton">Cotton</Link></li>
+                      <li>
+                        <Link to="/bra/pattern/lace">Lace</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/mesh">Mesh</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/satin">Satin</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/cotton">Cotton</Link>
+                      </li>
                     </ul>
                   </li>
                 </ul>
@@ -246,28 +400,52 @@ export default function Footer() {
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Preference</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/preference/padded">Padded</Link></li>
-                      <li><Link to="/bra/preference/non-padded">Non-Padded</Link></li>
-                      <li><Link to="/bra/preference/wired">Wired</Link></li>
-                      <li><Link to="/bra/preference/wireless">Wireless</Link></li>
+                      <li>
+                        <Link to="/bra/preference/padded">Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/non-padded">Non-Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wired">Wired</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wireless">Wireless</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Style</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/style/push-up">Push-Up</Link></li>
-                      <li><Link to="/bra/style/balconette">Balconette</Link></li>
-                      <li><Link to="/bra/style/bralette">Bralette</Link></li>
-                      <li><Link to="/bra/style/sports">Sports Bra</Link></li>
+                      <li>
+                        <Link to="/bra/style/push-up">Push-Up</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/balconette">Balconette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/bralette">Bralette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/sports">Sports Bra</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Pattern</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/pattern/lace">Lace</Link></li>
-                      <li><Link to="/bra/pattern/mesh">Mesh</Link></li>
-                      <li><Link to="/bra/pattern/satin">Satin</Link></li>
-                      <li><Link to="/bra/pattern/cotton">Cotton</Link></li>
+                      <li>
+                        <Link to="/bra/pattern/lace">Lace</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/mesh">Mesh</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/satin">Satin</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/cotton">Cotton</Link>
+                      </li>
                     </ul>
                   </li>
                 </ul>
@@ -278,28 +456,52 @@ export default function Footer() {
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Preference</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/preference/padded">Padded</Link></li>
-                      <li><Link to="/bra/preference/non-padded">Non-Padded</Link></li>
-                      <li><Link to="/bra/preference/wired">Wired</Link></li>
-                      <li><Link to="/bra/preference/wireless">Wireless</Link></li>
+                      <li>
+                        <Link to="/bra/preference/padded">Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/non-padded">Non-Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wired">Wired</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wireless">Wireless</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Style</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/style/push-up">Push-Up</Link></li>
-                      <li><Link to="/bra/style/balconette">Balconette</Link></li>
-                      <li><Link to="/bra/style/bralette">Bralette</Link></li>
-                      <li><Link to="/bra/style/sports">Sports Bra</Link></li>
+                      <li>
+                        <Link to="/bra/style/push-up">Push-Up</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/balconette">Balconette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/bralette">Bralette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/sports">Sports Bra</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Pattern</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/pattern/lace">Lace</Link></li>
-                      <li><Link to="/bra/pattern/mesh">Mesh</Link></li>
-                      <li><Link to="/bra/pattern/satin">Satin</Link></li>
-                      <li><Link to="/bra/pattern/cotton">Cotton</Link></li>
+                      <li>
+                        <Link to="/bra/pattern/lace">Lace</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/mesh">Mesh</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/satin">Satin</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/cotton">Cotton</Link>
+                      </li>
                     </ul>
                   </li>
                 </ul>
@@ -310,28 +512,52 @@ export default function Footer() {
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Preference</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/preference/padded">Padded</Link></li>
-                      <li><Link to="/bra/preference/non-padded">Non-Padded</Link></li>
-                      <li><Link to="/bra/preference/wired">Wired</Link></li>
-                      <li><Link to="/bra/preference/wireless">Wireless</Link></li>
+                      <li>
+                        <Link to="/bra/preference/padded">Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/non-padded">Non-Padded</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wired">Wired</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/preference/wireless">Wireless</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Style</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/style/push-up">Push-Up</Link></li>
-                      <li><Link to="/bra/style/balconette">Balconette</Link></li>
-                      <li><Link to="/bra/style/bralette">Bralette</Link></li>
-                      <li><Link to="/bra/style/sports">Sports Bra</Link></li>
+                      <li>
+                        <Link to="/bra/style/push-up">Push-Up</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/balconette">Balconette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/bralette">Bralette</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/style/sports">Sports Bra</Link>
+                      </li>
                     </ul>
                   </li>
                   <li className={styles.nestedDropdownItem}>
                     <span className={styles.categoryTitle}>Pattern</span>
                     <ul className={styles.nestedDropdownMenu}>
-                      <li><Link to="/bra/pattern/lace">Lace</Link></li>
-                      <li><Link to="/bra/pattern/mesh">Mesh</Link></li>
-                      <li><Link to="/bra/pattern/satin">Satin</Link></li>
-                      <li><Link to="/bra/pattern/cotton">Cotton</Link></li>
+                      <li>
+                        <Link to="/bra/pattern/lace">Lace</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/mesh">Mesh</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/satin">Satin</Link>
+                      </li>
+                      <li>
+                        <Link to="/bra/pattern/cotton">Cotton</Link>
+                      </li>
                     </ul>
                   </li>
                 </ul>
@@ -348,7 +574,11 @@ export default function Footer() {
           </p>
 
           <div className="input-group mt-3">
-            <input type="email" className="form-control" placeholder="Your email" />
+            <input
+              type="email"
+              className="form-control"
+              placeholder="Your email"
+            />
             <button className="btn btnSubscribe">Subscribe →</button>
           </div>
         </div>
@@ -360,12 +590,18 @@ export default function Footer() {
           </p>
 
           <div>
-            <Link to="/privacy" className={styles.bottomLink}>Privacy</Link>
-            <Link to="/refund" className={styles.bottomLink}>Refund</Link>
-            <Link to="/terms" className={styles.bottomLink}>Terms</Link>
+            <Link to="/privacy" className={styles.bottomLink}>
+              Privacy
+            </Link>
+            <Link to="/refund" className={styles.bottomLink}>
+              Refund
+            </Link>
+            <Link to="/terms" className={styles.bottomLink}>
+              Terms
+            </Link>
           </div>
         </div>
-        </div>
+      </div>
     </footer>
   );
 }

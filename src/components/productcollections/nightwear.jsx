@@ -1,27 +1,27 @@
 // src/components/BrasListing/BrasListing.jsx
-import React, { useState, useMemo, useEffect } from "react";
-import axios from "axios";
-import { FiHeart, FiShoppingBag } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
-import styles from "../../assets/styles/productcollection/BraListing.module.css";
+import React, { useState, useMemo, useEffect } from 'react';
+import axios from 'axios';
+import { FiHeart, FiShoppingBag } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import styles from '../../assets/styles/productcollection/BraListing.module.css';
 
 // 🔁 Replace these with your real image imports
-import paddedImg from "../../assets/images/17.jpg";
-import nonPaddedImg from "../../assets/images/19.jpg";
-import wiredImg from "../../assets/images/5.jpg";
-import nonWiredImg from "../../assets/images/17.jpg";
-import tshirtImg from "../../assets/images/19.jpg";
-import pushupImg from "../../assets/images/5.jpg";
-import multiwayImg from "../../assets/images/17.jpg";
+import paddedImg from '../../assets/images/17.jpg';
+import nonPaddedImg from '../../assets/images/19.jpg';
+import wiredImg from '../../assets/images/5.jpg';
+import nonWiredImg from '../../assets/images/17.jpg';
+import tshirtImg from '../../assets/images/19.jpg';
+import pushupImg from '../../assets/images/5.jpg';
+import multiwayImg from '../../assets/images/17.jpg';
 
 // Product card fallback images (if API image missing)
-import prod1Img from "../../assets/images/CSC_0015.jpg";
-import prod2Img from "../../assets/images/IMG_4869.JPG";
-import prod3Img from "../../assets/images/CSC_0015.jpg";
-import prod4Img from "../../assets/images/IMG_4869.JPG";
+import prod1Img from '../../assets/images/CSC_0015.jpg';
+import prod2Img from '../../assets/images/IMG_4869.JPG';
+import prod3Img from '../../assets/images/CSC_0015.jpg';
+import prod4Img from '../../assets/images/IMG_4869.JPG';
 
 // ================== CONFIG ==================
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = 'http://localhost:8000';
 const PRODUCTS_ENDPOINT = `${API_BASE_URL}/v1/products`;
 
 const BRA_TYPES = [
@@ -29,60 +29,60 @@ const BRA_TYPES = [
   // "id" should match tags you save in backend (product.tags)
   // e.g. if you want to show products when "Binki" is clicked,
   // add "binki" in product.tags array in Mongo.
-  { id: "binki", label: "Binki", image: paddedImg },
-  { id: "hipster", label: "Hipster", image: nonPaddedImg },
-  { id: "fullbrief", label: "FullBrief", image: wiredImg },
-  { id: "boyshorts", label: "Boy-shorts", image: nonWiredImg },
-  { id: "tong", label: "Tong", image: tshirtImg },
-  { id: "vanishSeamless", label: "Vanish Seamless", image: pushupImg },
-  { id: "boyleg", label: "Boyleg", image: multiwayImg },
+  { id: 'binki', label: 'Binki', image: paddedImg },
+  { id: 'hipster', label: 'Hipster', image: nonPaddedImg },
+  { id: 'fullbrief', label: 'FullBrief', image: wiredImg },
+  { id: 'boyshorts', label: 'Boy-shorts', image: nonWiredImg },
+  { id: 'tong', label: 'Tong', image: tshirtImg },
+  { id: 'vanishSeamless', label: 'Vanish Seamless', image: pushupImg },
+  { id: 'boyleg', label: 'Boyleg', image: multiwayImg },
 ];
 
 const SORT_OPTIONS = [
-  { id: "featured", label: "Featured" },
-  { id: "priceLow", label: "Price: Low to High" },
-  { id: "priceHigh", label: "Price: High to Low" },
+  { id: 'featured', label: 'Featured' },
+  { id: 'priceLow', label: 'Price: Low to High' },
+  { id: 'priceHigh', label: 'Price: High to Low' },
 ];
 
 const PRODUCTS_PER_PAGE = 12;
 
 // ----- helpers -----
 const getImageUrl = (url) => {
-  if (!url) return "";
-  if (url.startsWith("http")) return url;
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
   return `${API_BASE_URL}${url}`;
 };
 
 // decode colors coming from DB (string | object)
 const decodeColor = (c) => {
-  if (!c) return "#e5e7eb";
+  if (!c) return '#e5e7eb';
 
-  if (typeof c === "string") {
+  if (typeof c === 'string') {
     // already a hex or css color name
     return c;
   }
 
-  if (typeof c === "object") {
+  if (typeof c === 'object') {
     // from your form: { label, value } or { label, hex }
-    return c.value || c.hex || "#e5e7eb";
+    return c.value || c.hex || '#e5e7eb';
   }
 
-  return "#e5e7eb";
+  return '#e5e7eb';
 };
 
 const NightwearListing = () => {
   const [rawProducts, setRawProducts] = useState([]);
   const [loading, setLoading] = useState(false);
 
-  const [selectedType, setSelectedType] = useState("all");
-  const [sortBy, setSortBy] = useState("featured");
+  const [selectedType, setSelectedType] = useState('all');
+  const [sortBy, setSortBy] = useState('featured');
   const [currentPage, setCurrentPage] = useState(1);
 
   const navigate = useNavigate();
 
   // ⭐ Scroll to top whenever page changes (Prev, Next, number)
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage]);
 
   // ====== FETCH ONLY NIGHTWEAR PRODUCTS FROM BACKEND ======
@@ -94,7 +94,7 @@ const NightwearListing = () => {
         // 👇 change "Nightwear" if your DB uses different category text
         const res = await axios.get(PRODUCTS_ENDPOINT, {
           params: {
-            category: "Nightwear", // ONLY nightwear products
+            category: 'Nightwear', // ONLY nightwear products
             limit: 200,
           },
         });
@@ -102,7 +102,7 @@ const NightwearListing = () => {
         const apiProducts = res.data?.data || [];
         setRawProducts(apiProducts);
       } catch (err) {
-        console.error("Nightwear fetch error:", err);
+        console.error('Nightwear fetch error:', err);
       } finally {
         setLoading(false);
       }
@@ -122,7 +122,7 @@ const NightwearListing = () => {
           ? Number(p?.price?.sale)
           : mrp;
       let discountPercent =
-        typeof p?.price?.discountPercent === "number"
+        typeof p?.price?.discountPercent === 'number'
           ? p.price.discountPercent
           : 0;
 
@@ -135,19 +135,18 @@ const NightwearListing = () => {
       if (Array.isArray(p.tags)) {
         const lowerTags = p.tags.map((t) => String(t).toLowerCase());
 
-        if (lowerTags.includes("binki")) types.push("binki");
-        if (lowerTags.includes("hipster")) types.push("hipster");
-        if (lowerTags.includes("fullbrief")) types.push("fullbrief");
-        if (lowerTags.includes("boyshorts")) types.push("boyshorts");
-        if (lowerTags.includes("tong")) types.push("tong");
-        if (lowerTags.includes("vanishseamless"))
-          types.push("vanishSeamless");
-        if (lowerTags.includes("boyleg")) types.push("boyleg");
+        if (lowerTags.includes('binki')) types.push('binki');
+        if (lowerTags.includes('hipster')) types.push('hipster');
+        if (lowerTags.includes('fullbrief')) types.push('fullbrief');
+        if (lowerTags.includes('boyshorts')) types.push('boyshorts');
+        if (lowerTags.includes('tong')) types.push('tong');
+        if (lowerTags.includes('vanishseamless')) types.push('vanishSeamless');
+        if (lowerTags.includes('boyleg')) types.push('boyleg');
       }
 
       // default type so that they appear under "All" even if tags missing
       if (!types.length) {
-        types = ["default"];
+        types = ['default'];
       }
 
       const imageFromApi =
@@ -168,8 +167,8 @@ const NightwearListing = () => {
       return {
         id: p._id || index + 1,
         slug: p.slug,
-        brand: p.brand || "AMANTE",
-        name: p.name || "Product Name",
+        brand: p.brand || 'AMANTE',
+        name: p.name || 'Product Name',
         mrp,
         price: sale || mrp,
         discount: discountPercent || 0,
@@ -183,13 +182,13 @@ const NightwearListing = () => {
   // ----- FILTER + SORT -----
   const filteredProducts = useMemo(() => {
     let products =
-      selectedType === "all"
+      selectedType === 'all'
         ? [...allProducts]
         : allProducts.filter((p) => p.types.includes(selectedType));
 
-    if (sortBy === "priceLow") {
+    if (sortBy === 'priceLow') {
       products.sort((a, b) => a.price - b.price);
-    } else if (sortBy === "priceHigh") {
+    } else if (sortBy === 'priceHigh') {
       products.sort((a, b) => b.price - a.price);
     }
     return products;
@@ -213,16 +212,15 @@ const NightwearListing = () => {
   };
 
   // handle click to product detail (slug-based)
- const handleCardClick = (product) => {
-  navigate(`/product/${product._id}`);
-};
-
+  const handleCardClick = (product) => {
+    navigate(`/product/${product._id}`);
+  };
 
   return (
     <div className={styles.page}>
       {/* -------- BREADCRUMB -------- */}
       <div className={`container ${styles.breadcrumb}`}>
-        <span className={styles.breadcrumbLink} onClick={() => navigate("/")}>
+        <span className={styles.breadcrumbLink} onClick={() => navigate('/')}>
           Home
         </span>
         <span className={styles.breadcrumbSeparator}>&gt;</span>
@@ -234,9 +232,9 @@ const NightwearListing = () => {
         <button
           type="button"
           className={`${styles.typeChip} ${
-            selectedType === "all" ? styles.typeChipActive : ""
+            selectedType === 'all' ? styles.typeChipActive : ''
           }`}
-          onClick={() => handleTypeChange("all")}
+          onClick={() => handleTypeChange('all')}
         >
           <div className={styles.typeChipImgWrapper}>
             <div className={styles.typeChipAllCircle}>All</div>
@@ -249,7 +247,7 @@ const NightwearListing = () => {
             key={type.id}
             type="button"
             className={`${styles.typeChip} ${
-              selectedType === type.id ? styles.typeChipActive : ""
+              selectedType === type.id ? styles.typeChipActive : ''
             }`}
             onClick={() => handleTypeChange(type.id)}
           >
@@ -401,7 +399,7 @@ const NightwearListing = () => {
                 key={page}
                 type="button"
                 className={`${styles.pageBtn} ${
-                  currentPage === page ? styles.pageBtnActive : ""
+                  currentPage === page ? styles.pageBtnActive : ''
                 }`}
                 onClick={() => setCurrentPage(page)}
               >

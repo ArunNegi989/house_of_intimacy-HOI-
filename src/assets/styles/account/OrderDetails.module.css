@@ -133,7 +133,7 @@
   pointer-events: none;
 }
 
-.card > * {
+.card>* {
   position: relative;
 }
 
@@ -629,7 +629,8 @@
 }
 
 .modalReason input {
-  accent-color: #d63384; /* modern browsers */
+  accent-color: #d63384;
+  /* modern browsers */
 }
 
 .modalReasonSelected {

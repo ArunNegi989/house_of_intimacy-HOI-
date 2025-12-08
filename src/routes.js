@@ -109,7 +109,7 @@ const routes = [
     component: <AddBlog />,
     showInSidebar: false,
   },
-    {
+  {
     name: 'Edit Blogs',
     layout: '/admin',
     path: '/Blogs/:id',

@@ -1,6 +1,6 @@
 // src/pages/legal/PrivacyPolicy.jsx
-import React, { useEffect } from "react";
-import styles from "../../assets/styles/legal/PrivacyPolicy.module.css";
+import React, { useEffect } from 'react';
+import styles from '../../assets/styles/legal/PrivacyPolicy.module.css';
 
 const PrivacyPolicy = () => {
   useEffect(() => {
@@ -12,82 +12,77 @@ const PrivacyPolicy = () => {
     <div className={styles.page}>
       {/* Top Hero / Header */}
       <header className={styles.header}>
-  <div className={styles.headerInner}>
-    
-    {/* Top Label */}
-    <p className={styles.badge}>House of Intimacy • Privacy First</p>
+        <div className={styles.headerInner}>
+          {/* Top Label */}
+          <p className={styles.badge}>House of Intimacy • Privacy First</p>
 
-    {/* Title */}
-    <h1 className={styles.title}>Privacy Policy</h1>
+          {/* Title */}
+          <h1 className={styles.title}>Privacy Policy</h1>
 
-    {/* Subtitle */}
-    <p className={styles.subtitle}>
-      This Privacy Policy explains how{" "}
-      <strong>House of Intimacy</strong> (“HOI”, “we”, “us”, or “our”)
-      collects, uses, shares, and protects your personal information when
-      you use our website and services.
-    </p>
+          {/* Subtitle */}
+          <p className={styles.subtitle}>
+            This Privacy Policy explains how <strong>House of Intimacy</strong>{' '}
+            (“HOI”, “we”, “us”, or “our”) collects, uses, shares, and protects
+            your personal information when you use our website and services.
+          </p>
 
-    {/* Updated Date */}
-    <p className={styles.updated}>Last updated: DD Month YYYY</p>
+          {/* Updated Date */}
+          <p className={styles.updated}>Last updated: DD Month YYYY</p>
 
-    {/* Meta Row */}
-    <div className={styles.metaRow}>
-      <span className={styles.metaItem}>Applies to: HOI website & app</span>
-      <span className={styles.metaDot} />
-      <span className={styles.metaItem}>Users, customers & visitors</span>
-      <span className={styles.metaDot} />
-      <span className={styles.metaItem}>India & global users</span>
-    </div>
+          {/* Meta Row */}
+          <div className={styles.metaRow}>
+            <span className={styles.metaItem}>
+              Applies to: HOI website & app
+            </span>
+            <span className={styles.metaDot} />
+            <span className={styles.metaItem}>Users, customers & visitors</span>
+            <span className={styles.metaDot} />
+            <span className={styles.metaItem}>India & global users</span>
+          </div>
 
-    {/* --- NEW: TRUST BADGES ROW --- */}
-    <div className={styles.trustRow}>
-      <div className={styles.trustBox}>
-        🔒 100% Secure
-      </div>
-      <div className={styles.trustBox}>
-        🛡 No Data Selling
-      </div>
-      <div className={styles.trustBox}>
-        📦 Private Packaging
-      </div>
-      <div className={styles.trustBox}>
-        🇮🇳 India-based Servers
-      </div>
-    </div>
+          {/* --- NEW: TRUST BADGES ROW --- */}
+          <div className={styles.trustRow}>
+            <div className={styles.trustBox}>🔒 100% Secure</div>
+            <div className={styles.trustBox}>🛡 No Data Selling</div>
+            <div className={styles.trustBox}>📦 Private Packaging</div>
+            <div className={styles.trustBox}>🇮🇳 India-based Servers</div>
+          </div>
 
-    {/* --- NEW: SHORT SUMMARY BOX --- */}
-    <div className={styles.summaryCard}>
-      <p className={styles.summaryTitle}>Quick Summary</p>
-      <ul className={styles.summaryList}>
-        <li>
-          We collect only essential information to process your orders and improve your shopping experience.
-        </li>
-        <li>
-          Your order, browsing, and account details are kept confidential and never shared with advertisers.
-        </li>
-        <li>
-          Payment information is processed only by trusted, PCI-DSS compliant gateways like Razorpay / Stripe.
-        </li>
-        <li>
-          You can request to delete or update your data at any time.
-        </li>
-        <li>
-          We use encrypted connections (HTTPS) and secure storage to protect your personal information.
-        </li>
-      </ul>
-    </div>
+          {/* --- NEW: SHORT SUMMARY BOX --- */}
+          <div className={styles.summaryCard}>
+            <p className={styles.summaryTitle}>Quick Summary</p>
+            <ul className={styles.summaryList}>
+              <li>
+                We collect only essential information to process your orders and
+                improve your shopping experience.
+              </li>
+              <li>
+                Your order, browsing, and account details are kept confidential
+                and never shared with advertisers.
+              </li>
+              <li>
+                Payment information is processed only by trusted, PCI-DSS
+                compliant gateways like Razorpay / Stripe.
+              </li>
+              <li>
+                You can request to delete or update your data at any time.
+              </li>
+              <li>
+                We use encrypted connections (HTTPS) and secure storage to
+                protect your personal information.
+              </li>
+            </ul>
+          </div>
 
-    {/* --- NEW: PACKAGING PRIVACY --- */}
-    <div className={styles.packageNote}>
-      📦 <strong>Discreet Packaging Guarantee:</strong>  
-      For all orders, the packaging will NOT reveal product type, category, or brand name. 
-      Your privacy is always protected at the delivery stage.
-    </div>
-
-  </div>
-</header>
-
+          {/* --- NEW: PACKAGING PRIVACY --- */}
+          <div className={styles.packageNote}>
+            📦 <strong>Discreet Packaging Guarantee:</strong>
+            For all orders, the packaging will NOT reveal product type,
+            category, or brand name. Your privacy is always protected at the
+            delivery stage.
+          </div>
+        </div>
+      </header>
 
       {/* Layout: Sidebar + Content */}
       <div className={styles.layout}>
@@ -181,7 +176,9 @@ const PrivacyPolicy = () => {
               improve our services to you.
             </p>
 
-            <h3 className={styles.subTitle}>2.1. Information you provide directly</h3>
+            <h3 className={styles.subTitle}>
+              2.1. Information you provide directly
+            </h3>
             <ul className={styles.list}>
               <li>
                 <strong>Account details:</strong> name, email address, phone
@@ -201,7 +198,9 @@ const PrivacyPolicy = () => {
               </li>
             </ul>
 
-            <h3 className={styles.subTitle}>2.2. Information we collect automatically</h3>
+            <h3 className={styles.subTitle}>
+              2.2. Information we collect automatically
+            </h3>
             <ul className={styles.list}>
               <li>
                 <strong>Usage data:</strong> pages visited, time spent on pages,
@@ -268,7 +267,9 @@ const PrivacyPolicy = () => {
 
           {/* 4. Cookies */}
           <section id="cookies" className={styles.section}>
-            <h2 className={styles.sectionTitle}>4. Cookies & Tracking Technologies</h2>
+            <h2 className={styles.sectionTitle}>
+              4. Cookies & Tracking Technologies
+            </h2>
             <p className={styles.sectionText}>
               We use cookies and similar technologies to operate and improve our
               website. Cookies are small text files stored on your device.
@@ -328,7 +329,9 @@ const PrivacyPolicy = () => {
 
           {/* 6. Marketing */}
           <section id="marketing" className={styles.section}>
-            <h2 className={styles.sectionTitle}>6. Marketing & Communications</h2>
+            <h2 className={styles.sectionTitle}>
+              6. Marketing & Communications
+            </h2>
             <p className={styles.sectionText}>
               We may send you marketing communications about new launches,
               collections, discounts, and offers, only where permitted by law.
@@ -425,8 +428,12 @@ const PrivacyPolicy = () => {
             </ul>
             <p className={styles.sectionText}>
               To exercise these rights, please contact us using the details in
-              the <a href="#contact" className={styles.inlineLink}>Contact Us</a> section. We may need to verify
-              your identity before responding to your request.
+              the{' '}
+              <a href="#contact" className={styles.inlineLink}>
+                Contact Us
+              </a>{' '}
+              section. We may need to verify your identity before responding to
+              your request.
             </p>
           </section>
 
@@ -444,7 +451,9 @@ const PrivacyPolicy = () => {
 
           {/* 11. Third Parties */}
           <section id="third-parties" className={styles.section}>
-            <h2 className={styles.sectionTitle}>11. Third-Party Websites & Services</h2>
+            <h2 className={styles.sectionTitle}>
+              11. Third-Party Websites & Services
+            </h2>
             <p className={styles.sectionText}>
               Our website may contain links to third-party websites, apps, or
               services (such as social networks, payment gateways, or partner
@@ -479,7 +488,9 @@ const PrivacyPolicy = () => {
 
           {/* 13. International transfers */}
           <section id="international" className={styles.section}>
-            <h2 className={styles.sectionTitle}>13. International Data Transfers</h2>
+            <h2 className={styles.sectionTitle}>
+              13. International Data Transfers
+            </h2>
             <p className={styles.sectionText}>
               Our servers, service providers, or partners may be located in
               different countries. Your information may therefore be transferred
@@ -493,7 +504,9 @@ const PrivacyPolicy = () => {
 
           {/* 14. Changes */}
           <section id="changes" className={styles.section}>
-            <h2 className={styles.sectionTitle}>14. Changes to This Privacy Policy</h2>
+            <h2 className={styles.sectionTitle}>
+              14. Changes to This Privacy Policy
+            </h2>
             <p className={styles.sectionText}>
               We may update this Privacy Policy from time to time to reflect
               changes in our practices, technologies, legal requirements, or for
@@ -518,13 +531,20 @@ const PrivacyPolicy = () => {
             {/* TODO: Replace with your real contact details */}
             <div className={styles.contactCard}>
               <p className={styles.contactName}>House of Intimacy (HOI)</p>
-              <p className={styles.contactLine}>[Your Registered Company Name]</p>
+              <p className={styles.contactLine}>
+                [Your Registered Company Name]
+              </p>
               <p className={styles.contactLine}>[Full Address Line 1]</p>
               <p className={styles.contactLine}>[City, State, PIN, Country]</p>
               <p className={styles.contactLine}>
-                Email: <a href="mailto:support@houseofintimacy.com">support@houseofintimacy.com</a>
+                Email:{' '}
+                <a href="mailto:support@houseofintimacy.com">
+                  support@houseofintimacy.com
+                </a>
               </p>
-              <p className={styles.contactLine}>Phone/WhatsApp: +91-XXXXXXXXXX</p>
+              <p className={styles.contactLine}>
+                Phone/WhatsApp: +91-XXXXXXXXXX
+              </p>
             </div>
 
             <p className={styles.sectionTextSmall}>

@@ -1,7 +1,8 @@
 .page {
   padding: 24px 16px 40px;
   background: #faf5f7;
-  min-height: calc(100vh - 80px); /* below header */
+  min-height: calc(100vh - 80px);
+  /* below header */
 }
 
 .inner {

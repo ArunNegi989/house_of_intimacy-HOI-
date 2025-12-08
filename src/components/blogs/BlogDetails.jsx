@@ -1,12 +1,12 @@
 // src/pages/BlogDetails.jsx
-import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
-import axios from "axios";
-import Style from "../../assets/styles/BlogDetails.module.css";
-import Photo from "../../assets/images/fake/DSC05179.JPG";
+import React, { useEffect, useState } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import axios from 'axios';
+import Style from '../../assets/styles/BlogDetails.module.css';
+import Photo from '../../assets/images/fake/DSC05179.JPG';
 
-const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
-const apiRoot = baseUrl.replace(/\/v1$/, "");
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
+const apiRoot = baseUrl.replace(/\/v1$/, '');
 
 export function BlogDetails() {
   const { slug } = useParams(); // URL: /blog/:slug
@@ -14,14 +14,14 @@ export function BlogDetails() {
   const [blog, setBlog] = useState(null);
   const [recentBlogs, setRecentBlogs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   // 🔹 Fetch single blog + recent blogs
   useEffect(() => {
     const fetchBlogAndRecent = async () => {
       try {
         setLoading(true);
-        setError("");
+        setError('');
 
         // 1️⃣ Single blog by slug → GET /v1/myblogs/slug/:slug
         const blogRes = await axios.get(`${baseUrl}/myblogs/slug/${slug}`);
@@ -34,20 +34,21 @@ export function BlogDetails() {
 
         // Only published and not the same slug
         const published = listData.filter(
-          (b) => b.status === "published" && b.slug !== slug
+          (b) => b.status === 'published' && b.slug !== slug,
         );
 
         // Sort latest first
         const sorted = [...published].sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
 
         setBlog(blogData);
         setRecentBlogs(sorted.slice(0, 3)); // 3 recent blogs
       } catch (err) {
-        console.error("Blog fetch error:", err);
+        console.error('Blog fetch error:', err);
         setError(
-          err.response?.data?.message || "Failed to load blog. Please try again."
+          err.response?.data?.message ||
+            'Failed to load blog. Please try again.',
         );
       } finally {
         setLoading(false);
@@ -61,7 +62,7 @@ export function BlogDetails() {
   useEffect(() => {
     if (!blog) return;
     document.title =
-      blog.metaTitle || blog.seoTitle || blog.mainHeading || "Blog Details";
+      blog.metaTitle || blog.seoTitle || blog.mainHeading || 'Blog Details';
   }, [blog]);
 
   // ----- Loading / Error -----
@@ -79,7 +80,7 @@ export function BlogDetails() {
     return (
       <section className={Style.homePadding}>
         <div className="container py-5">
-          <p>{error || "Blog not found."}</p>
+          <p>{error || 'Blog not found.'}</p>
         </div>
       </section>
     );
@@ -88,18 +89,18 @@ export function BlogDetails() {
   // ----- Date & time formatting -----
   const created = blog.createdAt ? new Date(blog.createdAt) : null;
   const timeStr = created
-    ? created.toLocaleTimeString("en-IN", {
-        hour: "2-digit",
-        minute: "2-digit",
+    ? created.toLocaleTimeString('en-IN', {
+        hour: '2-digit',
+        minute: '2-digit',
       })
-    : "";
+    : '';
   const dateStr = created
-    ? created.toLocaleDateString("en-IN", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
+    ? created.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
       })
-    : "";
+    : '';
 
   // ----- Feature image -----
   const featureImageUrl = blog.featureImage
@@ -107,11 +108,11 @@ export function BlogDetails() {
     : Photo;
 
   // ----- Share URLs -----
-  const encodedTitle = encodeURIComponent(blog.mainHeading || "HOI Blog");
+  const encodedTitle = encodeURIComponent(blog.mainHeading || 'HOI Blog');
   const encodedUrl =
-    typeof window !== "undefined"
+    typeof window !== 'undefined'
       ? encodeURIComponent(window.location.href)
-      : "";
+      : '';
 
   const whatsappShare = `https://wa.me/?text=${encodedTitle}%20-%20${encodedUrl}`;
   const twitterShare = `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`;
@@ -130,7 +131,7 @@ export function BlogDetails() {
               <Link to="/blogs">Blog</Link>
               <span>/</span>
               <span className={Style.breadcrumbCurrent}>
-                {blog.mainHeading?.slice(0, 40) || "Details"}...
+                {blog.mainHeading?.slice(0, 40) || 'Details'}...
               </span>
             </div>
 
@@ -217,9 +218,12 @@ export function BlogDetails() {
                       type="button"
                       className={Style.copyLinkBtn}
                       onClick={() => {
-                        if (typeof window !== "undefined" && navigator?.clipboard) {
+                        if (
+                          typeof window !== 'undefined' &&
+                          navigator?.clipboard
+                        ) {
                           navigator.clipboard.writeText(window.location.href);
-                          alert("Link copied!");
+                          alert('Link copied!');
                         }
                       }}
                     >
@@ -331,12 +335,12 @@ export function BlogDetails() {
                       ? new Date(item.createdAt)
                       : null;
                     const recentDateStr = recentCreated
-                      ? recentCreated.toLocaleDateString("en-IN", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
+                      ? recentCreated.toLocaleDateString('en-IN', {
+                          day: '2-digit',
+                          month: 'short',
+                          year: 'numeric',
                         })
-                      : "";
+                      : '';
 
                     return (
                       <React.Fragment key={item._id}>
@@ -397,7 +401,7 @@ export function BlogDetails() {
 
             <div className={Style.conclusionCTA}>
               <p>
-                Ready for more?{" "}
+                Ready for more?{' '}
                 <Link to="/Blog">Browse all HOI lingerie guides →</Link>
               </p>
             </div>

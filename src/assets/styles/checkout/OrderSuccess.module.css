@@ -162,7 +162,8 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  max-height: 260px; /* scroll if too many items */
+  max-height: 260px;
+  /* scroll if too many items */
   overflow-y: auto;
   padding-right: 4px;
 }
@@ -302,6 +303,7 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
 .colorMeta {
   display: inline-flex;
   align-items: center;
@@ -349,10 +351,12 @@
     gap: 10px;
   }
 }
+
 /* Make the whole card a bit wider so 2 columns fit */
 .container {
   width: 100%;
-  max-width: 900px;   /* was 520px */
+  max-width: 900px;
+  /* was 520px */
 }
 
 /* Row that holds left (items) + right (info) */

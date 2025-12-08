@@ -1,19 +1,18 @@
 // src/routes/AdminRoute.jsx
-import React from "react";
-import { Navigate } from "react-router-dom";
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 
 export default function AdminRoute({ children }) {
   const token =
-    localStorage.getItem("authToken") ||
-    sessionStorage.getItem("authToken");
+    localStorage.getItem('authToken') || sessionStorage.getItem('authToken');
 
-  const role =
-    (localStorage.getItem("userRole") ||
-      sessionStorage.getItem("userRole") ||
-      ""
-    )
-      .toLowerCase()
-      .trim();
+  const role = (
+    localStorage.getItem('userRole') ||
+    sessionStorage.getItem('userRole') ||
+    ''
+  )
+    .toLowerCase()
+    .trim();
 
   // 1) No login → redirect to login
   if (!token) {
@@ -21,7 +20,7 @@ export default function AdminRoute({ children }) {
   }
 
   // 2) Not admin → redirect to home
-  if (role !== "admin") {
+  if (role !== 'admin') {
     return <Navigate to="/" replace />;
   }
 

@@ -1,19 +1,19 @@
 // src/pages/Wishlist/WishlistPage.jsx
-import React, { useContext, useEffect, useState, useMemo } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import React, { useContext, useEffect, useState, useMemo } from 'react';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
-import { WishlistContext } from "../../contexts/WishlistContext";
-import styles from "../../assets/styles/wishlistpage/WishlistPage.module.css";
+import { WishlistContext } from '../../contexts/WishlistContext';
+import styles from '../../assets/styles/wishlistpage/WishlistPage.module.css';
 
-import { FiHeart, FiTrash2, FiArrowLeft } from "react-icons/fi";
+import { FiHeart, FiTrash2, FiArrowLeft } from 'react-icons/fi';
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = 'http://localhost:8000';
 
 // helper: convert "/uploads/..." → full URL
 const getImageUrl = (url) => {
-  if (!url) return "";
-  if (url.startsWith("http")) return url;
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
   return `${API_BASE_URL}${url}`;
 };
 
@@ -48,7 +48,7 @@ function WishlistPage() {
         const backendProducts = res.data?.data || [];
         setAllProducts(backendProducts);
       } catch (err) {
-        console.error("Error fetching wishlist products", err);
+        console.error('Error fetching wishlist products', err);
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -100,7 +100,7 @@ function WishlistPage() {
             <div>
               <div className={styles.breadcrumb}>
                 <span
-                  onClick={() => navigate("/")}
+                  onClick={() => navigate('/')}
                   className={styles.breadcrumbLink}
                 >
                   Home
@@ -114,7 +114,7 @@ function WishlistPage() {
                 <span className={styles.countBadge}>
                   <FiHeart className={styles.countIcon} />
                   {wishlistItems?.length || 0} item
-                  {wishlistItems?.length === 1 ? "" : "s"}
+                  {wishlistItems?.length === 1 ? '' : 's'}
                 </span>
               </div>
 
@@ -123,19 +123,19 @@ function WishlistPage() {
                 <button
                   type="button"
                   className={styles.linkButton}
-                  onClick={() => navigate("/login")}
+                  onClick={() => navigate('/login')}
                 >
-                  {" "}
-                  log in{" "}
+                  {' '}
+                  log in{' '}
                 </button>
                 or
                 <button
                   type="button"
                   className={styles.linkButton}
-                  onClick={() => navigate("/auth/create_new_user")}
+                  onClick={() => navigate('/auth/create_new_user')}
                 >
-                  {" "}
-                  create an account{" "}
+                  {' '}
+                  create an account{' '}
                 </button>
                 to save it across devices.
               </p>
@@ -149,14 +149,14 @@ function WishlistPage() {
             <div className={styles.toolbarLeft}>
               <span className={styles.toolbarLabel}>
                 You have <strong>{products.length}</strong> favourite
-                {products.length === 1 ? "" : "s"}.
+                {products.length === 1 ? '' : 's'}.
               </span>
             </div>
             <div className={styles.toolbarRight}>
               <button
                 type="button"
                 className={styles.ctaButton}
-                onClick={() => navigate("/")}
+                onClick={() => navigate('/')}
               >
                 Continue Shopping
               </button>
@@ -192,7 +192,7 @@ function WishlistPage() {
             <button
               type="button"
               className={styles.shopButton}
-              onClick={() => navigate("/")}
+              onClick={() => navigate('/')}
             >
               Start Shopping
             </button>
@@ -208,7 +208,7 @@ function WishlistPage() {
                 (product.galleryImages &&
                   product.galleryImages.length > 0 &&
                   getImageUrl(product.galleryImages[0])) ||
-                "";
+                '';
 
               // ---------- PRICE LOGIC (MRP + SALE + DISCOUNT) ----------
               const priceObj = product.price || {};
@@ -229,11 +229,11 @@ function WishlistPage() {
                 salePrice !== mrp;
 
               // ---------- SIZE / COLOR / DESC ----------
-              const sizeText = product.defaultSize || product.size || "";
-              const colorText = product.defaultColor || product.color || "";
-              const brandText = product.brand || "";
+              const sizeText = product.defaultSize || product.size || '';
+              const colorText = product.defaultColor || product.color || '';
+              const brandText = product.brand || '';
               const description =
-                product.shortDescription || product.description || "";
+                product.shortDescription || product.description || '';
 
               return (
                 <div
@@ -308,16 +308,14 @@ function WishlistPage() {
                       {/* SALE PRICE */}
                       {isOnSale && salePrice > 0 && (
                         <span className={styles.price}>
-                          ₹ {Number(salePrice).toLocaleString("en-IN")}
+                          ₹ {Number(salePrice).toLocaleString('en-IN')}
                         </span>
                       )}
 
                       {/* MRP (strike if on sale) */}
                       {mrp > 0 && (
-                        <span
-                          className={isOnSale ? styles.mrp : styles.price}
-                        >
-                          ₹ {Number(mrp).toLocaleString("en-IN")}
+                        <span className={isOnSale ? styles.mrp : styles.price}>
+                          ₹ {Number(mrp).toLocaleString('en-IN')}
                         </span>
                       )}
 

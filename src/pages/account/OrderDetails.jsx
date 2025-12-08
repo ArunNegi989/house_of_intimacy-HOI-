@@ -8,10 +8,10 @@ import {
   FiCheckCircle,
   FiClock,
   FiXCircle,
-  FiCreditCard,   // ⭐ NEW
-  FiMapPin,       // ⭐ NEW
-  FiPhone,        // ⭐ NEW
-  FiInfo,         // ⭐ NEW
+  FiCreditCard, // ⭐ NEW
+  FiMapPin, // ⭐ NEW
+  FiPhone, // ⭐ NEW
+  FiInfo, // ⭐ NEW
 } from 'react-icons/fi';
 import axios from 'axios';
 import { useToast } from '@chakra-ui/react';
@@ -87,7 +87,9 @@ const OrderDetails = () => {
         setOrder(fetchedOrder);
       } catch (err) {
         console.error('Error fetching order details:', err);
-        setError('Unable to load this order right now. Please try again later.');
+        setError(
+          'Unable to load this order right now. Please try again later.',
+        );
       } finally {
         setLoading(false);
       }
@@ -103,7 +105,7 @@ const OrderDetails = () => {
 
   const orderStatusInfo = useMemo(
     () => formatStatus(order?.status || ''),
-    [order]
+    [order],
   );
 
   // ⭐ NEW: status step ordering for timeline
@@ -177,7 +179,9 @@ const OrderDetails = () => {
     const shipping =
       typeof order.shippingFee === 'number' ? order.shippingFee : 0;
     const grandTotal =
-      typeof order.grandTotal === 'number' ? order.grandTotal : subtotal + shipping;
+      typeof order.grandTotal === 'number'
+        ? order.grandTotal
+        : subtotal + shipping;
 
     return {
       subtotal,
@@ -194,10 +198,7 @@ const OrderDetails = () => {
     if (!order) return null;
 
     const addr =
-      order.shippingAddress ||
-      order.address ||
-      order.deliveryAddress ||
-      null;
+      order.shippingAddress || order.address || order.deliveryAddress || null;
 
     if (!addr) return null;
 
@@ -261,13 +262,15 @@ const OrderDetails = () => {
       };
 
       const res = await axios.patch(
-        `${API_BASE_URL}/v1/orders/${order._id || order.orderId}/request-cancel`,
+        `${API_BASE_URL}/v1/orders/${
+          order._id || order.orderId
+        }/request-cancel`,
         payload,
         {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
-        }
+        },
       );
 
       const updated = res.data.order || res.data;
@@ -358,7 +361,9 @@ const OrderDetails = () => {
                         {items.length} item{items.length !== 1 ? 's' : ''}
                       </span>
                       {getPaymentMethod() && (
-                        <span className={`${styles.chip} ${styles.chipOutline}`}>
+                        <span
+                          className={`${styles.chip} ${styles.chipOutline}`}
+                        >
                           <FiCreditCard className={styles.chipIcon} />
                           {getPaymentMethod()}
                         </span>
@@ -489,10 +494,14 @@ const OrderDetails = () => {
                       </p>
                     )}
                     {shippingAddress.line1 && (
-                      <p className={styles.addressLine}>{shippingAddress.line1}</p>
+                      <p className={styles.addressLine}>
+                        {shippingAddress.line1}
+                      </p>
                     )}
                     {shippingAddress.line2 && (
-                      <p className={styles.addressLine}>{shippingAddress.line2}</p>
+                      <p className={styles.addressLine}>
+                        {shippingAddress.line2}
+                      </p>
                     )}
 
                     {(shippingAddress.city ||
@@ -518,8 +527,8 @@ const OrderDetails = () => {
                 <h2 className={styles.cardTitle}>Order Actions</h2>
                 {order.cancelRequested && order.status !== 'CANCELLED' ? (
                   <p className={styles.cardText}>
-                    You’ve already requested cancellation. You will receive an email
-                    update soon.
+                    You’ve already requested cancellation. You will receive an
+                    email update soon.
                   </p>
                 ) : (
                   <>
@@ -555,8 +564,8 @@ const OrderDetails = () => {
                 {/* ⭐ NEW subtle info row */}
                 <p className={styles.supportText}>
                   <FiInfo className={styles.supportIcon} />
-                  Once your request is approved, we’ll send confirmation by email
-                  and SMS.
+                  Once your request is approved, we’ll send confirmation by
+                  email and SMS.
                 </p>
               </div>
             </div>
@@ -567,7 +576,9 @@ const OrderDetails = () => {
                 <h2 className={styles.cardTitle}>Items in this order</h2>
 
                 {items.length === 0 && (
-                  <p className={styles.cardText}>No items found in this order.</p>
+                  <p className={styles.cardText}>
+                    No items found in this order.
+                  </p>
                 )}
 
                 {items.length > 0 && (

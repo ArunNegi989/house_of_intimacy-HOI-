@@ -2,7 +2,8 @@
 
 .section {
   padding: 40px 40px 60px;
-  background: #fff7ee; /* light nude */
+  background: #fff7ee;
+  /* light nude */
 }
 
 .inner {
@@ -48,11 +49,9 @@
 .heroOverlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-      circle at 10% 10%,
+  background: radial-gradient(circle at 10% 10%,
       rgba(0, 0, 0, 0.18),
-      transparent 50%
-    ),
+      transparent 50%),
     linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent);
 }
 
@@ -108,7 +107,8 @@
   height: 100%;
   object-fit: cover;
   display: block;
-  object-position: top;   /* 👈 IMPORTANT: crop only from bottom */
+  object-position: top;
+  /* 👈 IMPORTANT: crop only from bottom */
 }
 
 .productBody {
@@ -155,13 +155,15 @@
 .originalPrice {
   font-size: 13px;
   color: #999;
-  text-decoration: line-through; /* original price cut */
+  text-decoration: line-through;
+  /* original price cut */
 }
 
 .discountTag {
   font-size: 12px;
   font-weight: 600;
-  color: #d32f2f; /* ya brand primary */
+  color: #d32f2f;
+  /* ya brand primary */
 }
 
 .mrpLabel {
@@ -305,7 +307,7 @@
 
 .sliderWrapper :global(.slick-slide) {
   height: auto;
- 
+
 }
 
 /* arrows */
@@ -373,10 +375,12 @@
   .heroCard {
     border-radius: 22px;
   }
+
   .productCard {
     border-radius: 22px;
   }
 }
+
 @media (max-width: 480px) {
   .sliderWrapper :global(.slick-list) {
     padding-right: 0;
@@ -388,5 +392,3 @@
     padding-right: 0;
   }
 }
-
-

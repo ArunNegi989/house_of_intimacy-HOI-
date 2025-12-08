@@ -58,11 +58,9 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    circle at top right,
-    rgba(214, 51, 132, 0.12),
-    transparent 55%
-  );
+  background: radial-gradient(circle at top right,
+      rgba(214, 51, 132, 0.12),
+      transparent 55%);
   opacity: 0;
   transition: opacity 0.3s ease;
   pointer-events: none;

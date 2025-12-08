@@ -1,14 +1,9 @@
 // src/contexts/CartContext.jsx
-import React, {
-  createContext,
-  useState,
-  useEffect,
-  useMemo,
-} from "react";
+import React, { createContext, useState, useEffect, useMemo } from 'react';
 
 export const CartContext = createContext();
 
-const CART_STORAGE_KEY = "hoi_cart";
+const CART_STORAGE_KEY = 'hoi_cart';
 
 export const CartProvider = ({ children }) => {
   // ---------- STATE ----------
@@ -17,7 +12,7 @@ export const CartProvider = ({ children }) => {
       const stored = localStorage.getItem(CART_STORAGE_KEY);
       return stored ? JSON.parse(stored) : [];
     } catch (err) {
-      console.error("Failed to parse cart from storage:", err);
+      console.error('Failed to parse cart from storage:', err);
       return [];
     }
   });
@@ -27,7 +22,7 @@ export const CartProvider = ({ children }) => {
     try {
       localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cartItems));
     } catch (err) {
-      console.error("Failed to save cart to storage:", err);
+      console.error('Failed to save cart to storage:', err);
     }
   }, [cartItems]);
 
@@ -43,7 +38,7 @@ export const CartProvider = ({ children }) => {
       (line) =>
         line.productId === productId &&
         line.size === size &&
-        line.color === color
+        line.color === color,
     );
 
   // ---------- ACTIONS ----------
@@ -55,14 +50,10 @@ export const CartProvider = ({ children }) => {
    * - If different combo → push new line
    */
   const addToCart = (product, options = {}) => {
-    const {
-      size = null,
-      color = null,
-      quantity = 1,
-    } = options;
+    const { size = null, color = null, quantity = 1 } = options;
 
     if (!product || !product._id) {
-      console.warn("addToCart called without product._id");
+      console.warn('addToCart called without product._id');
       return;
     }
 
@@ -100,19 +91,18 @@ export const CartProvider = ({ children }) => {
       prev.map((item, idx) =>
         idx === lineIndex
           ? { ...item, quantity: (item.quantity || 1) + 1 }
-          : item
-      )
+          : item,
+      ),
     );
   };
 
   const decrementQty = (lineIndex) => {
     setCartItems((prev) =>
-      prev
-        .map((item, idx) =>
-          idx === lineIndex
-            ? { ...item, quantity: Math.max((item.quantity || 1) - 1, 1) }
-            : item
-        )
+      prev.map((item, idx) =>
+        idx === lineIndex
+          ? { ...item, quantity: Math.max((item.quantity || 1) - 1, 1) }
+          : item,
+      ),
     );
   };
 
@@ -127,19 +117,12 @@ export const CartProvider = ({ children }) => {
   // ---------- DERIVED VALUES ----------
 
   // 🧮 distinct lines (what you want for the header badge)
-  const cartCount = useMemo(
-    () => cartItems.length,
-    [cartItems]
-  );
+  const cartCount = useMemo(() => cartItems.length, [cartItems]);
 
   // 🧮 total pieces, if needed anywhere (not used by Header)
   const cartTotalQty = useMemo(
-    () =>
-      cartItems.reduce(
-        (sum, item) => sum + (item.quantity || 1),
-        0
-      ),
-    [cartItems]
+    () => cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0),
+    [cartItems],
   );
 
   // 🧮 total amount, if your CartDrawer wants it
@@ -147,13 +130,11 @@ export const CartProvider = ({ children }) => {
     () =>
       cartItems.reduce((sum, item) => {
         const unitPrice =
-          item.product?.price?.sellingPrice ??
-          item.product?.price ??
-          0;
+          item.product?.price?.sellingPrice ?? item.product?.price ?? 0;
         const qty = item.quantity || 1;
         return sum + unitPrice * qty;
       }, 0),
-    [cartItems]
+    [cartItems],
   );
 
   // ---------- CONTEXT VALUE ----------
@@ -173,9 +154,5 @@ export const CartProvider = ({ children }) => {
     cartTotalAmount,
   };
 
-  return (
-    <CartContext.Provider value={value}>
-      {children}
-    </CartContext.Provider>
-  );
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

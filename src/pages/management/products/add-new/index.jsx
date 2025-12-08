@@ -1,6 +1,6 @@
 // src/pages/management/products/add-new.jsx
-import React, { useState } from "react";
-import axios from "axios";
+import React, { useState } from 'react';
+import axios from 'axios';
 import {
   Box,
   Button,
@@ -24,25 +24,25 @@ import {
   Badge,
   Image,
   useToast,
-} from "@chakra-ui/react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
-import { ChromePicker } from "react-color"; // 🎨 color plate
+} from '@chakra-ui/react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router-dom';
+import { ChromePicker } from 'react-color'; // 🎨 color plate
 
 // Ready-made color options
 const predefinedSwatches = [
-  { label: "Black", value: "#000000" },
-  { label: "White", value: "#FFFFFF" },
-  { label: "Nude", value: "#F5D0C5" },
-  { label: "Red", value: "#EF4444" },
-  { label: "Pink", value: "#EC4899" },
-  { label: "Blue", value: "#3B82F6" },
-  { label: "Green", value: "#22C55E" },
-  { label: "Purple", value: "#A855F7" },
-  { label: "Yellow", value: "#FACC15" },
+  { label: 'Black', value: '#000000' },
+  { label: 'White', value: '#FFFFFF' },
+  { label: 'Nude', value: '#F5D0C5' },
+  { label: 'Red', value: '#EF4444' },
+  { label: 'Pink', value: '#EC4899' },
+  { label: 'Blue', value: '#3B82F6' },
+  { label: 'Green', value: '#22C55E' },
+  { label: 'Purple', value: '#A855F7' },
+  { label: 'Yellow', value: '#FACC15' },
 ];
 
-const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
 
 const AddProducts = () => {
   const {
@@ -57,47 +57,47 @@ const AddProducts = () => {
   const toast = useToast();
 
   const [sizes, setSizes] = useState([
-    { label: "XS", stock: 0, selected: false },
-    { label: "S", stock: 0, selected: false },
-    { label: "M", stock: 0, selected: false },
-    { label: "L", stock: 0, selected: false },
-    { label: "XL", stock: 0, selected: false },
-    { label: "XXL", stock: 0, selected: false },
-    { label: "3XL", stock: 0, selected: false },
+    { label: 'XS', stock: 0, selected: false },
+    { label: 'S', stock: 0, selected: false },
+    { label: 'M', stock: 0, selected: false },
+    { label: 'L', stock: 0, selected: false },
+    { label: 'XL', stock: 0, selected: false },
+    { label: 'XXL', stock: 0, selected: false },
+    { label: '3XL', stock: 0, selected: false },
   ]);
 
   const [imagePreview, setImagePreview] = useState(null);
 
   // 🎨 current picked color & selected list
-  const [currentColor, setCurrentColor] = useState("#000000");
+  const [currentColor, setCurrentColor] = useState('#000000');
   const [selectedColors, setSelectedColors] = useState([]);
 
   // ⭐ Product Features (multiple points)
   const [featurePoints, setFeaturePoints] = useState([]);
-  const [featureInput, setFeatureInput] = useState("");
+  const [featureInput, setFeatureInput] = useState('');
 
   // ⭐ Shipping & Returns points
   const [shippingPoints, setShippingPoints] = useState([]);
-  const [shippingInput, setShippingInput] = useState("");
+  const [shippingInput, setShippingInput] = useState('');
 
-  const cardBg = useColorModeValue("white", "gray.900");
-  const pageBg = useColorModeValue("gray.50", "gray.800");
-  const borderColor = useColorModeValue("gray.200", "gray.700");
+  const cardBg = useColorModeValue('white', 'gray.900');
+  const pageBg = useColorModeValue('gray.50', 'gray.800');
+  const borderColor = useColorModeValue('gray.200', 'gray.700');
 
   // Auto price calculation
-  const mrp = Number(watch("mrp") || 0);
-  const discount = Number(watch("discount") || 0);
+  const mrp = Number(watch('mrp') || 0);
+  const discount = Number(watch('discount') || 0);
   const salePrice = Math.max(0, Math.round(mrp - (mrp * discount) / 100) || 0);
 
   // Live preview data
-  const nameWatch = watch("name") || "Product name";
-  const brandWatch = watch("brand") || "Brand";
-  const categoryWatch = watch("category") || "Category";
-  const colorsWatch = selectedColors.join(", ");
-  const tagsWatch = watch("tags") || "";
-  const isFeaturedWatch = watch("isFeatured") || false;
+  const nameWatch = watch('name') || 'Product name';
+  const brandWatch = watch('brand') || 'Brand';
+  const categoryWatch = watch('category') || 'Category';
+  const colorsWatch = selectedColors.join(', ');
+  const tagsWatch = watch('tags') || '';
+  const isFeaturedWatch = watch('isFeatured') || false;
 
-  const mainImageRegister = register("mainImage");
+  const mainImageRegister = register('mainImage');
 
   // 👉 Add current color to selected list
   const handleAddColor = () => {
@@ -105,7 +105,7 @@ const AddProducts = () => {
       if (!currentColor) return prev;
       if (prev.includes(currentColor)) return prev;
       const updated = [...prev, currentColor];
-      setValue("colors", updated.join(","), { shouldValidate: true });
+      setValue('colors', updated.join(','), { shouldValidate: true });
       return updated;
     });
   };
@@ -114,7 +114,7 @@ const AddProducts = () => {
   const handleRemoveColor = (hex) => {
     setSelectedColors((prev) => {
       const updated = prev.filter((c) => c !== hex);
-      setValue("colors", updated.join(","), { shouldValidate: true });
+      setValue('colors', updated.join(','), { shouldValidate: true });
       return updated;
     });
   };
@@ -126,16 +126,16 @@ const AddProducts = () => {
 
     setFeaturePoints((prev) => {
       const updated = [...prev, trimmed];
-      setValue("features", updated.join("||"), { shouldValidate: true });
+      setValue('features', updated.join('||'), { shouldValidate: true });
       return updated;
     });
-    setFeatureInput("");
+    setFeatureInput('');
   };
 
   const handleRemoveFeature = (index) => {
     setFeaturePoints((prev) => {
       const updated = prev.filter((_, i) => i !== index);
-      setValue("features", updated.join("||"), { shouldValidate: true });
+      setValue('features', updated.join('||'), { shouldValidate: true });
       return updated;
     });
   };
@@ -147,16 +147,16 @@ const AddProducts = () => {
 
     setShippingPoints((prev) => {
       const updated = [...prev, trimmed];
-      setValue("shippingInfo", updated.join("||"), { shouldValidate: true });
+      setValue('shippingInfo', updated.join('||'), { shouldValidate: true });
       return updated;
     });
-    setShippingInput("");
+    setShippingInput('');
   };
 
   const handleRemoveShippingPoint = (index) => {
     setShippingPoints((prev) => {
       const updated = prev.filter((_, i) => i !== index);
-      setValue("shippingInfo", updated.join("||"), { shouldValidate: true });
+      setValue('shippingInfo', updated.join('||'), { shouldValidate: true });
       return updated;
     });
   };
@@ -169,44 +169,44 @@ const AddProducts = () => {
 
     const tagsArray = data.tags
       ? data.tags
-          .split(",")
+          .split(',')
           .map((t) => t.trim())
           .filter(Boolean)
       : [];
 
     // Colors from hidden input (comma separated)
-    const colorsSource = data.colors || "";
+    const colorsSource = data.colors || '';
     const colorsArray = colorsSource
       ? colorsSource
-          .split(",")
+          .split(',')
           .map((c) => c.trim())
           .filter(Boolean)
       : [];
 
     const keywordsArray = data.seoKeywords
       ? data.seoKeywords
-          .split(",")
+          .split(',')
           .map((k) => k.trim())
           .filter(Boolean)
       : [];
 
     const collectionsArray = data.collections
       ? data.collections
-          .split(",")
+          .split(',')
           .map((c) => c.trim())
           .filter(Boolean)
       : [];
 
     const featuresArray = data.features
       ? data.features
-          .split("||")
+          .split('||')
           .map((f) => f.trim())
           .filter(Boolean)
       : [];
 
     const shippingArray = data.shippingInfo
       ? data.shippingInfo
-          .split("||")
+          .split('||')
           .map((s) => s.trim())
           .filter(Boolean)
       : [];
@@ -215,121 +215,121 @@ const AddProducts = () => {
     const formData = new FormData();
 
     // BASIC INFO
-    formData.append("name", data.name || "");
-    formData.append("slug", data.slug || "");
-    formData.append("brand", data.brand || "");
-    formData.append("gender", data.gender || "");
-    formData.append("category", data.category || "");
-    formData.append("subcategory", data.subcategory || "");
-    formData.append("sku", data.sku || "");
-    formData.append("taxSlab", data.taxSlab || "");
+    formData.append('name', data.name || '');
+    formData.append('slug', data.slug || '');
+    formData.append('brand', data.brand || '');
+    formData.append('gender', data.gender || '');
+    formData.append('category', data.category || '');
+    formData.append('subcategory', data.subcategory || '');
+    formData.append('sku', data.sku || '');
+    formData.append('taxSlab', data.taxSlab || '');
 
     // MEDIA
-    formData.append("sizeGuideUrl", data.sizeGuideUrl || "");
-    formData.append("videoUrl", data.videoUrl || "");
+    formData.append('sizeGuideUrl', data.sizeGuideUrl || '');
+    formData.append('videoUrl', data.videoUrl || '');
 
     // FABRIC / ATTRIBUTES
-    formData.append("fabric", data.fabric || "");
-    formData.append("composition", data.composition || "");
-    formData.append("coverage", data.coverage || "");
-    formData.append("padding", data.padding || "");
-    formData.append("underwire", data.underwire || "");
-    formData.append("strapType", data.strapType || "");
-    formData.append("closureType", data.closureType || "");
-    formData.append("pattern", data.pattern || "");
-    formData.append("occasion", data.occasion || "");
-    formData.append("careInstructions", data.careInstructions || "");
+    formData.append('fabric', data.fabric || '');
+    formData.append('composition', data.composition || '');
+    formData.append('coverage', data.coverage || '');
+    formData.append('padding', data.padding || '');
+    formData.append('underwire', data.underwire || '');
+    formData.append('strapType', data.strapType || '');
+    formData.append('closureType', data.closureType || '');
+    formData.append('pattern', data.pattern || '');
+    formData.append('occasion', data.occasion || '');
+    formData.append('careInstructions', data.careInstructions || '');
 
     // DESCRIPTIONS
-    formData.append("shortDescription", data.shortDescription || "");
-    formData.append("description", data.description || "");
+    formData.append('shortDescription', data.shortDescription || '');
+    formData.append('description', data.description || '');
 
     // INVENTORY
-    formData.append("status", data.status || "active");
-    formData.append("totalStock", data.totalStock || "");
+    formData.append('status', data.status || 'active');
+    formData.append('totalStock', data.totalStock || '');
 
     // FEATURED
-    formData.append("isFeatured", data.isFeatured ? "true" : "false");
+    formData.append('isFeatured', data.isFeatured ? 'true' : 'false');
 
     // OBJECTS / ARRAYS -> JSON
     formData.append(
-      "price",
+      'price',
       JSON.stringify({
         mrp,
         discountPercent: discount,
         sale: salePrice,
-      })
+      }),
     );
-    formData.append("sizes", JSON.stringify(selectedSizes));
-    formData.append("tags", JSON.stringify(tagsArray));
-    formData.append("colors", JSON.stringify(colorsArray));
-    formData.append("collections", JSON.stringify(collectionsArray));
-    formData.append("features", JSON.stringify(featuresArray));
-    formData.append("shippingAndReturns", JSON.stringify(shippingArray));
+    formData.append('sizes', JSON.stringify(selectedSizes));
+    formData.append('tags', JSON.stringify(tagsArray));
+    formData.append('colors', JSON.stringify(colorsArray));
+    formData.append('collections', JSON.stringify(collectionsArray));
+    formData.append('features', JSON.stringify(featuresArray));
+    formData.append('shippingAndReturns', JSON.stringify(shippingArray));
 
     formData.append(
-      "seo",
+      'seo',
       JSON.stringify({
-        metaTitle: data.metaTitle || "",
-        metaDescription: data.metaDescription || "",
+        metaTitle: data.metaTitle || '',
+        metaDescription: data.metaDescription || '',
         keywords: keywordsArray,
-        schemaMarkup: data.seoSchema || "",
-      })
+        schemaMarkup: data.seoSchema || '',
+      }),
     );
 
     // FILES
     if (data.mainImage && data.mainImage[0]) {
-      formData.append("mainImage", data.mainImage[0]);
+      formData.append('mainImage', data.mainImage[0]);
     }
 
     if (data.galleryImages && data.galleryImages.length > 0) {
       Array.from(data.galleryImages).forEach((file) => {
-        formData.append("galleryImages", file);
+        formData.append('galleryImages', file);
       });
     }
 
     try {
       const token =
-        localStorage.getItem("authToken") ||
-        sessionStorage.getItem("authToken");
+        localStorage.getItem('authToken') ||
+        sessionStorage.getItem('authToken');
 
       const res = await axios.post(`${baseUrl}/products`, formData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
+          'Content-Type': 'multipart/form-data',
         },
       });
 
-      console.log("Product created:", res.data);
+      console.log('Product created:', res.data);
 
       toast({
-        title: "Product Saved",
-        description: "Your product has been added successfully.",
-        status: "success",
+        title: 'Product Saved',
+        description: 'Your product has been added successfully.',
+        status: 'success',
         duration: 3000,
         isClosable: true,
-        position: "bottom-right",
+        position: 'bottom-right',
       });
 
-      navigate("/admin/products");
+      navigate('/admin/products');
     } catch (err) {
-      console.error("Save product error:", err);
+      console.error('Save product error:', err);
 
       toast({
-        title: "Error",
+        title: 'Error',
         description:
           err?.response?.data?.message ||
-          "Something went wrong while saving product",
-        status: "error",
+          'Something went wrong while saving product',
+        status: 'error',
         duration: 4000,
         isClosable: true,
-        position: "top-right",
+        position: 'top-right',
       });
     }
   };
 
   return (
-    <Box bg={pageBg} pt={{ base: "145px", md: "115px" }} minH="100vh">
+    <Box bg={pageBg} pt={{ base: '145px', md: '115px' }} minH="100vh">
       <Box maxW="1200px" mx="auto">
         {/* BACK BUTTON - Top Right */}
         <Flex justify="flex-end" mb={3}>
@@ -348,8 +348,8 @@ const AddProducts = () => {
         {/* Page Header */}
         <Flex
           justify="space-between"
-          align={{ base: "flex-start", md: "center" }}
-          direction={{ base: "column", md: "row" }}
+          align={{ base: 'flex-start', md: 'center' }}
+          direction={{ base: 'column', md: 'row' }}
           gap={2}
           mb={6}
         >
@@ -373,7 +373,7 @@ const AddProducts = () => {
           </Badge>
         </Flex>
 
-        <Flex gap={6} direction={{ base: "column", lg: "row" }}>
+        <Flex gap={6} direction={{ base: 'column', lg: 'row' }}>
           {/* LEFT: MAIN FORM */}
           <Box
             flex="3"
@@ -384,7 +384,10 @@ const AddProducts = () => {
             p={{ base: 4, md: 6 }}
             boxShadow="sm"
           >
-            <form onSubmit={handleSubmit(onSubmit)} encType="multipart/form-data">
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              encType="multipart/form-data"
+            >
               {/* SECTION: BASIC INFO */}
               <Heading size="md" mb={3}>
                 Basic Information
@@ -398,7 +401,7 @@ const AddProducts = () => {
                   <FormLabel>Product Name</FormLabel>
                   <Input
                     placeholder="Jockey Cotton Bikini Brief"
-                    {...register("name", { required: "Name is required" })}
+                    {...register('name', { required: 'Name is required' })}
                   />
                   {errors.name && (
                     <Text fontSize="xs" color="red.400" mt={1}>
@@ -411,13 +414,13 @@ const AddProducts = () => {
                   <FormLabel>Slug (URL)</FormLabel>
                   <Input
                     placeholder="jockey-cotton-bikini-brief-black"
-                    {...register("slug")}
+                    {...register('slug')}
                   />
                 </FormControl>
 
                 <FormControl>
                   <FormLabel>Brand</FormLabel>
-                  <Select {...register("brand")} placeholder="Select brand">
+                  <Select {...register('brand')} placeholder="Select brand">
                     <option value="Jockey">Jockey</option>
                     <option value="Nike">Nike</option>
                     <option value="Puma">Puma</option>
@@ -429,7 +432,7 @@ const AddProducts = () => {
 
                 <FormControl>
                   <FormLabel>Gender / Target</FormLabel>
-                  <Select {...register("gender")} placeholder="Select target">
+                  <Select {...register('gender')} placeholder="Select target">
                     <option value="women">Women</option>
                     <option value="men">Men</option>
                   </Select>
@@ -438,7 +441,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Category</FormLabel>
                   <Select
-                    {...register("category")}
+                    {...register('category')}
                     placeholder="Select category"
                   >
                     <option>Bra</option>
@@ -456,7 +459,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Sub Category / Style</FormLabel>
                   <Input
-                    {...register("subcategory")}
+                    {...register('subcategory')}
                     placeholder="Example: T-shirt Bra, Bikini, Bralette, Hipster"
                   />
                 </FormControl>
@@ -464,7 +467,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>SKU</FormLabel>
                   <Input
-                    {...register("sku")}
+                    {...register('sku')}
                     placeholder="JKY-BRA-123-RED-34B"
                   />
                 </FormControl>
@@ -472,7 +475,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>HSN / Tax Slab</FormLabel>
                   <Input
-                    {...register("taxSlab")}
+                    {...register('taxSlab')}
                     placeholder="Example: 12% GST / HSN code"
                   />
                 </FormControl>
@@ -514,14 +517,14 @@ const AddProducts = () => {
                     type="file"
                     accept="image/*"
                     multiple
-                    {...register("galleryImages")}
+                    {...register('galleryImages')}
                   />
                 </FormControl>
 
                 <FormControl>
                   <FormLabel>Size Guide Image / URL</FormLabel>
                   <Input
-                    {...register("sizeGuideUrl")}
+                    {...register('sizeGuideUrl')}
                     placeholder="https://example.com/size-guide-image"
                   />
                 </FormControl>
@@ -529,7 +532,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Video URL (optional)</FormLabel>
                   <Input
-                    {...register("videoUrl")}
+                    {...register('videoUrl')}
                     placeholder="https://youtube.com/..."
                   />
                 </FormControl>
@@ -557,15 +560,15 @@ const AddProducts = () => {
                 {/* Hidden field – RHF ke liye actual value */}
                 <Input
                   type="hidden"
-                  {...register("colors")}
-                  value={selectedColors.join(",")}
+                  {...register('colors')}
+                  value={selectedColors.join(',')}
                   readOnly
                 />
 
                 <Flex
                   gap={6}
-                  align={{ base: "flex-start", md: "flex-start" }}
-                  direction={{ base: "column", md: "row" }}
+                  align={{ base: 'flex-start', md: 'flex-start' }}
+                  direction={{ base: 'column', md: 'row' }}
                 >
                   {/* LEFT: Color plate / ChromePicker */}
                   <Box>
@@ -761,10 +764,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>MRP (₹)</FormLabel>
                   <NumberInput min={0}>
-                    <NumberInputField
-                      {...register("mrp")}
-                      placeholder="999"
-                    />
+                    <NumberInputField {...register('mrp')} placeholder="999" />
                   </NumberInput>
                 </FormControl>
 
@@ -772,7 +772,7 @@ const AddProducts = () => {
                   <FormLabel>Discount (%)</FormLabel>
                   <NumberInput min={0} max={90}>
                     <NumberInputField
-                      {...register("discount")}
+                      {...register('discount')}
                       placeholder="20"
                     />
                   </NumberInput>
@@ -789,7 +789,7 @@ const AddProducts = () => {
                   <FormLabel>Total Stock (optional)</FormLabel>
                   <NumberInput min={0}>
                     <NumberInputField
-                      {...register("totalStock")}
+                      {...register('totalStock')}
                       placeholder="Auto from sizes or manual"
                     />
                   </NumberInput>
@@ -797,7 +797,7 @@ const AddProducts = () => {
 
                 <FormControl>
                   <FormLabel>Status</FormLabel>
-                  <Select {...register("status")} defaultValue="active">
+                  <Select {...register('status')} defaultValue="active">
                     <option value="active">Active</option>
                     <option value="draft">Draft</option>
                     <option value="out-of-stock">Out of Stock</option>
@@ -808,7 +808,7 @@ const AddProducts = () => {
 
               <FormControl mt={4} display="flex" alignItems="center" gap={3}>
                 <FormLabel mb="0">Featured on Home Page</FormLabel>
-                <Switch {...register("isFeatured")} />
+                <Switch {...register('isFeatured')} />
               </FormControl>
 
               <Divider my={6} />
@@ -825,7 +825,7 @@ const AddProducts = () => {
               <SimpleGrid columns={[1, 2]} gap={4}>
                 <FormControl>
                   <FormLabel>Fabric</FormLabel>
-                  <Select {...register("fabric")} placeholder="Select fabric">
+                  <Select {...register('fabric')} placeholder="Select fabric">
                     <option>Cotton</option>
                     <option>Modal</option>
                     <option>Cotton Blend</option>
@@ -838,7 +838,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Fabric Composition</FormLabel>
                   <Input
-                    {...register("composition")}
+                    {...register('composition')}
                     placeholder="95% Cotton, 5% Elastane"
                   />
                 </FormControl>
@@ -846,7 +846,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Coverage</FormLabel>
                   <Select
-                    {...register("coverage")}
+                    {...register('coverage')}
                     placeholder="Select coverage"
                   >
                     <option>Low</option>
@@ -857,10 +857,7 @@ const AddProducts = () => {
 
                 <FormControl>
                   <FormLabel>Padding</FormLabel>
-                  <Select
-                    {...register("padding")}
-                    placeholder="Select padding"
-                  >
+                  <Select {...register('padding')} placeholder="Select padding">
                     <option>Non-Padded</option>
                     <option>Lightly Padded</option>
                     <option>Heavily Padded</option>
@@ -870,7 +867,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Underwire</FormLabel>
                   <Select
-                    {...register("underwire")}
+                    {...register('underwire')}
                     placeholder="Wired / Non-wired"
                   >
                     <option>Wired</option>
@@ -881,7 +878,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Strap Type</FormLabel>
                   <Select
-                    {...register("strapType")}
+                    {...register('strapType')}
                     placeholder="Select strap type"
                   >
                     <option>Regular</option>
@@ -894,7 +891,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Closure Type</FormLabel>
                   <Select
-                    {...register("closureType")}
+                    {...register('closureType')}
                     placeholder="Select closure"
                   >
                     <option>Back Closure</option>
@@ -906,10 +903,7 @@ const AddProducts = () => {
 
                 <FormControl>
                   <FormLabel>Pattern / Design</FormLabel>
-                  <Select
-                    {...register("pattern")}
-                    placeholder="Select pattern"
-                  >
+                  <Select {...register('pattern')} placeholder="Select pattern">
                     <option>Solid</option>
                     <option>Printed</option>
                     <option>Lace</option>
@@ -921,7 +915,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Occasion / Use</FormLabel>
                   <Select
-                    {...register("occasion")}
+                    {...register('occasion')}
                     placeholder="Select occasion"
                   >
                     <option>Everyday</option>
@@ -932,10 +926,10 @@ const AddProducts = () => {
                   </Select>
                 </FormControl>
 
-                <FormControl gridColumn={{ base: "1 / -1", md: "1 / -1" }}>
+                <FormControl gridColumn={{ base: '1 / -1', md: '1 / -1' }}>
                   <FormLabel>Care Instructions</FormLabel>
                   <Textarea
-                    {...register("careInstructions")}
+                    {...register('careInstructions')}
                     placeholder="Machine wash cold, Do not bleach, Line dry in shade."
                     rows={2}
                   />
@@ -952,7 +946,7 @@ const AddProducts = () => {
               <FormControl mb={4}>
                 <FormLabel>Short Description</FormLabel>
                 <Textarea
-                  {...register("shortDescription")}
+                  {...register('shortDescription')}
                   placeholder="2–3 line summary for listing cards."
                   rows={2}
                 />
@@ -961,7 +955,7 @@ const AddProducts = () => {
               <FormControl mb={4}>
                 <FormLabel>Full Description</FormLabel>
                 <Textarea
-                  {...register("description")}
+                  {...register('description')}
                   placeholder="Detailed product description, features, feel, fit..."
                   rows={5}
                 />
@@ -971,7 +965,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Tags (comma separated)</FormLabel>
                   <Input
-                    {...register("tags")}
+                    {...register('tags')}
                     placeholder="bestseller, seamless, wireless, summer"
                   />
                 </FormControl>
@@ -979,7 +973,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Collections</FormLabel>
                   <Input
-                    {...register("collections")}
+                    {...register('collections')}
                     placeholder="Summer Collection, Bridal Edit"
                   />
                 </FormControl>
@@ -994,8 +988,8 @@ const AddProducts = () => {
                   {/* Hidden field for RHF */}
                   <Input
                     type="hidden"
-                    {...register("features")}
-                    value={featurePoints.join("||")}
+                    {...register('features')}
+                    value={featurePoints.join('||')}
                     readOnly
                   />
 
@@ -1045,8 +1039,8 @@ const AddProducts = () => {
                   {/* Hidden field for RHF */}
                   <Input
                     type="hidden"
-                    {...register("shippingInfo")}
-                    value={shippingPoints.join("||")}
+                    {...register('shippingInfo')}
+                    value={shippingPoints.join('||')}
                     readOnly
                   />
 
@@ -1101,7 +1095,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Meta Title</FormLabel>
                   <Input
-                    {...register("metaTitle")}
+                    {...register('metaTitle')}
                     placeholder="Best padded bra for everyday comfort | HOI"
                   />
                 </FormControl>
@@ -1109,7 +1103,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Meta Description</FormLabel>
                   <Textarea
-                    {...register("metaDescription")}
+                    {...register('metaDescription')}
                     rows={2}
                     placeholder="Shop ultra-comfortable padded bras with full coverage, perfect for daily wear..."
                   />
@@ -1120,7 +1114,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>SEO Keywords</FormLabel>
                   <Input
-                    {...register("seoKeywords")}
+                    {...register('seoKeywords')}
                     placeholder="padded bra, seamless bra, cotton bra"
                   />
                   <Text fontSize="xs" color="gray.500" mt={1}>
@@ -1131,7 +1125,7 @@ const AddProducts = () => {
                 <FormControl>
                   <FormLabel>Schema Markup (JSON-LD)</FormLabel>
                   <Textarea
-                    {...register("seoSchema")}
+                    {...register('seoSchema')}
                     rows={4}
                     placeholder='{"@context": "https://schema.org", "@type": "Product", ...}'
                   />

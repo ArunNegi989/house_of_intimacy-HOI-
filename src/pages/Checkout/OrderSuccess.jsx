@@ -1,21 +1,21 @@
 // src/pages/Checkout/OrderSuccess.jsx
-import React, { useEffect, useState, useMemo } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { FiCheckCircle } from "react-icons/fi";
-import axios from "axios";
-import styles from "../../assets/styles/checkout/OrderSuccess.module.css";
+import React, { useEffect, useState, useMemo } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { FiCheckCircle } from 'react-icons/fi';
+import axios from 'axios';
+import styles from '../../assets/styles/checkout/OrderSuccess.module.css';
 
 // ---- CONFIG ----
-const FILE_BASE_URL = "http://localhost:8000";
-const API_ROOT = "http://localhost:8000/v1";
+const FILE_BASE_URL = 'http://localhost:8000';
+const API_ROOT = 'http://localhost:8000/v1';
 
 const getImageUrl = (url) => {
-  if (!url) return "";
-  if (url.startsWith("http")) return url;
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
   return `${FILE_BASE_URL}${url}`;
 };
 
-const getToken = () => localStorage.getItem("authToken");
+const getToken = () => localStorage.getItem('authToken');
 
 function OrderSuccess() {
   const { orderId } = useParams();
@@ -23,26 +23,26 @@ function OrderSuccess() {
 
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   // ---------- FETCH ORDER DETAILS ----------
   useEffect(() => {
     const fetchOrder = async () => {
       if (!orderId) {
-        setError("Invalid order ID.");
+        setError('Invalid order ID.');
         setLoading(false);
         return;
       }
 
       const token = getToken();
       if (!token) {
-        navigate("/login");
+        navigate('/login');
         return;
       }
 
       try {
         setLoading(true);
-        setError("");
+        setError('');
 
         const res = await axios.get(`${API_ROOT}/orders/${orderId}`, {
           headers: {
@@ -52,10 +52,10 @@ function OrderSuccess() {
 
         setOrder(res.data);
       } catch (err) {
-        console.error("OrderSuccess fetch error:", err);
+        console.error('OrderSuccess fetch error:', err);
         setError(
           err.response?.data?.message ||
-            "Failed to load your order. Please try again."
+            'Failed to load your order. Please try again.',
         );
       } finally {
         setLoading(false);
@@ -76,43 +76,43 @@ function OrderSuccess() {
     return order.shippingAddress || order.address || null;
   }, [order]);
 
- const grandTotal = useMemo(() => {
-  if (!order) return null;
+  const grandTotal = useMemo(() => {
+    if (!order) return null;
 
-  // 1) direct key from backend
-  if (order.grandTotal != null) return order.grandTotal;
+    // 1) direct key from backend
+    if (order.grandTotal != null) return order.grandTotal;
 
-  // 2) if in nested objects (for future safety)
-  if (order.totals?.grandTotal != null) return order.totals.grandTotal;
-  if (order.paymentSummary?.grandTotal != null) return order.paymentSummary.grandTotal;
-  if (order.totalAmount != null) return order.totalAmount;
+    // 2) if in nested objects (for future safety)
+    if (order.totals?.grandTotal != null) return order.totals.grandTotal;
+    if (order.paymentSummary?.grandTotal != null)
+      return order.paymentSummary.grandTotal;
+    if (order.totalAmount != null) return order.totalAmount;
 
-  // 3) last fallback: calculate from itemsTotal + shippingFee
-  if (order.itemsTotal != null && order.shippingFee != null) {
-    return Number(order.itemsTotal) + Number(order.shippingFee);
-  }
+    // 3) last fallback: calculate from itemsTotal + shippingFee
+    if (order.itemsTotal != null && order.shippingFee != null) {
+      return Number(order.itemsTotal) + Number(order.shippingFee);
+    }
 
-  return null;
-}, [order]);
-
+    return null;
+  }, [order]);
 
   const paymentMethodLabel = useMemo(() => {
-    if (!order) return "";
-    const m = (order.paymentMethod || "").toUpperCase();
-    if (m === "COD") return "Cash on Delivery";
-    if (m === "ONLINE") return "Online Payment";
-    return order.paymentMethod || "—";
+    if (!order) return '';
+    const m = (order.paymentMethod || '').toUpperCase();
+    if (m === 'COD') return 'Cash on Delivery';
+    if (m === 'ONLINE') return 'Online Payment';
+    return order.paymentMethod || '—';
   }, [order]);
 
   const statusLabel = useMemo(() => {
-    if (!order) return "Placed";
-    const s = (order.status || "").toUpperCase();
-    if (!s || s === "PLACED" || s === "PENDING") return "Placed";
-    if (s === "CONFIRMED" || s === "PROCESSING") return "Processing";
-    if (s === "SHIPPED") return "Shipped";
-    if (s === "OUT_FOR_DELIVERY") return "Out for delivery";
-    if (s === "DELIVERED") return "Delivered";
-    if (s === "CANCELLED") return "Cancelled";
+    if (!order) return 'Placed';
+    const s = (order.status || '').toUpperCase();
+    if (!s || s === 'PLACED' || s === 'PENDING') return 'Placed';
+    if (s === 'CONFIRMED' || s === 'PROCESSING') return 'Processing';
+    if (s === 'SHIPPED') return 'Shipped';
+    if (s === 'OUT_FOR_DELIVERY') return 'Out for delivery';
+    if (s === 'DELIVERED') return 'Delivered';
+    if (s === 'CANCELLED') return 'Cancelled';
     return s;
   }, [order]);
 
@@ -137,7 +137,7 @@ function OrderSuccess() {
             <p className={styles.errorText}>{error}</p>
             <button
               className={styles.primaryBtn}
-              onClick={() => navigate("/account/orders")}
+              onClick={() => navigate('/account/orders')}
             >
               Go to my orders
             </button>
@@ -153,10 +153,7 @@ function OrderSuccess() {
         <div className={styles.container}>
           <div className={styles.card}>
             <p className={styles.errorText}>Order not found.</p>
-            <button
-              className={styles.primaryBtn}
-              onClick={() => navigate("/")}
-            >
+            <button className={styles.primaryBtn} onClick={() => navigate('/')}>
               Back to home
             </button>
           </div>
@@ -197,13 +194,13 @@ function OrderSuccess() {
                         item.name ||
                         item.product?.name ||
                         item.productSnapshot?.name ||
-                        "Product";
+                        'Product';
 
                       const brand =
                         item.brand ||
                         item.product?.brand ||
                         item.productSnapshot?.brand ||
-                        "";
+                        '';
 
                       const img =
                         item.image ||
@@ -224,32 +221,28 @@ function OrderSuccess() {
                         0;
 
                       const size =
-                        typeof item.size === "string"
+                        typeof item.size === 'string'
                           ? item.size
                           : item.size?.label || null;
 
-                      const rawColor =
-                        item.color || item.selectedColor || null;
+                      const rawColor = item.color || item.selectedColor || null;
 
                       const colorName =
                         item.colorName ||
                         item.selectedColorName ||
-                        (rawColor &&
-                        !rawColor.startsWith("#")
+                        (rawColor && !rawColor.startsWith('#')
                           ? rawColor
                           : null);
 
                       const colorHex =
                         item.colorHex ||
                         item.selectedColorHex ||
-                        (rawColor &&
-                        rawColor.startsWith("#")
+                        (rawColor && rawColor.startsWith('#')
                           ? rawColor
                           : null);
 
                       const lineTotal =
-                        item.lineTotal ||
-                        Number(unitPrice) * Number(qty || 1);
+                        item.lineTotal || Number(unitPrice) * Number(qty || 1);
 
                       return (
                         <div key={index} className={styles.itemRow}>
@@ -281,7 +274,6 @@ function OrderSuccess() {
                                       style={{ backgroundColor: colorHex }}
                                     ></span>
                                   )}
-
                                   {colorName && (
                                     <span className={styles.colorLabel}>
                                       {colorName}
@@ -325,16 +317,12 @@ function OrderSuccess() {
 
                 <div className={styles.infoRow}>
                   <span className={styles.label}>Payment Method</span>
-                  <span className={styles.value}>
-                    {paymentMethodLabel}
-                  </span>
+                  <span className={styles.value}>{paymentMethodLabel}</span>
                 </div>
 
                 <div className={styles.infoRow}>
                   <span className={styles.label}>Status</span>
-                  <span className={styles.statusPill}>
-                    {statusLabel}
-                  </span>
+                  <span className={styles.statusPill}>{statusLabel}</span>
                 </div>
 
                 {shippingAddress && (
@@ -342,16 +330,15 @@ function OrderSuccess() {
                     <span className={styles.label}>Shipping to</span>
                     <div className={styles.addressText}>
                       <strong>
-                        {shippingAddress.name} •{" "}
-                        {shippingAddress.phone}
+                        {shippingAddress.name} • {shippingAddress.phone}
                       </strong>
                       <br />
                       {shippingAddress.addressLine1}
                       {shippingAddress.addressLine2 &&
                         `, ${shippingAddress.addressLine2}`}
                       <br />
-                      {shippingAddress.city}, {shippingAddress.state}{" "}
-                      - {shippingAddress.pincode}
+                      {shippingAddress.city}, {shippingAddress.state} -{' '}
+                      {shippingAddress.pincode}
                       {shippingAddress.landmark && (
                         <>
                           <br />
@@ -373,23 +360,23 @@ function OrderSuccess() {
           <div className={styles.buttonsRow}>
             <button
               className={styles.primaryBtn}
-              onClick={() => navigate("/account/orders")}
+              onClick={() => navigate('/account/orders')}
             >
               View my orders
             </button>
             <button
               className={styles.secondaryBtn}
-              onClick={() => navigate("/")}
+              onClick={() => navigate('/')}
             >
               Continue shopping
             </button>
           </div>
 
           <p className={styles.footerNote}>
-            Need help?{" "}
+            Need help?{' '}
             <button
               className={styles.inlineLink}
-              onClick={() => navigate("/ContactUs")}
+              onClick={() => navigate('/ContactUs')}
             >
               Contact support
             </button>

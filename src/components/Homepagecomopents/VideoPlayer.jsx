@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const VideoPlayer = () => {
   return (
@@ -10,7 +10,7 @@ const VideoPlayer = () => {
         muted
         loop
         playsInline
-        style={{ display: "block", width: "100%", height: "auto" }}
+        style={{ display: 'block', width: '100%', height: 'auto' }}
       />
     </div>
   );

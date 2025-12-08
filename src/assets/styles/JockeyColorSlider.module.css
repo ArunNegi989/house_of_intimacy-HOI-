@@ -71,8 +71,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  cursor: pointer;   /* 👈 show hand cursor */
+  cursor: pointer;
+  /* 👈 show hand cursor */
 }
+
 .card,
 .cardImageWrap,
 .cardImage {
@@ -98,7 +100,8 @@
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover; /* image full cover */
+  object-fit: cover;
+  /* image full cover */
 }
 
 .cardInfo {
@@ -155,7 +158,8 @@
 }
 
 .cardImageWrap {
-  position: relative; /* 👈 important overlay ke liye */
+  position: relative;
+  /* 👈 important overlay ke liye */
   overflow: hidden;
 }
 
@@ -211,19 +215,17 @@
   width: 100%;
   height: 6px;
   border-radius: 999px;
-  background: linear-gradient(
-    90deg,
-    #000000,
-    #4b5563,
-    #1f2937,
-    #2563eb,
-    #14b8a6,
-    #22c55e,
-    #f97316,
-    #ef4444,
-    #ec4899,
-    #facc15
-  );
+  background: linear-gradient(90deg,
+      #000000,
+      #4b5563,
+      #1f2937,
+      #2563eb,
+      #14b8a6,
+      #22c55e,
+      #f97316,
+      #ef4444,
+      #ec4899,
+      #facc15);
   outline: none;
   margin-top: 18px;
 }

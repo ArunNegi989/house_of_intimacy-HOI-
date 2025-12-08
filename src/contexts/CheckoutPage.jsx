@@ -1,10 +1,5 @@
 // src/pages/Checkout/CheckoutPage.jsx
-import React, {
-  useContext,
-  useMemo,
-  useState,
-  useEffect,
-} from 'react';
+import React, { useContext, useMemo, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FiArrowLeft, FiLock, FiTrash2 } from 'react-icons/fi';
 import axios from 'axios';

@@ -1,13 +1,7 @@
 // src/components/cart/CartDrawer.jsx
 import React, { useContext, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-  FiX,
-  FiPlus,
-  FiMinus,
-  FiTrash2,
-  FiChevronRight,
-} from 'react-icons/fi';
+import { FiX, FiPlus, FiMinus, FiTrash2, FiChevronRight } from 'react-icons/fi';
 
 import styles from '../../assets/styles/cart/CartDrawer.module.css';
 import { CartContext } from '../../contexts/CartContext';
@@ -81,10 +75,7 @@ const renderColorInfo = (colorValue, colorLabel) => {
   if (typeof value === 'string' && value.startsWith('#')) {
     return (
       <span className={styles.colorWrap}>
-        <span
-          className={styles.colorDot}
-          style={{ backgroundColor: value }}
-        />
+        <span className={styles.colorDot} style={{ backgroundColor: value }} />
         <span className={styles.colorText}>
           {colorLabel || 'Selected color'}
         </span>
@@ -215,10 +206,7 @@ function CartDrawer({ isOpen, onClose }) {
                 const linePrice = unitPrice * qty;
 
                 const colorValue =
-                  line.color ||
-                  prod.color ||
-                  prod.shade ||
-                  prod.colorValue;
+                  line.color || prod.color || prod.shade || prod.colorValue;
                 const colorLabel =
                   line.colorLabel ||
                   prod.colorLabel ||
@@ -227,7 +215,9 @@ function CartDrawer({ isOpen, onClose }) {
 
                 return (
                   <div
-                    key={`${line.productId || prod._id || index}-${line.size || ''}-${line.color || ''}`}
+                    key={`${line.productId || prod._id || index}-${
+                      line.size || ''
+                    }-${line.color || ''}`}
                     className={styles.cartItem}
                   >
                     <div className={styles.itemImageWrap}>
@@ -299,7 +289,9 @@ function CartDrawer({ isOpen, onClose }) {
                           {lineMrp && lineMrp > linePrice ? (
                             <>
                               <span className={styles.mrp}>₹ {lineMrp}</span>
-                              <span className={styles.price}>₹ {linePrice}</span>
+                              <span className={styles.price}>
+                                ₹ {linePrice}
+                              </span>
                             </>
                           ) : (
                             <span className={styles.price}>₹ {linePrice}</span>
@@ -393,13 +385,9 @@ function CartDrawer({ isOpen, onClose }) {
                     getUnitPriceInfo(prod);
 
                   const colorLabel =
-                    prod.colorLabel ||
-                    prod.colorName ||
-                    prod.shadeLabel;
+                    prod.colorLabel || prod.colorName || prod.shadeLabel;
                   const colorValue =
-                    prod.color ||
-                    prod.shade ||
-                    prod.colorValue;
+                    prod.color || prod.shade || prod.colorValue;
 
                   return (
                     <div
@@ -499,8 +487,8 @@ function CartDrawer({ isOpen, onClose }) {
           <div className={styles.shippingText}>
             {remainingForFreeShipping > 0 ? (
               <span>
-                Add <strong>₹ {remainingForFreeShipping}</strong> more for
-                free shipping
+                Add <strong>₹ {remainingForFreeShipping}</strong> more for free
+                shipping
               </span>
             ) : (
               <span>You&apos;re eligible for free shipping 🎉</span>

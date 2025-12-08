@@ -1,18 +1,17 @@
 // src/components/Home/BlogCards.jsx
-import React, { useEffect, useState } from "react";
-import Style from "../../assets/styles/blogscard.module.css";
-import { Link } from "react-router-dom";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import Style from '../../assets/styles/blogscard.module.css';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
-const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
-const apiRoot = baseUrl.replace(/\/v1$/, "");
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
+const apiRoot = baseUrl.replace(/\/v1$/, '');
 
 const BlogCard = ({ image, heading, link }) => {
   return (
     <div className={Style.blogcard}>
       <div className={Style.blogcardimage}>
         <img src={image} alt={heading} />
-        
       </div>
       <div className={Style.blogcardcontent}>
         <h3 className={Style.blogcardheading}>{heading}</h3>
@@ -38,17 +37,17 @@ export default function BlogCards() {
         const list = payload.blogs || [];
 
         // 1) only published blogs
-        const published = list.filter((b) => b.status === "published");
+        const published = list.filter((b) => b.status === 'published');
 
         // 2) sort by createdAt (latest first)
         const sorted = [...published].sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
 
         // 3) show latest 4
         setBlogs(sorted.slice(0, 4));
       } catch (err) {
-        console.error("Error fetching blogs", err);
+        console.error('Error fetching blogs', err);
       } finally {
         setLoading(false);
       }
@@ -80,7 +79,7 @@ export default function BlogCards() {
         {blogs.map((blog) => {
           const blogImage = blog.featureImage
             ? `${apiRoot}${blog.featureImage}`
-            : "https://via.placeholder.com/400x300?text=No+Image";
+            : 'https://via.placeholder.com/400x300?text=No+Image';
 
           return (
             <div className="col-md-6 col-lg-3 col-12" key={blog._id}>

@@ -1,87 +1,87 @@
 // src/components/BrasListing/BrasListing.jsx
-import React, { useState, useMemo, useEffect } from "react";
-import axios from "axios";
-import { FiHeart, FiShoppingBag } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
-import styles from "../../assets/styles/productcollection/BraListing.module.css";
+import React, { useState, useMemo, useEffect } from 'react';
+import axios from 'axios';
+import { FiHeart, FiShoppingBag } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+import styles from '../../assets/styles/productcollection/BraListing.module.css';
 
 // 🔁 Replace these with your real image imports
-import paddedImg from "../../assets/images/17.jpg";
-import nonPaddedImg from "../../assets/images/19.jpg";
-import wiredImg from "../../assets/images/5.jpg";
-import nonWiredImg from "../../assets/images/17.jpg";
-import tshirtImg from "../../assets/images/19.jpg";
-import pushupImg from "../../assets/images/5.jpg";
-import multiwayImg from "../../assets/images/17.jpg";
-import sliponImg from "../../assets/images/19.jpg";
-import braletteImg from "../../assets/images/5.jpg";
-import fullFigureImg from "../../assets/images/17.jpg";
-import minimizerImg from "../../assets/images/19.jpg";
-import sportsImg from "../../assets/images/5.jpg";
+import paddedImg from '../../assets/images/17.jpg';
+import nonPaddedImg from '../../assets/images/19.jpg';
+import wiredImg from '../../assets/images/5.jpg';
+import nonWiredImg from '../../assets/images/17.jpg';
+import tshirtImg from '../../assets/images/19.jpg';
+import pushupImg from '../../assets/images/5.jpg';
+import multiwayImg from '../../assets/images/17.jpg';
+import sliponImg from '../../assets/images/19.jpg';
+import braletteImg from '../../assets/images/5.jpg';
+import fullFigureImg from '../../assets/images/17.jpg';
+import minimizerImg from '../../assets/images/19.jpg';
+import sportsImg from '../../assets/images/5.jpg';
 
 // ================== CONFIG ==================
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = 'http://localhost:8000';
 
 // 👉 change this to exactly match your DB value
-const BRAS_CATEGORY = "Bra";
+const BRAS_CATEGORY = 'Bra';
 
 const SORT_OPTIONS = [
-  { id: "featured", label: "Featured" },
-  { id: "priceLow", label: "Price: Low to High" },
-  { id: "priceHigh", label: "Price: High to Low" },
+  { id: 'featured', label: 'Featured' },
+  { id: 'priceLow', label: 'Price: Low to High' },
+  { id: 'priceHigh', label: 'Price: High to Low' },
 ];
 
 const PRODUCTS_PER_PAGE = 12;
 
 // ----- TOP FILTER TYPES (only UI, filter uses product.tags) -----
 const BRA_TYPES = [
-  { id: "padded", label: "Padded Bra", image: paddedImg },
-  { id: "nonPadded", label: "Non-Padded Bra", image: nonPaddedImg },
-  { id: "wired", label: "Wired", image: wiredImg },
-  { id: "nonWired", label: "Non-Wired", image: nonWiredImg },
-  { id: "tshirt", label: "T-Shirt Bra", image: tshirtImg },
-  { id: "pushup", label: "Push-Up Bra", image: pushupImg },
-  { id: "multiway", label: "Multiway Bra", image: multiwayImg },
-  { id: "slipon", label: "Slip-On Bra", image: sliponImg },
-  { id: "bralette", label: "Bralette", image: braletteImg },
-  { id: "fullFigure", label: "Full Figure Bra", image: fullFigureImg },
-  { id: "minimizer", label: "Minimizer", image: minimizerImg },
-  { id: "sports", label: "Sports Bra", image: sportsImg },
+  { id: 'padded', label: 'Padded Bra', image: paddedImg },
+  { id: 'nonPadded', label: 'Non-Padded Bra', image: nonPaddedImg },
+  { id: 'wired', label: 'Wired', image: wiredImg },
+  { id: 'nonWired', label: 'Non-Wired', image: nonWiredImg },
+  { id: 'tshirt', label: 'T-Shirt Bra', image: tshirtImg },
+  { id: 'pushup', label: 'Push-Up Bra', image: pushupImg },
+  { id: 'multiway', label: 'Multiway Bra', image: multiwayImg },
+  { id: 'slipon', label: 'Slip-On Bra', image: sliponImg },
+  { id: 'bralette', label: 'Bralette', image: braletteImg },
+  { id: 'fullFigure', label: 'Full Figure Bra', image: fullFigureImg },
+  { id: 'minimizer', label: 'Minimizer', image: minimizerImg },
+  { id: 'sports', label: 'Sports Bra', image: sportsImg },
 ];
 
 // ---------- HELPERS ----------
 const getImageUrl = (url) => {
-  if (!url) return "";
-  if (url.startsWith("http")) return url;
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
   return `${API_BASE_URL}${url}`;
 };
 
 // color name → hex map
 const COLOR_MAP = {
-  Black: "#000000",
-  Purple: "#800080",
-  White: "#ffffff",
-  Red: "#ef4444",
-  Blue: "#3b82f6",
-  Green: "#22c55e",
-  Nude: "#F5D0C5",
-  Pink: "#ec4899",
-  Yellow: "#facc15",
+  Black: '#000000',
+  Purple: '#800080',
+  White: '#ffffff',
+  Red: '#ef4444',
+  Blue: '#3b82f6',
+  Green: '#22c55e',
+  Nude: '#F5D0C5',
+  Pink: '#ec4899',
+  Yellow: '#facc15',
 };
 
 // Decode color value coming from backend
 // supports: "#hex", "Black", {label, value}, {hex}, etc.
 const decodeColor = (value) => {
-  if (!value) return "#e5e7eb"; // fallback grey
+  if (!value) return '#e5e7eb'; // fallback grey
 
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     const v = value.trim();
     if (/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(v)) return v;
     if (COLOR_MAP[v]) return COLOR_MAP[v];
-    return "#e5e7eb";
+    return '#e5e7eb';
   }
 
-  if (typeof value === "object") {
+  if (typeof value === 'object') {
     if (value.hex && /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(value.hex)) {
       return value.hex;
     }
@@ -93,12 +93,12 @@ const decodeColor = (value) => {
     }
   }
 
-  return "#e5e7eb";
+  return '#e5e7eb';
 };
 
 // Check if product matches selected type (using product.tags array)
 const matchesSelectedType = (product, selectedType) => {
-  if (selectedType === "all") return true;
+  if (selectedType === 'all') return true;
   if (!product.tags || !Array.isArray(product.tags)) return false;
   return product.tags.includes(selectedType);
 };
@@ -108,15 +108,15 @@ const BrasListing = () => {
 
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
-  const [selectedType, setSelectedType] = useState("all");
-  const [sortBy, setSortBy] = useState("featured");
+  const [selectedType, setSelectedType] = useState('all');
+  const [sortBy, setSortBy] = useState('featured');
   const [currentPage, setCurrentPage] = useState(1);
 
   // ⭐ Scroll to top whenever page changes
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage]);
 
   // ---------- FETCH BRAS FROM BACKEND ----------
@@ -124,7 +124,7 @@ const BrasListing = () => {
     const fetchBras = async () => {
       try {
         setLoading(true);
-        setError("");
+        setError('');
 
         const res = await axios.get(`${API_BASE_URL}/v1/products`, {
           params: {
@@ -137,8 +137,8 @@ const BrasListing = () => {
         const apiProducts = res.data?.data || [];
         setProducts(apiProducts);
       } catch (err) {
-        console.error("Error fetching bras:", err);
-        setError("Failed to load bras. Please try again.");
+        console.error('Error fetching bras:', err);
+        setError('Failed to load bras. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -157,8 +157,8 @@ const BrasListing = () => {
       const bMrp = Number(b.price?.mrp || 0);
       const bSale = Number(b.price?.sale ?? bMrp);
 
-      if (sortBy === "priceLow") return aSale - bSale;
-      if (sortBy === "priceHigh") return bSale - aSale;
+      if (sortBy === 'priceLow') return aSale - bSale;
+      if (sortBy === 'priceHigh') return bSale - aSale;
 
       return 0; // featured
     });
@@ -168,7 +168,7 @@ const BrasListing = () => {
 
   // ---------- PAGINATION ----------
   const totalPages = Math.ceil(
-    (filteredProducts.length || 0) / PRODUCTS_PER_PAGE
+    (filteredProducts.length || 0) / PRODUCTS_PER_PAGE,
   );
 
   const startIndex = (currentPage - 1) * PRODUCTS_PER_PAGE;
@@ -186,22 +186,21 @@ const BrasListing = () => {
     setCurrentPage(1);
   };
 
- const handleCardClick = (product) => {
-  navigate(`/product/${product._id}`);
-};
-
+  const handleCardClick = (product) => {
+    navigate(`/product/${product._id}`);
+  };
 
   const handleAddToBag = (event, product) => {
     event.stopPropagation();
     // 👉 here you can integrate CartContext later
     // e.g. addToCart(product, selectedSize, quantity)
-    console.log("ADD TO BAG:", product.name);
+    console.log('ADD TO BAG:', product.name);
   };
 
   const handleWishlist = (event, product) => {
     event.stopPropagation();
     // 👉 integrate WishlistContext here if needed
-    console.log("WISHLIST:", product.name);
+    console.log('WISHLIST:', product.name);
   };
 
   // ---------- RENDER ----------
@@ -209,10 +208,7 @@ const BrasListing = () => {
     <div className={styles.page}>
       {/* -------- BREADCRUMB -------- */}
       <div className={`container ${styles.breadcrumb}`}>
-        <span
-          className={styles.breadcrumbLink}
-          onClick={() => navigate("/")}
-        >
+        <span className={styles.breadcrumbLink} onClick={() => navigate('/')}>
           Home
         </span>
         <span className={styles.breadcrumbSeparator}>&gt;</span>
@@ -240,9 +236,9 @@ const BrasListing = () => {
         <button
           type="button"
           className={`${styles.typeChip} ${
-            selectedType === "all" ? styles.typeChipActive : ""
+            selectedType === 'all' ? styles.typeChipActive : ''
           }`}
-          onClick={() => handleTypeChange("all")}
+          onClick={() => handleTypeChange('all')}
         >
           <div className={styles.typeChipImgWrapper}>
             <div className={styles.typeChipAllCircle}>All</div>
@@ -255,7 +251,7 @@ const BrasListing = () => {
             key={type.id}
             type="button"
             className={`${styles.typeChip} ${
-              selectedType === type.id ? styles.typeChipActive : ""
+              selectedType === type.id ? styles.typeChipActive : ''
             }`}
             onClick={() => handleTypeChange(type.id)}
           >
@@ -310,9 +306,7 @@ const BrasListing = () => {
       </div>
 
       {/* -------- LOADING / ERROR -------- */}
-      {loading && (
-        <div className={styles.loadingState}>Loading bras...</div>
-      )}
+      {loading && <div className={styles.loadingState}>Loading bras...</div>}
       {error && <div className={styles.errorState}>{error}</div>}
 
       {/* -------- PRODUCTS GRID -------- */}
@@ -320,7 +314,7 @@ const BrasListing = () => {
         <div className={`container-fluid ${styles.productsGridWrapper}`}>
           <div className={styles.collectionMeta}>
             <span className={styles.collectionCount}>
-              Showing {paginatedProducts.length} of {filteredProducts.length}{" "}
+              Showing {paginatedProducts.length} of {filteredProducts.length}{' '}
               styles
             </span>
             <span className={styles.collectionInfo}>
@@ -332,7 +326,7 @@ const BrasListing = () => {
             {paginatedProducts.map((product) => {
               const mrp = Number(product.price?.mrp || 0);
               const sale = Number(
-                product.price?.sale != null ? product.price.sale : mrp
+                product.price?.sale != null ? product.price.sale : mrp,
               );
               const discountPercent =
                 product.price?.discountPercent != null
@@ -344,7 +338,7 @@ const BrasListing = () => {
               const mainImg =
                 product.mainImage ||
                 (product.galleryImages && product.galleryImages[0]) ||
-                "";
+                '';
 
               const colorDots = Array.isArray(product.colors)
                 ? product.colors.map(decodeColor)
@@ -352,9 +346,9 @@ const BrasListing = () => {
 
               const shortDescription = product.description
                 ? product.description.length > 90
-                  ? product.description.slice(0, 90) + "..."
+                  ? product.description.slice(0, 90) + '...'
                   : product.description
-                : "";
+                : '';
 
               return (
                 <div
@@ -401,9 +395,7 @@ const BrasListing = () => {
                     <div className={styles.name}>{product.name}</div>
 
                     {shortDescription && (
-                      <p className={styles.description}>
-                        {shortDescription}
-                      </p>
+                      <p className={styles.description}>{shortDescription}</p>
                     )}
 
                     <div className={styles.priceRow}>
@@ -422,9 +414,7 @@ const BrasListing = () => {
                       )}
                     </div>
 
-                    <div className={styles.taxText}>
-                      Inclusive of all taxes
-                    </div>
+                    <div className={styles.taxText}>Inclusive of all taxes</div>
 
                     {/* meta pills: coverage, padding, fabric */}
                     <div className={styles.metaRow}>
@@ -498,9 +488,7 @@ const BrasListing = () => {
             type="button"
             className={`${styles.pageBtn} ${styles.pagePrevNext}`}
             disabled={currentPage === 1}
-            onClick={() =>
-              setCurrentPage((prev) => Math.max(prev - 1, 1))
-            }
+            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           >
             Prev
           </button>
@@ -512,7 +500,7 @@ const BrasListing = () => {
                 key={page}
                 type="button"
                 className={`${styles.pageBtn} ${
-                  currentPage === page ? styles.pageBtnActive : ""
+                  currentPage === page ? styles.pageBtnActive : ''
                 }`}
                 onClick={() => setCurrentPage(page)}
               >
@@ -526,9 +514,7 @@ const BrasListing = () => {
             className={`${styles.pageBtn} ${styles.pagePrevNext}`}
             disabled={currentPage === totalPages}
             onClick={() =>
-              setCurrentPage((prev) =>
-                Math.min(prev + 1, totalPages)
-              )
+              setCurrentPage((prev) => Math.min(prev + 1, totalPages))
             }
           >
             Next

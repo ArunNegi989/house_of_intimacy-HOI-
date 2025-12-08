@@ -1,19 +1,19 @@
 // src/components/AllProducts/AllProducts.jsx
-import React, { useEffect, useState, useMemo, useContext } from "react";
-import axios from "axios";
-import { FiShoppingBag,FiHeart } from "react-icons/fi";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState, useMemo, useContext } from 'react';
+import axios from 'axios';
+import { FiShoppingBag, FiHeart } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
-import styles from "../../assets/styles/productcollection/AllProducts.module.css";
+import styles from '../../assets/styles/productcollection/AllProducts.module.css';
 
 // ✅ import wishlist context
-import { WishlistContext } from "../../contexts/WishlistContext";
+import { WishlistContext } from '../../contexts/WishlistContext';
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = 'http://localhost:8000';
 
 const getImageUrl = (url) => {
-  if (!url) return "";
-  if (url.startsWith("http")) return url;
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
   return `${API_BASE_URL}${url}`;
 };
 
@@ -22,31 +22,31 @@ const getDiscountPercent = (mrp, price) => {
   return Math.round(((mrp - price) / mrp) * 100);
 };
 
-const BRAND_OPTIONS = ["Jockey", "Vamika", "Nike", "Puma", "Clovia", "Zivame"];
+const BRAND_OPTIONS = ['Jockey', 'Vamika', 'Nike', 'Puma', 'Clovia', 'Zivame'];
 
 const SIZE_OPTIONS = [
-  "XS",
-  "S",
-  "M",
-  "L",
-  "XL",
-  "XXL",
-  "32B",
-  "34B",
-  "36B",
-  "36C",
-  "38C",
+  'XS',
+  'S',
+  'M',
+  'L',
+  'XL',
+  'XXL',
+  '32B',
+  '34B',
+  '36B',
+  '36C',
+  '38C',
 ];
 
 const CATEGORY_OPTIONS = [
-  "Bra",
-  "Panty",
-  "Nightwear",
-  "Athleisure",
-  "Layering",
-  "Shapewear",
-  "Swimwear",
-  "Accessories",
+  'Bra',
+  'Panty',
+  'Nightwear',
+  'Athleisure',
+  'Layering',
+  'Shapewear',
+  'Swimwear',
+  'Accessories',
 ];
 
 const AllProducts = () => {
@@ -59,7 +59,7 @@ const AllProducts = () => {
   const [totalProducts, setTotalProducts] = useState(0);
 
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   // ⭐ PAGINATION STATE
   const [page, setPage] = useState(1);
@@ -67,7 +67,7 @@ const AllProducts = () => {
   const [totalPages, setTotalPages] = useState(1);
 
   // ⭐ SORT STATE
-  const [sortBy, setSortBy] = useState("featured");
+  const [sortBy, setSortBy] = useState('featured');
 
   // ⭐ FILTER STATES
   const [selectedBrands, setSelectedBrands] = useState([]);
@@ -77,17 +77,23 @@ const AllProducts = () => {
   const toggleFilter = (type, value) => {
     setPage(1);
 
-    if (type === "brand") {
+    if (type === 'brand') {
       setSelectedBrands((prev) =>
-        prev.includes(value) ? prev.filter((b) => b !== value) : [...prev, value]
+        prev.includes(value)
+          ? prev.filter((b) => b !== value)
+          : [...prev, value],
       );
-    } else if (type === "size") {
+    } else if (type === 'size') {
       setSelectedSizes((prev) =>
-        prev.includes(value) ? prev.filter((s) => s !== value) : [...prev, value]
+        prev.includes(value)
+          ? prev.filter((s) => s !== value)
+          : [...prev, value],
       );
-    } else if (type === "category") {
+    } else if (type === 'category') {
       setSelectedCategories((prev) =>
-        prev.includes(value) ? prev.filter((c) => c !== value) : [...prev, value]
+        prev.includes(value)
+          ? prev.filter((c) => c !== value)
+          : [...prev, value],
       );
     }
   };
@@ -103,7 +109,7 @@ const AllProducts = () => {
     const fetchAllProducts = async () => {
       try {
         setLoading(true);
-        setError("");
+        setError('');
 
         const params = {
           page,
@@ -111,13 +117,13 @@ const AllProducts = () => {
         };
 
         if (selectedBrands.length > 0) {
-          params.brand = selectedBrands.join(",");
+          params.brand = selectedBrands.join(',');
         }
         if (selectedSizes.length > 0) {
-          params.size = selectedSizes.join(",");
+          params.size = selectedSizes.join(',');
         }
         if (selectedCategories.length > 0) {
-          params.category = selectedCategories.join(",");
+          params.category = selectedCategories.join(',');
         }
 
         const res = await axios.get(`${API_BASE_URL}/v1/products`, { params });
@@ -135,18 +141,19 @@ const AllProducts = () => {
 
           const tags = Array.isArray(prod.tags) ? prod.tags : [];
           const isNew =
-            tags.some((t) => `${t}`.toLowerCase().includes("new")) || prod.isNew;
+            tags.some((t) => `${t}`.toLowerCase().includes('new')) ||
+            prod.isNew;
           const isBestSeller = tags
-            .join(" ")
+            .join(' ')
             .toLowerCase()
-            .includes("bestseller");
+            .includes('bestseller');
 
           // flatten sizes if needed just to show in UI
           let sizes = [];
           if (Array.isArray(prod.sizes)) {
-            if (typeof prod.sizes[0] === "string") {
+            if (typeof prod.sizes[0] === 'string') {
               sizes = prod.sizes;
-            } else if (typeof prod.sizes[0] === "object") {
+            } else if (typeof prod.sizes[0] === 'object') {
               sizes = prod.sizes.map((s) => s.label);
             }
           }
@@ -167,12 +174,15 @@ const AllProducts = () => {
             price: salePrice,
             discountPercent,
             image: getImageUrl(
-              prod.mainImage || (prod.galleryImages && prod.galleryImages[0])
+              prod.mainImage || (prod.galleryImages && prod.galleryImages[0]),
             ),
             category: prod.category,
             subcategory: prod.subcategory,
             primaryTag:
-              tags[0] || prod.category || prod.subcategory || "Everyday Essential",
+              tags[0] ||
+              prod.category ||
+              prod.subcategory ||
+              'Everyday Essential',
             isNew,
             isBestSeller,
             rating: prod.rating || prod.averageRating || 0,
@@ -184,8 +194,8 @@ const AllProducts = () => {
 
         setProducts(mapped);
       } catch (err) {
-        console.error("Failed to fetch products:", err);
-        setError("Could not load products. Please try again.");
+        console.error('Failed to fetch products:', err);
+        setError('Could not load products. Please try again.');
       } finally {
         setLoading(false);
       }
@@ -197,7 +207,7 @@ const AllProducts = () => {
   useEffect(() => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth",
+      behavior: 'smooth',
     });
   }, [page]);
 
@@ -205,15 +215,15 @@ const AllProducts = () => {
   const sortedProducts = useMemo(() => {
     const copy = [...products];
 
-    if (sortBy === "priceLowHigh") {
+    if (sortBy === 'priceLowHigh') {
       return copy.sort((a, b) => a.price - b.price);
     }
-    if (sortBy === "priceHighLow") {
+    if (sortBy === 'priceHighLow') {
       return copy.sort((a, b) => b.price - a.price);
     }
-    if (sortBy === "discountHigh") {
+    if (sortBy === 'discountHigh') {
       return copy.sort(
-        (a, b) => (b.discountPercent || 0) - (a.discountPercent || 0)
+        (a, b) => (b.discountPercent || 0) - (a.discountPercent || 0),
       );
     }
 
@@ -251,7 +261,7 @@ const AllProducts = () => {
 
           <div className={styles.headerRight}>
             <div className={styles.countText}>
-              Showing <strong>{products.length}</strong> of{" "}
+              Showing <strong>{products.length}</strong> of{' '}
               <strong>{totalProducts}</strong> products
             </div>
 
@@ -286,9 +296,9 @@ const AllProducts = () => {
                   className={`${styles.filterChip} ${
                     selectedBrands.includes(brand)
                       ? styles.filterChipActive
-                      : ""
+                      : ''
                   }`}
-                  onClick={() => toggleFilter("brand", brand)}
+                  onClick={() => toggleFilter('brand', brand)}
                 >
                   {brand}
                 </button>
@@ -304,11 +314,9 @@ const AllProducts = () => {
                   key={size}
                   type="button"
                   className={`${styles.filterChip} ${
-                    selectedSizes.includes(size)
-                      ? styles.filterChipActive
-                      : ""
+                    selectedSizes.includes(size) ? styles.filterChipActive : ''
                   }`}
-                  onClick={() => toggleFilter("size", size)}
+                  onClick={() => toggleFilter('size', size)}
                 >
                   {size}
                 </button>
@@ -326,9 +334,9 @@ const AllProducts = () => {
                   className={`${styles.filterChip} ${
                     selectedCategories.includes(cat)
                       ? styles.filterChipActive
-                      : ""
+                      : ''
                   }`}
-                  onClick={() => toggleFilter("category", cat)}
+                  onClick={() => toggleFilter('category', cat)}
                 >
                   {cat}
                 </button>
@@ -339,10 +347,12 @@ const AllProducts = () => {
           {hasActiveFilters && (
             <div className={styles.activeFiltersRow}>
               <span className={styles.activeFiltersText}>
-                Filters applied:{" "}
-                {[...selectedBrands, ...selectedSizes, ...selectedCategories].join(
-                  ", "
-                )}
+                Filters applied:{' '}
+                {[
+                  ...selectedBrands,
+                  ...selectedSizes,
+                  ...selectedCategories,
+                ].join(', ')}
               </span>
               <button
                 type="button"
@@ -363,8 +373,7 @@ const AllProducts = () => {
           <div className={styles.grid}>
             {sortedProducts.map((item) => {
               const discount = item.discountPercent;
-              const savings =
-                item.mrp > item.price ? item.mrp - item.price : 0;
+              const savings = item.mrp > item.price ? item.mrp - item.price : 0;
 
               // ✅ check if this product is in wishlist (assuming IDs array)
               const inWishlist = wishlistItems.includes(item.id);
@@ -401,7 +410,9 @@ const AllProducts = () => {
 
                     {/* 🔻 Discount badge in image top-left */}
                     {discount > 0 && (
-                      <span className={`${styles.badge} ${styles.discountInImage}`}>
+                      <span
+                        className={`${styles.badge} ${styles.discountInImage}`}
+                      >
                         {discount}% OFF
                       </span>
                     )}
@@ -410,7 +421,7 @@ const AllProducts = () => {
                     <button
                       type="button"
                       className={`${styles.wishlistBtn} ${
-                        inWishlist ? styles.wishlistActive : ""
+                        inWishlist ? styles.wishlistActive : ''
                       }`}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -449,7 +460,9 @@ const AllProducts = () => {
                     {(item.category || item.subcategory) && (
                       <div className={styles.metaRow}>
                         {item.category && (
-                          <span className={styles.metaItem}>{item.category}</span>
+                          <span className={styles.metaItem}>
+                            {item.category}
+                          </span>
                         )}
                         {item.category && item.subcategory && (
                           <span className={styles.metaDot}>•</span>
@@ -545,7 +558,7 @@ const AllProducts = () => {
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
               className={`${styles.pageBtn} ${
-                page === 1 ? styles.disabled : ""
+                page === 1 ? styles.disabled : ''
               }`}
             >
               Previous
@@ -557,7 +570,7 @@ const AllProducts = () => {
                 <button
                   key={pageNum}
                   className={`${styles.pageBtn} ${
-                    page === pageNum ? styles.activePage : ""
+                    page === pageNum ? styles.activePage : ''
                   }`}
                   onClick={() => setPage(pageNum)}
                 >
@@ -570,7 +583,7 @@ const AllProducts = () => {
               disabled={page === totalPages}
               onClick={() => setPage(page + 1)}
               className={`${styles.pageBtn} ${
-                page === totalPages ? styles.disabled : ""
+                page === totalPages ? styles.disabled : ''
               }`}
             >
               Next

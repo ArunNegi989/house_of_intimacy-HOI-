@@ -195,8 +195,7 @@ function ProductDetail() {
   const imageList = [product.mainImage, ...gallery].filter(Boolean);
 
   // helpful flags
-  const hasColors =
-    Array.isArray(product.colors) && product.colors.length > 0;
+  const hasColors = Array.isArray(product.colors) && product.colors.length > 0;
   const hasSizes = Array.isArray(product.sizes) && product.sizes.length > 0;
 
   // ---------- HANDLERS ----------
@@ -706,8 +705,7 @@ function ProductDetail() {
               <button
                 type="button"
                 className={`${styles.addToBag} ${
-                  (hasSizes && !selectedSize) ||
-                  (hasColors && !selectedColor)
+                  (hasSizes && !selectedSize) || (hasColors && !selectedColor)
                     ? styles.addToBagDisabled
                     : ''
                 }`}

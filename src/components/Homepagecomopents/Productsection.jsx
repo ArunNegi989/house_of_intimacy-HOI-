@@ -5,88 +5,88 @@ import img19 from '../../assets/images/19.jpg';
 import { Link } from 'react-router-dom';
 
 const sampleData = {
-   New: [
-      {
-        id: 1,
-        brand: 'AquaFit',
-        title: 'Island Escape Bikini',
-        price: '$189.00',
-        img: img5,
-        arrow: '→',
-      },
-      {
-        id: 2,
-        brand: 'SwimStyle',
-        title: 'Seaside Sensation One-piece Monokini',
-        price: '$119.00',
-        img: img17,
-        arrow: '←',
-      },
-      {
-        id: 3,
-        brand: 'SwimStyle',
-        title: 'Seaside Sensation One-piece Monokini',
-        price: '$119.00',
-        img: img19,
-        arrow: '→',
-      },
-    ],
-    Trendy: [
-      {
-        id: 4,
-        brand: 'WaveWear',
-        title: 'Sand Dune One-piece Tankini',
-        price: '$112.00',
-        img: img5,
-      },
-      {
-        id: 5,
-        brand: 'SwimStyle',
-        title: 'Wave Rider Rash Guard Bikini',
-        price: '$79.00',
-        img: img17,
-      },
-      {
-        id: 6,
-        brand: 'SwimStyle',
-        title: 'Tropicana Monokini',
-        price: '$89.00',
-        img: img19,
-      },
-    ],
-    Sale: [
-      {
-        id: 7,
-        brand: 'Coastal Clothing',
-        title: 'Sunkissed Sands One-Piece Swimsuit',
-        priceOld: '$160.00',
-        price: '$127.00',
-        img: img5,
-      },
-      {
-        id: 8,
-        brand: 'Coastal Clothing',
-        title: 'Surfside Sunset Monokini',
-        priceOld: '$299.00',
-        price: '$229.00',
-        img: img17,
-      },
-      {
-        id: 9,
-        brand: 'SeaSplash',
-        title: 'Tidal Temptation Bikini',
-        priceOld: '$149.00',
-        price: '$112.00',
-        img: img5,
-      },
-    ],
-  };
+  New: [
+    {
+      id: 1,
+      brand: 'AquaFit',
+      title: 'Island Escape Bikini',
+      price: '$189.00',
+      img: img5,
+      arrow: '→',
+    },
+    {
+      id: 2,
+      brand: 'SwimStyle',
+      title: 'Seaside Sensation One-piece Monokini',
+      price: '$119.00',
+      img: img17,
+      arrow: '←',
+    },
+    {
+      id: 3,
+      brand: 'SwimStyle',
+      title: 'Seaside Sensation One-piece Monokini',
+      price: '$119.00',
+      img: img19,
+      arrow: '→',
+    },
+  ],
+  Trendy: [
+    {
+      id: 4,
+      brand: 'WaveWear',
+      title: 'Sand Dune One-piece Tankini',
+      price: '$112.00',
+      img: img5,
+    },
+    {
+      id: 5,
+      brand: 'SwimStyle',
+      title: 'Wave Rider Rash Guard Bikini',
+      price: '$79.00',
+      img: img17,
+    },
+    {
+      id: 6,
+      brand: 'SwimStyle',
+      title: 'Tropicana Monokini',
+      price: '$89.00',
+      img: img19,
+    },
+  ],
+  Sale: [
+    {
+      id: 7,
+      brand: 'Coastal Clothing',
+      title: 'Sunkissed Sands One-Piece Swimsuit',
+      priceOld: '$160.00',
+      price: '$127.00',
+      img: img5,
+    },
+    {
+      id: 8,
+      brand: 'Coastal Clothing',
+      title: 'Surfside Sunset Monokini',
+      priceOld: '$299.00',
+      price: '$229.00',
+      img: img17,
+    },
+    {
+      id: 9,
+      brand: 'SeaSplash',
+      title: 'Tidal Temptation Bikini',
+      priceOld: '$149.00',
+      price: '$112.00',
+      img: img5,
+    },
+  ],
+};
 
-  export default function ProductSection() {
+export default function ProductSection() {
   const sections = [
     { name: 'New', align: 'left', direction: 'rtl' },
     { name: 'Trendy', align: 'right', direction: 'ltr' },
-    { name: 'Sale', align: 'left', direction: 'rtl' }
+    { name: 'Sale', align: 'left', direction: 'rtl' },
   ];
 
   return (
@@ -485,7 +485,10 @@ const sampleData = {
             const duplicatedItems = [...items, ...items];
 
             return (
-              <div key={section.name} className={`section-row align-${section.align}`}>
+              <div
+                key={section.name}
+                className={`section-row align-${section.align}`}
+              >
                 <div className="title-wrapper">
                   <h3 className="column-title">{section.name}</h3>
                   <div className="view-all-wrapper">
@@ -496,31 +499,49 @@ const sampleData = {
                   </div>
                 </div>
 
-                <div className={`products-container direction-${section.direction}`}>
+                <div
+                  className={`products-container direction-${section.direction}`}
+                >
                   <div className="products-scroll">
                     {duplicatedItems.map((item, idx) => {
-                      const discount = item.priceOld 
-                        ? Math.round(((parseFloat(item.priceOld.replace('$', '')) - parseFloat(item.price.replace('$', ''))) / parseFloat(item.priceOld.replace('$', ''))) * 100)
+                      const discount = item.priceOld
+                        ? Math.round(
+                            ((parseFloat(item.priceOld.replace('$', '')) -
+                              parseFloat(item.price.replace('$', ''))) /
+                              parseFloat(item.priceOld.replace('$', ''))) *
+                              100,
+                          )
                         : null;
 
                       return (
-                        <article key={`${item.id}-${idx}`} className="product-card">
+                        <article
+                          key={`${item.id}-${idx}`}
+                          className="product-card"
+                        >
                           <div className="product-image">
                             <img src={item.img} alt={item.title} />
-                            {section.name === 'Sale' && <div className="sale-badge">Sale</div>}
+                            {section.name === 'Sale' && (
+                              <div className="sale-badge">Sale</div>
+                            )}
                           </div>
 
                           <div className="product-info">
                             <div className="product-brand">{item.brand}</div>
                             <div className="product-title">{item.title}</div>
-                            
+
                             <div className="product-price">
                               {item.priceOld && (
-                                <span className="price-old">{item.priceOld}</span>
+                                <span className="price-old">
+                                  {item.priceOld}
+                                </span>
                               )}
-                              <span className="price-current">{item.price}</span>
+                              <span className="price-current">
+                                {item.price}
+                              </span>
                               {discount && (
-                                <span className="discount-percent">-{discount}%</span>
+                                <span className="discount-percent">
+                                  -{discount}%
+                                </span>
                               )}
                             </div>
                           </div>

@@ -1,7 +1,7 @@
 // src/utils/authStorage.js
 
-const TOKEN_KEY = "authToken";
-const NAME_KEY = "userName";
+const TOKEN_KEY = 'authToken';
+const NAME_KEY = 'userName';
 
 export const saveAuthData = (token, name) => {
   if (token) {

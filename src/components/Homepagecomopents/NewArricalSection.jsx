@@ -71,34 +71,33 @@ const NewArrival = () => {
   // ✅ get wishlist from context
   const { wishlistItems, toggleWishlist } = useContext(WishlistContext);
 
- // ---------- SLIDER SETTINGS ----------
-const settings = {
-  dots: false,
-  infinite: true,
-  speed: 800,
-  slidesToShow: 4,
-  slidesToScroll: 1,
-  swipeToSlide: true,
-  autoplay: false, // ⛔ desktop autoplay on
-  nextArrow: <NextArrow />,
-  prevArrow: <PrevArrow />,
-  responsive: [
-    { breakpoint: 1280, settings: { slidesToShow: 3 } },
-    { breakpoint: 992, settings: { slidesToShow: 2 } },
-    // 👇 tablet: still fine to show 1.5 (optional)
-    { breakpoint: 768, settings: { slidesToShow: 1.5 } },
-    // 👇 small phones (≤ 480px): show EXACTLY 1 card
-    {
-      breakpoint: 480,
-      settings: {
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        centerMode: false,
+  // ---------- SLIDER SETTINGS ----------
+  const settings = {
+    dots: false,
+    infinite: true,
+    speed: 800,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    swipeToSlide: true,
+    autoplay: false, // ⛔ desktop autoplay on
+    nextArrow: <NextArrow />,
+    prevArrow: <PrevArrow />,
+    responsive: [
+      { breakpoint: 1280, settings: { slidesToShow: 3 } },
+      { breakpoint: 992, settings: { slidesToShow: 2 } },
+      // 👇 tablet: still fine to show 1.5 (optional)
+      { breakpoint: 768, settings: { slidesToShow: 1.5 } },
+      // 👇 small phones (≤ 480px): show EXACTLY 1 card
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+          centerMode: false,
+        },
       },
-    },
-  ],
-};
-
+    ],
+  };
 
   // ---------- FETCH PRODUCTS ----------
   useEffect(() => {
@@ -121,10 +120,7 @@ const settings = {
           } else if (typeof prod.stock === 'number') {
             totalStock = prod.stock;
           } else if (Array.isArray(prod.sizes)) {
-            totalStock = prod.sizes.reduce(
-              (sum, s) => sum + (s.stock || 0),
-              0,
-            );
+            totalStock = prod.sizes.reduce((sum, s) => sum + (s.stock || 0), 0);
           }
 
           const genderType = prod.gender || prod.genderType || 'Unisex';
@@ -165,7 +161,7 @@ const settings = {
 
         <div className={styles.contentRow}>
           {/* LEFT VIDEO SECTION */}
-           <div className={styles.leftPanel}>
+          <div className={styles.leftPanel}>
             <div className={styles.heroCard}>
               <video
                 className={styles.heroVideo}
@@ -181,22 +177,20 @@ const settings = {
               <div className={styles.heroOverlay}></div>
 
               {/* 🔥 SHOP NOW NAVIGATES TO BRAND LISTING PAGE */}
-             <button
-  type="button"
-  className={styles.heroBtn}
-  onClick={() => navigate("/products")}  // 👈 OPEN ALL PRODUCTS PAGE
->
-  Shop Now
-</button>
+              <button
+                type="button"
+                className={styles.heroBtn}
+                onClick={() => navigate('/products')} // 👈 OPEN ALL PRODUCTS PAGE
+              >
+                Shop Now
+              </button>
             </div>
           </div>
 
           {/* RIGHT SLIDER */}
           <div className={styles.sliderWrapper}>
             {loading && <p className={styles.infoText}>Loading products...</p>}
-            {error && !loading && (
-              <p className={styles.errorText}>{error}</p>
-            )}
+            {error && !loading && <p className={styles.errorText}>{error}</p>}
             {!loading && !error && products.length === 0 && (
               <p className={styles.infoText}>No products found.</p>
             )}

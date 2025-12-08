@@ -70,11 +70,15 @@ const MyOrders = () => {
         });
 
         // adjust depending on backend shape
-        const fetched = Array.isArray(res.data) ? res.data : res.data.orders || [];
+        const fetched = Array.isArray(res.data)
+          ? res.data
+          : res.data.orders || [];
         setOrders(fetched);
       } catch (err) {
         console.error('Error fetching orders:', err);
-        setError('Unable to load your orders right now. Please try again later.');
+        setError(
+          'Unable to load your orders right now. Please try again later.',
+        );
       } finally {
         setLoading(false);
       }
@@ -88,9 +92,14 @@ const MyOrders = () => {
     return orders.filter((o) => {
       const s = (o.status || '').toUpperCase();
       if (statusFilter === 'ACTIVE') {
-        return ['PLACED', 'PENDING', 'PROCESSING', 'CONFIRMED', 'SHIPPED', 'OUT_FOR_DELIVERY'].includes(
-          s
-        );
+        return [
+          'PLACED',
+          'PENDING',
+          'PROCESSING',
+          'CONFIRMED',
+          'SHIPPED',
+          'OUT_FOR_DELIVERY',
+        ].includes(s);
       }
       if (statusFilter === 'COMPLETED') {
         return s === 'DELIVERED';
@@ -114,7 +123,9 @@ const MyOrders = () => {
   };
 
   const getOrderIdDisplay = (order) =>
-    order.orderNumber || order.orderId || (order._id ? `#${order._id.slice(-8)}` : '#N/A');
+    order.orderNumber ||
+    order.orderId ||
+    (order._id ? `#${order._id.slice(-8)}` : '#N/A');
 
   const getOrderDate = (order) => {
     const raw = order.createdAt || order.orderDate;
@@ -144,7 +155,8 @@ const MyOrders = () => {
           <div className={styles.headerText}>
             <h1 className={styles.title}>My Orders</h1>
             <p className={styles.subtitle}>
-              Track your current orders and view your order history on House of Intimacy.
+              Track your current orders and view your order history on House of
+              Intimacy.
             </p>
           </div>
         </div>
@@ -188,7 +200,8 @@ const MyOrders = () => {
             <div className={styles.stateBox}>
               <p className={styles.stateTitle}>No orders yet</p>
               <p className={styles.stateText}>
-                Looks like you haven&apos;t placed any orders. Start shopping to see them here.
+                Looks like you haven&apos;t placed any orders. Start shopping to
+                see them here.
               </p>
               <button
                 type="button"
@@ -208,11 +221,16 @@ const MyOrders = () => {
                 const statusInfo = formatStatus(order.status);
 
                 return (
-                  <div className={styles.orderCard} key={order._id || order.orderId}>
+                  <div
+                    className={styles.orderCard}
+                    key={order._id || order.orderId}
+                  >
                     {/* Top row */}
                     <div className={styles.orderTopRow}>
                       <div>
-                        <div className={styles.orderId}>{getOrderIdDisplay(order)}</div>
+                        <div className={styles.orderId}>
+                          {getOrderIdDisplay(order)}
+                        </div>
                         <div className={styles.orderDate}>
                           Placed on {getOrderDate(order)}
                         </div>
@@ -223,7 +241,9 @@ const MyOrders = () => {
                           styles[`status_${statusInfo.key}`] || ''
                         }`}
                       >
-                        <span className={styles.statusIcon}>{statusInfo.icon}</span>
+                        <span className={styles.statusIcon}>
+                          {statusInfo.icon}
+                        </span>
                         <span>{statusInfo.label}</span>
                       </div>
                     </div>
@@ -265,7 +285,9 @@ const MyOrders = () => {
                               <div className={styles.itemMeta}>
                                 {item.size && <span>Size: {item.size}</span>}
                                 {item.color && <span>Color: {item.color}</span>}
-                                <span>Qty: {item.quantity || item.qty || 1}</span>
+                                <span>
+                                  Qty: {item.quantity || item.qty || 1}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -279,7 +301,9 @@ const MyOrders = () => {
                         type="button"
                         className={styles.secondaryBtn}
                         onClick={() =>
-                          navigate(`/account/orders/${order._id || order.orderId}`)
+                          navigate(
+                            `/account/orders/${order._id || order.orderId}`,
+                          )
                         }
                       >
                         View Details

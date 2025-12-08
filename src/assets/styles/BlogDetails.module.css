@@ -4,11 +4,9 @@
 
 .homePadding {
   padding: 80px 0 70px;
-  background: radial-gradient(
-      circle at top left,
+  background: radial-gradient(circle at top left,
       rgba(214, 51, 132, 0.15),
-      transparent 55%
-    ),
+      transparent 55%),
     linear-gradient(135deg, #fff5fb 0%, #ffffff 40%, #ffeaf5 100%);
 }
 
@@ -107,11 +105,9 @@
   right: -80px;
   width: 220px;
   height: 220px;
-  background: radial-gradient(
-    circle,
-    rgba(214, 51, 132, 0.16),
-    transparent 60%
-  );
+  background: radial-gradient(circle,
+      rgba(214, 51, 132, 0.16),
+      transparent 60%);
   pointer-events: none;
 }
 
@@ -272,11 +268,9 @@
   position: absolute;
   inset: auto 0 0 0;
   height: 35%;
-  background: linear-gradient(
-    to top,
-    rgba(0, 0, 0, 0.35),
-    transparent
-  );
+  background: linear-gradient(to top,
+      rgba(0, 0, 0, 0.35),
+      transparent);
   pointer-events: none;
 }
 
@@ -363,11 +357,9 @@
 }
 
 .recentblogsbox {
-  background: radial-gradient(
-      circle at top left,
+  background: radial-gradient(circle at top left,
       rgba(214, 51, 132, 0.12),
-      transparent 55%
-    ),
+      transparent 55%),
     #ffeeec;
   padding: 1.9rem;
   border-radius: 18px;
@@ -477,11 +469,9 @@
    =============================== */
 
 .Conclusion {
-  background: radial-gradient(
-      circle at top,
+  background: radial-gradient(circle at top,
       rgba(214, 51, 132, 0.12),
-      transparent 55%
-    ),
+      transparent 55%),
     #fff9fc;
   padding: 40px 0 70px;
 }
@@ -506,11 +496,9 @@
   right: -60px;
   width: 180px;
   height: 180px;
-  background: radial-gradient(
-    circle,
-    rgba(214, 51, 132, 0.18),
-    transparent 70%
-  );
+  background: radial-gradient(circle,
+      rgba(214, 51, 132, 0.18),
+      transparent 70%);
   pointer-events: none;
 }
 

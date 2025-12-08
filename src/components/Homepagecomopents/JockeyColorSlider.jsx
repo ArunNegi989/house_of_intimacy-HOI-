@@ -1,43 +1,43 @@
 // src/components/JockeyColorSlider/JockeyColorSlider.jsx
-import React, { useState, useRef, useEffect } from "react";
-import Slider from "react-slick";
-import axios from "axios";
-import { useNavigate } from "react-router-dom"; // ✅ NEW
-import styles from "../../assets/styles/JockeyColorSlider.module.css";
+import React, { useState, useRef, useEffect } from 'react';
+import Slider from 'react-slick';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // ✅ NEW
+import styles from '../../assets/styles/JockeyColorSlider.module.css';
 
-const API_BASE_URL = "http://localhost:8000";
+const API_BASE_URL = 'http://localhost:8000';
 
 // ----- UI COLORS (slider ke liye) -----
 const COLORS = [
-  { id: "black", label: "Black", hex: "#000000" },
-  { id: "grey", label: "Grey", hex: "#4B5563" },
-  { id: "navy", label: "Navy", hex: "#1F2937" },
-  { id: "blue", label: "Blue", hex: "#2563EB" },
-  { id: "teal", label: "Teal", hex: "#14B8A6" },
-  { id: "green", label: "Green", hex: "#22C55E" },
-  { id: "orange", label: "Orange", hex: "#F97316" },
-  { id: "red", label: "Red", hex: "#EF4444" },
-  { id: "pink", label: "Pink", hex: "#EC4899" },
-  { id: "yellow", label: "Yellow", hex: "#FACC15" },
+  { id: 'black', label: 'Black', hex: '#000000' },
+  { id: 'grey', label: 'Grey', hex: '#4B5563' },
+  { id: 'navy', label: 'Navy', hex: '#1F2937' },
+  { id: 'blue', label: 'Blue', hex: '#2563EB' },
+  { id: 'teal', label: 'Teal', hex: '#14B8A6' },
+  { id: 'green', label: 'Green', hex: '#22C55E' },
+  { id: 'orange', label: 'Orange', hex: '#F97316' },
+  { id: 'red', label: 'Red', hex: '#EF4444' },
+  { id: 'pink', label: 'Pink', hex: '#EC4899' },
+  { id: 'yellow', label: 'Yellow', hex: '#FACC15' },
 ];
 
 // 💡 master color map (name → hex)
 const COLOR_MAP = {
-  black: "#000000",
-  grey: "#4B5563",
-  navy: "#1F2937",
-  blue: "#2563EB",
-  teal: "#14B8A6",
-  green: "#22C55E",
-  orange: "#F97316",
-  red: "#EF4444",
-  pink: "#EC4899",
-  yellow: "#FACC15",
+  black: '#000000',
+  grey: '#4B5563',
+  navy: '#1F2937',
+  blue: '#2563EB',
+  teal: '#14B8A6',
+  green: '#22C55E',
+  orange: '#F97316',
+  red: '#EF4444',
+  pink: '#EC4899',
+  yellow: '#FACC15',
 };
 
 // reverse map (hex → name)
 const HEX_TO_NAME = Object.fromEntries(
-  Object.entries(COLOR_MAP).map(([name, hex]) => [hex.toLowerCase(), name])
+  Object.entries(COLOR_MAP).map(([name, hex]) => [hex.toLowerCase(), name]),
 );
 
 // ✅ universal color normalizer
@@ -46,20 +46,20 @@ function normalizeColor(val) {
   if (!val) return null;
 
   // If object like {label:"Red"} ya {name:"Red"}
-  if (typeof val === "object") {
+  if (typeof val === 'object') {
     if (val.label) return String(val.label).toLowerCase();
     if (val.name) return String(val.name).toLowerCase();
   }
 
   // If hex string "#EF4444"
-  if (typeof val === "string" && val.startsWith("#")) {
+  if (typeof val === 'string' && val.startsWith('#')) {
     const lowerHex = val.toLowerCase();
     const mappedName = HEX_TO_NAME[lowerHex];
     return mappedName ? mappedName.toLowerCase() : null;
   }
 
   // Simple string like "Red", "RED"
-  if (typeof val === "string") {
+  if (typeof val === 'string') {
     return val.toLowerCase();
   }
 
@@ -68,8 +68,8 @@ function normalizeColor(val) {
 
 // backend image helper
 const getImageUrl = (url) => {
-  if (!url) return "";
-  return url.startsWith("http") ? url : `${API_BASE_URL}${url}`;
+  if (!url) return '';
+  return url.startsWith('http') ? url : `${API_BASE_URL}${url}`;
 };
 
 // custom arrows
@@ -98,7 +98,7 @@ function PrevArrow({ onClick }) {
 }
 
 const JockeyColorSlider = () => {
-  const [activeGender, setActiveGender] = useState("men"); // "men" | "women"
+  const [activeGender, setActiveGender] = useState('men'); // "men" | "women"
   const [activeColorIndex, setActiveColorIndex] = useState(0);
   const [allProducts, setAllProducts] = useState([]); // sab products (Men + Women)
   const sliderRef = useRef(null);
@@ -117,13 +117,13 @@ const JockeyColorSlider = () => {
           },
         });
 
-        console.log("Jockey slider all products:", res.data);
+        console.log('Jockey slider all products:', res.data);
         setAllProducts(res.data?.data || []);
         if (sliderRef.current) {
           sliderRef.current.slickGoTo(0);
         }
       } catch (err) {
-        console.error("Error fetching products:", err);
+        console.error('Error fetching products:', err);
       }
     };
 
@@ -131,7 +131,7 @@ const JockeyColorSlider = () => {
   }, []);
 
   // ---------- GENDER FILTER FRONTEND PE ----------
-  const currentGenderValue = activeGender === "men" ? "men" : "women";
+  const currentGenderValue = activeGender === 'men' ? 'men' : 'women';
 
   const genderFilteredProducts = allProducts.filter((p) => {
     if (!p.gender) return false;
@@ -208,10 +208,10 @@ const JockeyColorSlider = () => {
             <button
               type="button"
               className={`${styles.tabBtn} ${
-                activeGender === "men" ? styles.tabActive : ""
+                activeGender === 'men' ? styles.tabActive : ''
               }`}
               onClick={() => {
-                setActiveGender("men");
+                setActiveGender('men');
                 setActiveColorIndex(0);
                 if (sliderRef.current) sliderRef.current.slickGoTo(0);
               }}
@@ -221,10 +221,10 @@ const JockeyColorSlider = () => {
             <button
               type="button"
               className={`${styles.tabBtn} ${
-                activeGender === "women" ? styles.tabActive : ""
+                activeGender === 'women' ? styles.tabActive : ''
               }`}
               onClick={() => {
-                setActiveGender("women");
+                setActiveGender('women');
                 setActiveColorIndex(0);
                 if (sliderRef.current) sliderRef.current.slickGoTo(0);
               }}
@@ -238,14 +238,14 @@ const JockeyColorSlider = () => {
         <div className={styles.sliderWrapper}>
           <Slider ref={sliderRef} {...settings}>
             {productsToShow.map((p) => {
-              const genderLabel = p.gender || "";
+              const genderLabel = p.gender || '';
 
               return (
                 <div
                   key={p._id}
                   className={styles.cardOuter}
                   onClick={() => handleCardClick(p._id)} // ✅ CLICK HANDLER
-                  style={{ cursor: "pointer" }} // optional: visual feedback
+                  style={{ cursor: 'pointer' }} // optional: visual feedback
                 >
                   <div className={styles.card}>
                     <div className={styles.cardImageWrap}>
@@ -267,7 +267,7 @@ const JockeyColorSlider = () => {
                   <div className={styles.cardInfo}>
                     <p className={styles.cardName}>{p.name}</p>
                     <p className={styles.cardSubtitle}>
-                      {p.brand || p.category || ""}
+                      {p.brand || p.category || ''}
                     </p>
                   </div>
                 </div>

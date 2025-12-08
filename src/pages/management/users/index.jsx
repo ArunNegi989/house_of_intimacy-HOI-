@@ -159,8 +159,6 @@ const Users = () => {
       pb={10}
       px={{ base: 4, md: 6 }}
     >
-      
-
       {loading ? (
         <Flex justify="center" mt={10}>
           <Spinner size="lg" />
@@ -184,7 +182,6 @@ const Users = () => {
             rounded="2xl"
             boxShadow="lg"
             border="1px solid"
-           
             mt={2}
           >
             {/* 👇 IMPORTANT: wrap in overflowX for mid breakpoints */}

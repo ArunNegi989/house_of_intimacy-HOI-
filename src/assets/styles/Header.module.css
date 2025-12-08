@@ -13,9 +13,11 @@
   margin: 0 auto;
   padding: 14px 40px 10px;
   display: flex;
-  justify-content: center; /* logo centered */
+  justify-content: center;
+  /* logo centered */
   align-items: center;
-  position: relative; /* so absolute children align to this row */
+  position: relative;
+  /* so absolute children align to this row */
 }
 
 /* Hamburger button (absolute on left) */
@@ -26,7 +28,8 @@
   background: transparent;
   font-size: 24px;
   cursor: pointer;
-  display: none; /* shown only on mobile */
+  display: none;
+  /* shown only on mobile */
 }
 
 /* Logo center */
@@ -269,9 +272,11 @@
 
 /* when open */
 .mobileNavOpen {
-  max-height: 100vh;     /* or 80vh, or 1200px – just big enough */
+  max-height: 100vh;
+  /* or 80vh, or 1200px – just big enough */
   border-bottom-color: #eee;
-  overflow-y: auto;       /* ⭐ allows scrolling inside menu */
+  overflow-y: auto;
+  /* ⭐ allows scrolling inside menu */
 }
 
 .mobileNavList {
@@ -280,7 +285,7 @@
   padding: 0 16px 10px;
 }
 
-.mobileNavItem + .mobileNavItem {
+.mobileNavItem+.mobileNavItem {
   border-top: 1px solid #eee;
 }
 
@@ -354,7 +359,7 @@
   padding: 6px 0 10px;
 }
 
-.mobileMegaColumn + .mobileMegaColumn {
+.mobileMegaColumn+.mobileMegaColumn {
   margin-top: 6px;
 }
 
@@ -416,7 +421,8 @@
   }
 
   .navDesktop {
-    display: none; /* hide desktop nav */
+    display: none;
+    /* hide desktop nav */
   }
 
   .bottomRow {

@@ -15,6 +15,7 @@
     opacity: 0;
     transform: translateY(6px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -23,7 +24,8 @@
 
 /* ---------- BREADCRUMB ---------- */
 .heartFilled {
-  color: #e11d48; /* full red/pink heart */
+  color: #e11d48;
+  /* full red/pink heart */
 }
 
 .breadcrumb {
@@ -60,8 +62,10 @@
 
 /* 🔔 small toast for feedback */
 .actionToast {
-  position: fixed;              /* ⬅️ important: fixed, not sticky */
-  top: 150px;                    /* header height ke just niche (adjust if needed) */
+  position: fixed;
+  /* ⬅️ important: fixed, not sticky */
+  top: 150px;
+  /* header height ke just niche (adjust if needed) */
   left: 50%;
   transform: translateX(-50%);
   background: #111;
@@ -70,10 +74,13 @@
   border-radius: 999px;
   font-size: 14px;
   font-weight: 500;
-  z-index: 2000;                /* header se jyada rakho */
+  z-index: 2000;
+  /* header se jyada rakho */
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  pointer-events: none;         /* clicks neeche wale buttons pe jayenge */
+  pointer-events: none;
+  /* clicks neeche wale buttons pe jayenge */
 }
+
 /* ---------- LAYOUT ---------- */
 
 .contentWrapper {
@@ -156,7 +163,7 @@
 }
 
 .mainImageWrapper::after {
-  
+
   position: absolute;
   bottom: 12px;
   right: 18px;
@@ -225,7 +232,7 @@
   pointer-events: none;
 }
 
-.rightCol > * {
+.rightCol>* {
   position: relative;
   z-index: 1;
 }
@@ -1098,6 +1105,7 @@
     opacity: 0;
     transform: translateY(12px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

@@ -91,7 +91,6 @@ export default function Main() {
                     </ProtectedRoute>
                   }
                 />
-
                 {/* Auth layout (register, forgot, etc) */}
                 <Route path="auth/*" element={<AuthLayout />} />
                 <Route path="/wishlist" element={<WishlistPage />} />
@@ -107,10 +106,9 @@ export default function Main() {
                   path="/order-success/:orderId"
                   element={<OrderSuccess />}
                 />
-                <Route path="/Blog" element={<AllBlogs/>} /> 
-                <Route path="/BlogDetails" element={<BlogDetails/>} />    
-        <Route path="/blog/:slug" element={<BlogDetails />} />
-
+                <Route path="/Blog" element={<AllBlogs />} />
+                <Route path="/BlogDetails" element={<BlogDetails />} />
+                <Route path="/blog/:slug" element={<BlogDetails />} />
                 {/* 🔐 ADMIN LAYOUT – now uses AdminRoute */}
                 <Route
                   path="admin/*"
@@ -123,7 +121,6 @@ export default function Main() {
                     </AdminRoute>
                   }
                 />
-
                 {/* Login */}
                 <Route
                   path="/login"
@@ -133,7 +130,6 @@ export default function Main() {
                     </PublicRoute>
                   }
                 />
-
                 {/* Register */}
                 <Route
                   path="/auth/create_new_user"
@@ -143,7 +139,6 @@ export default function Main() {
                     </PublicRoute>
                   }
                 />
-
                 {/* ✅ NEW: Verify Email (OTP) */}
                 <Route
                   path="/auth/verify-email"
@@ -153,7 +148,6 @@ export default function Main() {
                     </PublicRoute>
                   }
                 />
-
                 {/* Account pages (protected) */}
                 <Route
                   path="/account/profile"
@@ -163,7 +157,6 @@ export default function Main() {
                     </ProtectedRoute>
                   }
                 />
-
                 <Route
                   path="/account/orders"
                   element={
@@ -172,11 +165,9 @@ export default function Main() {
                     </ProtectedRoute>
                   }
                 />
-
                 <Route path="/bras" element={<BraListing />} />
                 <Route path="/panties" element={<PantiesListing />} />
                 <Route path="/nightwear" element={<NightwearListing />} />
-
                 {/* HOME PAGE (public) */}
                 <Route path="/" element={<Home />} />
                 <Route path="/about-us" element={<Aboutus />} />

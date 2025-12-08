@@ -2,7 +2,8 @@
 
 .wrapper {
   width: 100%;
-  background-color: #ffeeec; /* light cream like screenshot */
+  background-color: #ffeeec;
+  /* light cream like screenshot */
   padding: 18px 0 26px;
 }
 
@@ -18,11 +19,13 @@
 
   /* make it scrollable on small screens */
   overflow-x: auto;
-  scrollbar-width: none; /* Firefox */
+  scrollbar-width: none;
+  /* Firefox */
 }
 
 .inner::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none;
+  /* Chrome, Safari */
 }
 
 /* each category card */

@@ -1,14 +1,14 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext(null);
 
 export const useAuth = () => useContext(AuthContext);
 
-const LOCAL_KEY = "hoi_auth"; // jo marzi naam rakho
+const LOCAL_KEY = 'hoi_auth'; // jo marzi naam rakho
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);     // { name, email, ... }
-  const [token, setToken] = useState(null);   // JWT token
+  const [user, setUser] = useState(null); // { name, email, ... }
+  const [token, setToken] = useState(null); // JWT token
   const [loading, setLoading] = useState(true);
 
   // 🔁 app load hone par localStorage se auth read karo
@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
         setUser(parsed.user || null);
         setToken(parsed.token || null);
       } catch (err) {
-        console.error("Invalid auth in localStorage", err);
+        console.error('Invalid auth in localStorage', err);
         localStorage.removeItem(LOCAL_KEY);
       }
     }
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
     setToken(tokenValue);
     localStorage.setItem(
       LOCAL_KEY,
-      JSON.stringify({ user: userData, token: tokenValue })
+      JSON.stringify({ user: userData, token: tokenValue }),
     );
   };
 

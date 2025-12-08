@@ -85,6 +85,7 @@
   color: #666;
   margin-bottom: 10px;
 }
+
 .imageWrap {
   position: relative;
   overflow: hidden;
@@ -123,11 +124,15 @@
 }
 
 .wishlistActive svg {
-  fill: red !important;    /* fill inside icon */
-  stroke: red !important;  /* outline */
+  fill: red !important;
+  /* fill inside icon */
+  stroke: red !important;
+  /* outline */
 }
+
 .wishlistActive {
-  color: #e11d48; /* pink/red */
+  color: #e11d48;
+  /* pink/red */
 }
 
 .imageWrap {
@@ -152,7 +157,8 @@
   position: absolute;
   top: 8px;
   left: 8px;
-  background: #e3f5e2; /* or your brand pink/red */
+  background: #e3f5e2;
+  /* or your brand pink/red */
   color: #1c7a28;
   border-radius: 999px;
   padding: 4px 10px;
@@ -297,7 +303,8 @@
 /* ============================= */
 .imageWrap {
   width: 100%;
-  padding-top: 130%; /* portrait aspect ratio */
+  padding-top: 130%;
+  /* portrait aspect ratio */
   position: relative;
   overflow: hidden;
   background: radial-gradient(circle at top, #ffeef7 0%, #f9f2f6 60%, #ffffff 100%);
@@ -381,7 +388,7 @@
   font-size: 15px;
   font-weight: 600;
   color: #222;
-  
+
 }
 
 /* Category / Subcategory meta */

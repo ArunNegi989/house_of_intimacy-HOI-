@@ -3,29 +3,29 @@
   padding-top: 40px;
   font-family: "Inter", sans-serif;
 }
+
 .newsletterSection button {
-      border: 1px solid !important;
-    background: linear-gradient(135deg, #e91e63 0%, #d63384 100%) !important;
-    color: #fff !important;
+  border: 1px solid !important;
+  background: linear-gradient(135deg, #e91e63 0%, #d63384 100%) !important;
+  color: #fff !important;
 }
+
 /* Logo */
 .logo {
-      height: 170px;
-    object-fit: contain;
-    width: 50%;
+  height: 170px;
+  object-fit: contain;
+  width: 50%;
 }
 
 .desc {
   text-decoration: none;
-    color: #222;
-    font-size: 16px;
-    font-weight: 300;
-    text-transform: uppercase;
-    padding-bottom: 4px;
-    border-bottom: 2px solid transparent;
-    transition: color 0.2s 
-ease, border-color 0.2s 
-ease;
+  color: #222;
+  font-size: 16px;
+  font-weight: 300;
+  text-transform: uppercase;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 /* Headings */
@@ -35,7 +35,7 @@ ease;
   text-transform: uppercase;
   font-weight: 600;
   color: #222;
-      padding-top: 40px;
+  padding-top: 40px;
 }
 
 /* List */
@@ -45,16 +45,14 @@ ease;
 }
 
 .list li {
- text-decoration: none;
-    color: #222;
-    font-size: 16px;
-    font-weight: 300;
-    text-transform: uppercase;
-    padding-bottom: 4px;
-    border-bottom: 2px solid transparent;
-    transition: color 0.2s 
-ease, border-color 0.2s 
-ease;
+  text-decoration: none;
+  color: #222;
+  font-size: 16px;
+  font-weight: 300;
+  text-transform: uppercase;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .list li a {
@@ -74,6 +72,7 @@ ease;
   border-bottom: 1px solid #e2e2e2;
   margin-top: 20px;
 }
+
 .newsletterSection input {
   border: 1px solid #e91e63;
 }
@@ -129,19 +128,23 @@ ease;
     margin-bottom: 10px;
   }
 }
+
 @media (max-width: 499px) {
-   .logo {
+  .logo {
     height: 150px;
     width: 100%;
   }
+
   .list li {
     font-size: 14px !important;
   }
+
   .heading {
-  font-size: 20px;
+    font-size: 20px;
   }
+
   .footer {
-  padding-top: 10px !important;
+    padding-top: 10px !important;
   }
 }
 
@@ -152,16 +155,14 @@ ease;
 }
 
 .list li {
- text-decoration: none;
-    color: #222;
-    font-size: 16px;
-    font-weight: 300;
-    text-transform: uppercase;
-    padding-bottom: 4px;
-    border-bottom: 2px solid transparent;
-    transition: color 0.2s 
-ease, border-color 0.2s 
-ease;
+  text-decoration: none;
+  color: #222;
+  font-size: 16px;
+  font-weight: 300;
+  text-transform: uppercase;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
 }
 
 .list li a {
