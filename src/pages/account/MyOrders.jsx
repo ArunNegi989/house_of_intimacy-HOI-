@@ -13,13 +13,14 @@ import axios from 'axios';
 
 import styles from '../../assets/styles/account/MyOrders.module.css';
 
-const API_BASE_URL = 'http://localhost:8000';
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
+const apiRoot = baseUrl.replace(/\/v1$/, '');
 
 // helper for image URL
 const getImageUrl = (url) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  return `${API_BASE_URL}${url}`;
+  return `${apiRoot}${url}`;
 };
 
 // map backend status → label + className key
@@ -63,7 +64,7 @@ const MyOrders = () => {
         setError('');
 
         // 🔁 change this endpoint to your real one
-        const res = await axios.get(`${API_BASE_URL}/v1/orders/my-orders`, {
+        const res = await axios.get(`${baseUrl}/orders/my-orders`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },

@@ -9,12 +9,13 @@ import styles from '../../assets/styles/productcollection/AllProducts.module.css
 // ✅ import wishlist context
 import { WishlistContext } from '../../contexts/WishlistContext';
 
-const API_BASE_URL = 'http://localhost:8000';
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
+const apiRoot = baseUrl.replace(/\/v1$/, '');
 
 const getImageUrl = (url) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  return `${API_BASE_URL}${url}`;
+  return `${apiRoot}${url}`;
 };
 
 const getDiscountPercent = (mrp, price) => {
@@ -126,7 +127,7 @@ const AllProducts = () => {
           params.category = selectedCategories.join(',');
         }
 
-        const res = await axios.get(`${API_BASE_URL}/v1/products`, { params });
+        const res = await axios.get(`${baseUrl}/products`, { params });
 
         const backendProducts = res.data?.data || [];
         const total = res.data?.pagination?.total || 0;

@@ -21,8 +21,9 @@ import prod3Img from '../../assets/images/CSC_0015.jpg';
 import prod4Img from '../../assets/images/IMG_4869.JPG';
 
 // ================== CONFIG ==================
-const API_BASE_URL = 'http://localhost:8000';
-const PRODUCTS_ENDPOINT = `${API_BASE_URL}/v1/products`;
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
+const apiRoot = baseUrl.replace(/\/v1$/, '');
+const PRODUCTS_ENDPOINT = `${baseUrl}/v1/products`;
 
 const BRA_TYPES = [
   // ⚠️ IMPORTANT:
@@ -50,7 +51,7 @@ const PRODUCTS_PER_PAGE = 12;
 const getImageUrl = (url) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  return `${API_BASE_URL}${url}`;
+  return `${apiRoot}${url}`;
 };
 
 // decode colors coming from DB (string | object)

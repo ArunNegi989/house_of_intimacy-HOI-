@@ -8,13 +8,14 @@ import styles from '../../assets/styles/wishlistpage/WishlistPage.module.css';
 
 import { FiHeart, FiTrash2, FiArrowLeft } from 'react-icons/fi';
 
-const API_BASE_URL = 'http://localhost:8000';
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
+const apiRoot = baseUrl.replace(/\/v1$/, '');
 
 // helper: convert "/uploads/..." → full URL
 const getImageUrl = (url) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  return `${API_BASE_URL}${url}`;
+  return `${apiRoot}${url}`;
 };
 
 function WishlistPage() {
@@ -36,7 +37,7 @@ function WishlistPage() {
       try {
         setLoading(true);
 
-        const res = await axios.get(`${API_BASE_URL}/v1/products`, {
+        const res = await axios.get(`${baseUrl}/products`, {
           params: {
             page: 1,
             limit: 200, // adjust as per your expected max

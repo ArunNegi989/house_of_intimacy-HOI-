@@ -7,12 +7,13 @@ import styles from '../../assets/styles/cart/CartDrawer.module.css';
 import { CartContext } from '../../contexts/CartContext';
 import { WishlistContext } from '../../contexts/WishlistContext';
 
-const API_BASE_URL = 'http://localhost:8000';
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
+const apiRoot = baseUrl.replace(/\/v1$/, '');
 
 const getImageUrl = (url) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  return `${API_BASE_URL}${url}`;
+  return `${apiRoot}${url}`;
 };
 
 const FREE_SHIPPING_THRESHOLD = 999;

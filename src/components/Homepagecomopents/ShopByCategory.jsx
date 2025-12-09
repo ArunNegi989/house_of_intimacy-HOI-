@@ -1,69 +1,70 @@
 // src/components/ShopByCategory/ShopByCategory.jsx
-import React, { useState, useEffect } from 'react';
-import Slider from 'react-slick';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import Slider from "react-slick";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-import styles from '../../assets/styles/ShopByCategory.module.css';
+import styles from "../../assets/styles/ShopByCategory.module.css";
 
 // Import slick CSS (global)
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 // Icons (PNG)
-import brasIcon from '../../assets/icons/sport-bra.png';
-import pantyIcon from '../../assets/icons/underwear.png';
-import sleepIcon from '../../assets/icons/clothes.png';
-import activeIcon from '../../assets/icons/trouser.png';
-import layeringIcon from '../../assets/icons/dress.png';
+import brasIcon from "../../assets/icons/sport-bra.png";
+import pantyIcon from "../../assets/icons/underwear.png";
+import sleepIcon from "../../assets/icons/clothes.png";
+import activeIcon from "../../assets/icons/trouser.png";
+import layeringIcon from "../../assets/icons/dress.png";
 
 // ---------- CONFIG ----------
-const API_BASE_URL = 'http://localhost:8000';
-const PRODUCTS_ENDPOINT = `${API_BASE_URL}/v1/products`;
+const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
+const apiRoot = baseUrl.replace(/\/v1$/, ""); // ✅ for /uploads/...
+const PRODUCTS_ENDPOINT = `${baseUrl}/products`;
 
 // Helper: resolve image URL from backend
 const getImageUrl = (url) => {
-  if (!url) return '';
-  if (url.startsWith('http')) return url;
-  return `${API_BASE_URL}${url}`;
+  if (!url) return "";
+  if (url.startsWith("http")) return url;
+  return `${apiRoot}${url}`; // ✅ use apiRoot instead of baseUrl
 };
 
 // Tabs config (also map to category & listing route)
 const TABS = [
   {
-    id: 'bras',
-    label: 'BRAS',
+    id: "bras",
+    label: "BRAS",
     icon: brasIcon,
-    category: 'Bra',
-    route: '/bras',
+    category: "Bra",
+    route: "/bras",
   },
   {
-    id: 'panty',
-    label: 'PANTY',
+    id: "panty",
+    label: "PANTY",
     icon: pantyIcon,
-    category: 'Panty',
-    route: '/panties',
+    category: "Panty",
+    route: "/panties",
   },
   {
-    id: 'sleep',
-    label: 'SLEEP',
+    id: "sleep",
+    label: "SLEEP",
     icon: sleepIcon,
-    category: 'Nightwear',
-    route: '/nightwear',
+    category: "Nightwear",
+    route: "/nightwear",
   },
   {
-    id: 'active',
-    label: 'ACTIVE',
+    id: "active",
+    label: "ACTIVE",
     icon: activeIcon,
-    category: 'Active',
-    route: '/activewear',
+    category: "Active",
+    route: "/activewear",
   },
   {
-    id: 'layering',
-    label: 'LAYERING',
+    id: "layering",
+    label: "LAYERING",
     icon: layeringIcon,
-    category: 'Layering',
-    route: '/layering',
+    category: "Layering",
+    route: "/layering",
   },
 ];
 
@@ -97,16 +98,15 @@ const NextArrow = (props) => {
 };
 
 const ShopByCategory = () => {
-  const [activeTab, setActiveTab] = useState('bras');
+  const [activeTab, setActiveTab] = useState("bras");
   const [itemsByTab, setItemsByTab] = useState({});
   const [loadingTab, setLoadingTab] = useState(null);
   const [errorTab, setErrorTab] = useState(null);
 
   const navigate = useNavigate();
 
-  // find current tab object
+  // current tab object
   const currentTab = TABS.find((t) => t.id === activeTab);
-
   const items = itemsByTab[activeTab] || [];
 
   // ----- API: fetch products for a tab (category) -----
@@ -123,16 +123,16 @@ const ShopByCategory = () => {
       const params = {
         page: 1,
         limit: 10,
-        category: tabObj.category, // backend: filter.category
+        category: tabObj.category,
       };
 
       const res = await axios.get(PRODUCTS_ENDPOINT, { params });
       const rawProducts = res?.data?.data || [];
 
       const mapped = rawProducts.map((p) => ({
-        id: p._id, // 👈 unique id from backend
+        id: p._id, // unique id from backend
         title: p.name,
-        image: getImageUrl(p.mainImage),
+        image: getImageUrl(p.mainImage || p.galleryImages?.[0]),
         slug: p.slug,
       }));
 
@@ -141,7 +141,7 @@ const ShopByCategory = () => {
         [tabObj.id]: mapped,
       }));
     } catch (err) {
-      console.error('ShopByCategory fetch error:', err);
+      console.error("ShopByCategory fetch error:", err);
       setErrorTab(tabObj.id);
     } finally {
       setLoadingTab(null);
@@ -150,7 +150,7 @@ const ShopByCategory = () => {
 
   // initial load for default tab
   useEffect(() => {
-    const defaultTab = TABS.find((t) => t.id === 'bras');
+    const defaultTab = TABS.find((t) => t.id === "bras");
     fetchTabProducts(defaultTab);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -161,11 +161,10 @@ const ShopByCategory = () => {
     fetchTabProducts(tabObj);
   };
 
-  // ✅ OPEN SINGLE PRODUCT PAGE BY UNIQUE ID
+  // OPEN SINGLE PRODUCT PAGE BY UNIQUE ID
   const handleCardClick = (item) => {
-    // example product route: /product/:id
     navigate(`/product/${item.id}`);
-    // if you use slug instead: navigate(`/product/${item.slug}`);
+    // or slug: navigate(`/product/${item.slug}`);
   };
 
   const handleViewAll = () => {
@@ -174,7 +173,7 @@ const ShopByCategory = () => {
     }
   };
 
-  // react-slick settings – desktop: no autoplay, mobile: autoplay
+  // react-slick settings – desktop: NO autoplay, mobile: autoplay
   const sliderSettings = {
     dots: false,
     infinite: items.length > 4,
@@ -182,7 +181,7 @@ const ShopByCategory = () => {
     slidesToShow: 4,
     slidesToScroll: 1,
     swipeToSlide: true,
-    autoplay: true, // ⛔ desktop autoplay on
+    autoplay: false, // ✅ desktop autoplay OFF
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
     responsive: [
@@ -219,7 +218,7 @@ const ShopByCategory = () => {
               key={tab.id}
               type="button"
               className={`${styles.tabBtn} ${
-                activeTab === tab.id ? styles.tabBtnActive : ''
+                activeTab === tab.id ? styles.tabBtnActive : ""
               }`}
               onClick={() => handleTabClick(tab.id)}
             >
@@ -227,7 +226,7 @@ const ShopByCategory = () => {
                 src={tab.icon}
                 alt={tab.label}
                 className={`${styles.tabIcon} ${
-                  activeTab === tab.id ? styles.tabIconActive : ''
+                  activeTab === tab.id ? styles.tabIconActive : ""
                 }`}
               />
               <span className={styles.tabLabel}>{tab.label}</span>
@@ -261,8 +260,8 @@ const ShopByCategory = () => {
                 <div
                   key={item.id}
                   className={styles.card}
-                  onClick={() => handleCardClick(item)} // 👈 whole card clickable
-                  style={{ cursor: 'pointer' }}
+                  onClick={() => handleCardClick(item)}
+                  style={{ cursor: "pointer" }}
                 >
                   <div className={styles.cardImageWrap}>
                     <img

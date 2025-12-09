@@ -15,7 +15,8 @@ import seamlessImg from '../../assets/images/5.jpg';
 import boylegImg from '../../assets/images/17.jpg';
 
 // ================== CONFIG ==================
-const API_BASE_URL = 'http://localhost:8000';
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
+const apiRoot = baseUrl.replace(/\/v1$/, '');
 
 // 👉 must match your DB category for panties
 const PANTIES_CATEGORY = 'Panty';
@@ -44,7 +45,7 @@ const PANTY_TYPES = [
 const getImageUrl = (url) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  return `${API_BASE_URL}${url}`;
+  return `${apiRoot}${url}`;
 };
 
 // color name → hex map
@@ -131,7 +132,7 @@ const PantiesListing = () => {
         setLoading(true);
         setError('');
 
-        const res = await axios.get(`${API_BASE_URL}/v1/products`, {
+        const res = await axios.get(`${baseUrl}/products`, {
           params: {
             category: PANTIES_CATEGORY,
             page: 1,

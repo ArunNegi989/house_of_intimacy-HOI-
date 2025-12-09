@@ -18,13 +18,14 @@ import { useToast } from '@chakra-ui/react';
 
 import styles from '../../assets/styles/account/OrderDetails.module.css';
 
-const API_BASE_URL = 'http://localhost:8000';
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
+const apiRoot = baseUrl.replace(/\/v1$/, '');
 
 // helper for image URL
 const getImageUrl = (url) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  return `${API_BASE_URL}${url}`;
+  return `${apiRoot}${url}`;
 };
 
 // same status helper style as MyOrders
@@ -76,7 +77,7 @@ const OrderDetails = () => {
         setLoading(true);
         setError('');
 
-        const res = await axios.get(`${API_BASE_URL}/v1/orders/${orderId}`, {
+        const res = await axios.get(`${baseUrl}/orders/${orderId}`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
           },
@@ -262,7 +263,7 @@ const OrderDetails = () => {
       };
 
       const res = await axios.patch(
-        `${API_BASE_URL}/v1/orders/${
+        `${baseUrl}/orders/${
           order._id || order.orderId
         }/request-cancel`,
         payload,

@@ -20,12 +20,13 @@ import { WishlistContext } from '../../../contexts/WishlistContext';
 // ✅ Cart context
 import { CartContext } from '../../../contexts/CartContext';
 
-const API_BASE_URL = 'http://localhost:8000';
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
+const apiRoot = baseUrl.replace(/\/v1$/, '');
 
 const getImageUrl = (url) => {
   if (!url) return '';
   if (url.startsWith('http')) return url;
-  return `${API_BASE_URL}${url}`;
+  return `${apiRoot}${url}`;
 };
 
 const COLOR_MAP = {
@@ -116,7 +117,7 @@ function ProductDetail() {
         setActionMessage('');
         setQty(1);
 
-        const res = await fetch(`${API_BASE_URL}/v1/products/${id}`);
+        const res = await fetch(`${baseUrl}/products/${id}`);
         const data = await res.json();
 
         console.log('PRODUCT DATA 👉', data);
@@ -133,7 +134,7 @@ function ProductDetail() {
 
         if (data.brand) {
           const relRes = await fetch(
-            `${API_BASE_URL}/v1/products/brand/${encodeURIComponent(
+            `${baseUrl}/products/brand/${encodeURIComponent(
               data.brand,
             )}`,
           );
@@ -242,7 +243,7 @@ function ProductDetail() {
 
     try {
       const res = await fetch(
-        `${API_BASE_URL}/v1/shipping/check-pincode/${clean}`,
+        `${baseUrl}/shipping/check-pincode/${clean}`,
       );
       const data = await res.json();
 

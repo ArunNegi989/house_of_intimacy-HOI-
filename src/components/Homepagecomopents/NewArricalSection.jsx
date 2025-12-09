@@ -1,29 +1,31 @@
 // src/components/NewArrival/NewArrival.jsx
-import React, { useEffect, useState, useContext } from 'react';
-import Slider from 'react-slick';
-import axios from 'axios';
-import { FiHeart, FiShoppingBag } from 'react-icons/fi';
-import { FaHeart } from 'react-icons/fa'; // ✅ filled heart
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState, useContext } from "react";
+import Slider from "react-slick";
+import axios from "axios";
+import { FiHeart, FiShoppingBag } from "react-icons/fi";
+import { FaHeart } from "react-icons/fa"; // filled heart
+import { useNavigate } from "react-router-dom";
 
-import styles from '../../assets/styles/LingerieSection.module.css';
+import styles from "../../assets/styles/LingerieSection.module.css";
 
-// ✅ Wishlist context
-import { WishlistContext } from '../../contexts/WishlistContext';
+// Wishlist context
+import { WishlistContext } from "../../contexts/WishlistContext";
 
 // ---------- ASSETS ----------
-import heroVideoPoster from '../../assets/videos/IMG_3698.MP4';
-import heroVideo from '../../assets/videos/IMG_3698.MP4';
+import heroVideoPoster from "../../assets/videos/IMG_3698.MP4";
+import heroVideo from "../../assets/videos/IMG_3698.MP4";
 
 // fallback image if none available
-import prodFallback from '../../assets/images/17.jpg';
+import prodFallback from "../../assets/images/17.jpg";
 
 // ---------- CONFIG ----------
-const BRAND_NAME = 'Vamika';
-const API_BASE_URL = 'http://localhost:8000';
+const BRAND_NAME = "Vamika";
+const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
+// for static files like /uploads/...
+const apiRoot = baseUrl.replace(/\/v1$/, "");
 
-const PRODUCTS_ENDPOINT = `${API_BASE_URL}/v1/products/brand/${encodeURIComponent(
-  BRAND_NAME,
+const PRODUCTS_ENDPOINT = `${baseUrl}/products/brand/${encodeURIComponent(
+  BRAND_NAME
 )}`;
 
 // ---------- HELPERS ----------
@@ -34,8 +36,9 @@ const getDiscountPercent = (mrp, price) => {
 
 const getImageUrl = (path) => {
   if (!path) return prodFallback;
-  if (path.startsWith('http')) return path;
-  return `${API_BASE_URL}${path}`;
+  if (path.startsWith("http")) return path;
+  // 🔹 use apiRoot so /uploads/... works correctly
+  return `${apiRoot}${path}`;
 };
 
 // ---------- CUSTOM ARROWS ----------
@@ -64,11 +67,11 @@ const PrevArrow = ({ style, onClick }) => (
 const NewArrival = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const navigate = useNavigate();
 
-  // ✅ get wishlist from context
+  // wishlist from context
   const { wishlistItems, toggleWishlist } = useContext(WishlistContext);
 
   // ---------- SLIDER SETTINGS ----------
@@ -79,15 +82,13 @@ const NewArrival = () => {
     slidesToShow: 4,
     slidesToScroll: 1,
     swipeToSlide: true,
-    autoplay: false, // ⛔ desktop autoplay on
+    autoplay: false, // autoplay OFF
     nextArrow: <NextArrow />,
     prevArrow: <PrevArrow />,
     responsive: [
       { breakpoint: 1280, settings: { slidesToShow: 3 } },
       { breakpoint: 992, settings: { slidesToShow: 2 } },
-      // 👇 tablet: still fine to show 1.5 (optional)
       { breakpoint: 768, settings: { slidesToShow: 1.5 } },
-      // 👇 small phones (≤ 480px): show EXACTLY 1 card
       {
         breakpoint: 480,
         settings: {
@@ -104,6 +105,7 @@ const NewArrival = () => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
+        setError("");
 
         const res = await axios.get(PRODUCTS_ENDPOINT);
         const backendProducts = res.data?.data || [];
@@ -115,25 +117,28 @@ const NewArrival = () => {
 
           // stock calculator
           let totalStock = 0;
-          if (typeof prod.totalStock === 'number') {
+          if (typeof prod.totalStock === "number") {
             totalStock = prod.totalStock;
-          } else if (typeof prod.stock === 'number') {
+          } else if (typeof prod.stock === "number") {
             totalStock = prod.stock;
           } else if (Array.isArray(prod.sizes)) {
-            totalStock = prod.sizes.reduce((sum, s) => sum + (s.stock || 0), 0);
+            totalStock = prod.sizes.reduce(
+              (sum, s) => sum + (s.stock || 0),
+              0
+            );
           }
 
-          const genderType = prod.gender || prod.genderType || 'Unisex';
+          const genderType = prod.gender || prod.genderType || "Unisex";
 
           return {
             id: prod._id,
             brand: prod.brand || BRAND_NAME,
             name: prod.name,
-            description: prod.description || '',
+            description: prod.description || "",
             mrp,
             price: salePrice,
             image: getImageUrl(
-              prod.mainImage || (prod.galleryImages && prod.galleryImages[0]),
+              prod.mainImage || (prod.galleryImages && prod.galleryImages[0])
             ),
             colors: colorsArray,
             moreColors: colorsArray.length > 3 ? colorsArray.length - 3 : 0,
@@ -144,8 +149,8 @@ const NewArrival = () => {
 
         setProducts(mapped);
       } catch (err) {
-        console.error('Error fetching Vamika products:', err);
-        setError('Failed to load products.');
+        console.error("Error fetching Vamika products:", err);
+        setError("Failed to load products.");
       } finally {
         setLoading(false);
       }
@@ -176,11 +181,11 @@ const NewArrival = () => {
 
               <div className={styles.heroOverlay}></div>
 
-              {/* 🔥 SHOP NOW NAVIGATES TO BRAND LISTING PAGE */}
+              {/* SHOP NOW NAVIGATES TO BRAND LISTING PAGE */}
               <button
                 type="button"
                 className={styles.heroBtn}
-                onClick={() => navigate('/products')} // 👈 OPEN ALL PRODUCTS PAGE
+                onClick={() => navigate("/products")}
               >
                 Shop Now
               </button>
@@ -189,8 +194,12 @@ const NewArrival = () => {
 
           {/* RIGHT SLIDER */}
           <div className={styles.sliderWrapper}>
-            {loading && <p className={styles.infoText}>Loading products...</p>}
-            {error && !loading && <p className={styles.errorText}>{error}</p>}
+            {loading && (
+              <p className={styles.infoText}>Loading products...</p>
+            )}
+            {error && !loading && (
+              <p className={styles.errorText}>{error}</p>
+            )}
             {!loading && !error && products.length === 0 && (
               <p className={styles.infoText}>No products found.</p>
             )}
@@ -199,20 +208,20 @@ const NewArrival = () => {
               <Slider {...settings}>
                 {products.map((item) => {
                   const discount = getDiscountPercent(item.mrp, item.price);
-                  const isInWishlist = wishlistItems.includes(item.id); // ✅ check global wishlist
+                  const isInWishlist = wishlistItems.includes(item.id);
 
                   return (
                     <div key={item.id} className={styles.slideOuter}>
-                      {/* 👇 FULL CARD CLICKABLE */}
+                      {/* FULL CARD CLICKABLE */}
                       <div
                         className={styles.productCard}
                         onClick={() => navigate(`/product/${item.id}`)}
                         role="button"
                       >
-                        {/* ✅ WISHLIST BUTTON (stops card click) */}
+                        {/* WISHLIST BUTTON */}
                         <button
                           className={`${styles.wishBtn} ${
-                            isInWishlist ? styles.wishBtnActive : ''
+                            isInWishlist ? styles.wishBtnActive : ""
                           }`}
                           onClick={(e) => {
                             e.stopPropagation();
@@ -264,7 +273,7 @@ const NewArrival = () => {
                             >
                               {item.stock > 0
                                 ? `Available Stock: ${item.stock}`
-                                : 'Out of stock'}
+                                : "Out of stock"}
                             </span>
 
                             <span className={styles.genderTag}>
@@ -294,7 +303,7 @@ const NewArrival = () => {
                               className={styles.cartBtn}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                // yaha add-to-cart logic daalna
+                                // TODO: add-to-cart logic
                               }}
                             >
                               <FiShoppingBag />

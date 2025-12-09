@@ -29,12 +29,11 @@ import {
   GridItem,
   HStack,
 } from "@chakra-ui/react";
-import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons"; // 👈 NEW
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { FiEye } from "react-icons/fi";
 import axios from "axios";
 
-const API_BASE_URL =
-  process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
+const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
 
 const statusColors = {
   PLACED: "yellow",
@@ -56,10 +55,10 @@ function AdminOrdersList() {
   const [total, setTotal] = useState(0);
   const [limit] = useState(10);
 
-  // 👉 per-row status update loader
+  // per-row status update loader
   const [updatingId, setUpdatingId] = useState(null);
 
-  // 👉 Modal state
+  // Modal state
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
@@ -68,10 +67,22 @@ function AdminOrdersList() {
 
   const fetchOrders = async () => {
     try {
-      if (!authToken) return;
+      if (!authToken) {
+        setLoading(false);
+        toast({
+          title: "Not authenticated",
+          description: "Please log in again to view orders.",
+          status: "warning",
+          duration: 3000,
+          isClosable: true,
+          position: "top",
+        });
+        return;
+      }
+
       setLoading(true);
 
-      const res = await axios.get(`${API_BASE_URL}/orders/admin/list`, {
+      const res = await axios.get(`${baseUrl}/orders/admin/list`, {
         params: {
           status: statusFilter === "ALL" ? undefined : statusFilter,
           page,
@@ -110,7 +121,7 @@ function AdminOrdersList() {
       setUpdatingId(orderId);
 
       await axios.patch(
-        `${API_BASE_URL}/orders/admin/${orderId}/status`,
+        `${baseUrl}/orders/admin/${orderId}/status`,
         { status: newStatus },
         {
           headers: {
@@ -153,7 +164,7 @@ function AdminOrdersList() {
     return val.toFixed(2);
   };
 
-  // 🔍 Modal helpers
+  // Modal helpers
   const openDetailsModal = (order) => {
     setSelectedOrder(order);
     setIsDetailsOpen(true);
@@ -222,118 +233,130 @@ function AdminOrdersList() {
                 </Tr>
               </Thead>
               <Tbody>
-                {orders.map((order) => (
-                  <Tr
-                    key={order._id}
-                    opacity={updatingId === order._id ? 0.6 : 1}
-                  >
-                    <Td>
-                      <Text fontWeight="600" fontSize="sm">
-                        {order.orderNumber || order._id.slice(-8)}
+                {orders.length === 0 ? (
+                  <Tr>
+                    <Td colSpan={8}>
+                      <Text fontSize="sm" textAlign="center" py={4}>
+                        No orders found.
                       </Text>
-                      <Text fontSize="xs" color="gray.500">
-                        {order.items?.length || 0} items
-                      </Text>
-                    </Td>
-
-                    <Td>
-                      <Text fontSize="sm">
-                        {order.shippingAddress?.name ||
-                          order.user?.name ||
-                          "Customer"}
-                      </Text>
-                      <Text fontSize="xs" color="gray.500">
-                        {order.user?.email}
-                      </Text>
-                    </Td>
-
-                    <Td isNumeric>
-                      <Text fontSize="sm">
-                        ₹ {formatMoney(order.grandTotal)}
-                      </Text>
-                      {order.totalSavings != null && (
-                        <Text fontSize="xs" color="green.500">
-                          Saved ₹ {formatMoney(order.totalSavings)}
-                        </Text>
-                      )}
-                    </Td>
-
-                    <Td>
-                      <Badge colorScheme={statusColors[order.status] || "gray"}>
-                        {order.status}
-                      </Badge>
-                    </Td>
-
-                    <Td>
-                      <Badge
-                        colorScheme={
-                          order.paymentStatus === "PAID"
-                            ? "green"
-                            : order.paymentStatus === "FAILED"
-                            ? "red"
-                            : "yellow"
-                        }
-                      >
-                        {order.paymentMethod} / {order.paymentStatus}
-                      </Badge>
-                    </Td>
-
-                    <Td>
-                      <Text fontSize="xs">
-                        {new Date(order.createdAt).toLocaleString("en-IN", {
-                          day: "2-digit",
-                          month: "short",
-                          year: "numeric",
-                          hour: "2-digit",
-                          minute: "2-digit",
-                        })}
-                      </Text>
-                    </Td>
-
-                    {/* 👁 Eye button for details */}
-                    <Td>
-                      <IconButton
-                        aria-label="View order details"
-                        icon={<FiEye />}
-                        size="sm"
-                        variant="outline"
-                        onClick={() => openDetailsModal(order)}
-                      />
-                    </Td>
-
-                    <Td>
-                      <Select
-                        size="xs"
-                        value={order.status}
-                        onChange={(e) =>
-                          handleStatusChange(order._id, e.target.value)
-                        }
-                        isDisabled={updatingId === order._id}
-                      >
-                        <option value="PLACED">PLACED</option>
-                        <option value="CONFIRMED">CONFIRMED</option>
-                        <option value="PROCESSING">PROCESSING</option>
-                        <option value="SHIPPED">SHIPPED</option>
-                        <option value="OUT_FOR_DELIVERY">
-                          OUT_FOR_DELIVERY
-                        </option>
-                        <option value="DELIVERED">DELIVERED</option>
-                        <option value="CANCELLED">CANCELLED</option>
-                      </Select>
-                      {updatingId === order._id && (
-                        <Text fontSize="xx-small" color="gray.500" mt="1">
-                          Updating...
-                        </Text>
-                      )}
                     </Td>
                   </Tr>
-                ))}
+                ) : (
+                  orders.map((order) => (
+                    <Tr
+                      key={order._id}
+                      opacity={updatingId === order._id ? 0.6 : 1}
+                    >
+                      <Td>
+                        <Text fontWeight="600" fontSize="sm">
+                          {order.orderNumber || order._id.slice(-8)}
+                        </Text>
+                        <Text fontSize="xs" color="gray.500">
+                          {order.items?.length || 0} items
+                        </Text>
+                      </Td>
+
+                      <Td>
+                        <Text fontSize="sm">
+                          {order.shippingAddress?.name ||
+                            order.user?.name ||
+                            "Customer"}
+                        </Text>
+                        <Text fontSize="xs" color="gray.500">
+                          {order.user?.email}
+                        </Text>
+                      </Td>
+
+                      <Td isNumeric>
+                        <Text fontSize="sm">
+                          ₹ {formatMoney(order.grandTotal)}
+                        </Text>
+                        {order.totalSavings != null && (
+                          <Text fontSize="xs" color="green.500">
+                            Saved ₹ {formatMoney(order.totalSavings)}
+                          </Text>
+                        )}
+                      </Td>
+
+                      <Td>
+                        <Badge
+                          colorScheme={statusColors[order.status] || "gray"}
+                        >
+                          {order.status}
+                        </Badge>
+                      </Td>
+
+                      <Td>
+                        <Badge
+                          colorScheme={
+                            order.paymentStatus === "PAID"
+                              ? "green"
+                              : order.paymentStatus === "FAILED"
+                              ? "red"
+                              : "yellow"
+                          }
+                        >
+                          {order.paymentMethod} / {order.paymentStatus}
+                        </Badge>
+                      </Td>
+
+                      <Td>
+                        <Text fontSize="xs">
+                          {new Date(order.createdAt).toLocaleString("en-IN", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                            hour: "2-digit",
+                            minute: "2-digit",
+                          })}
+                        </Text>
+                      </Td>
+
+                      {/* Eye button for details */}
+                      <Td>
+                        <IconButton
+                          aria-label="View order details"
+                          icon={<FiEye />}
+                          size="sm"
+                          variant="outline"
+                          onClick={() => openDetailsModal(order)}
+                        />
+                      </Td>
+
+                      <Td>
+                        <Select
+                          size="xs"
+                          value={order.status}
+                          onChange={(e) =>
+                            handleStatusChange(order._id, e.target.value)
+                          }
+                          isDisabled={updatingId === order._id}
+                        >
+                          <option value="PLACED">PLACED</option>
+                          <option value="CONFIRMED">CONFIRMED</option>
+                          <option value="PROCESSING">PROCESSING</option>
+                          <option value="SHIPPED">SHIPPED</option>
+                          <option value="OUT_FOR_DELIVERY">
+                            OUT_FOR_DELIVERY
+                          </option>
+                          <option value="DELIVERED">DELIVERED</option>
+                          <option value="CANCELLED">CANCELLED</option>
+                        </Select>
+                        {updatingId === order._id && (
+                          <Text fontSize="xx-small" color="gray.500" mt="1">
+                            Updating...
+                          </Text>
+                        )}
+                      </Td>
+                    </Tr>
+                  ))
+                )}
               </Tbody>
             </Table>
           )}
         </Box>
 
-        {/* 🎨 Pagination – centered & pretty */}
+        {/* Pagination – centered & pretty */}
         <Flex justify="center" mt="6">
           <Stack spacing={2} align="center">
             <Text fontSize="xs" color="gray.500">
@@ -391,7 +414,7 @@ function AdminOrdersList() {
         </Flex>
       </Box>
 
-      {/* 🔍 Order Details Modal - same attractive design */}
+      {/* Order Details Modal */}
       <Modal
         isOpen={isDetailsOpen}
         onClose={closeDetailsModal}
@@ -419,7 +442,8 @@ function AdminOrdersList() {
                 </Text>
                 <Text fontWeight="700" fontSize="lg">
                   {selectedOrder?.orderNumber ||
-                    (selectedOrder?._id && `#${selectedOrder._id.slice(-8)}`)}
+                    (selectedOrder?._id &&
+                      `#${selectedOrder._id.slice(-8)}`)}
                 </Text>
               </Box>
 
@@ -430,7 +454,9 @@ function AdminOrdersList() {
                     py={1}
                     borderRadius="full"
                     fontSize="xs"
-                    colorScheme={statusColors[selectedOrder.status] || "gray"}
+                    colorScheme={
+                      statusColors[selectedOrder.status] || "gray"
+                    }
                   >
                     {selectedOrder.status}
                   </Badge>
@@ -539,7 +565,8 @@ function AdminOrdersList() {
 
                         {selectedOrder.user?.email && (
                           <Text fontSize="sm">
-                            <strong>Email:</strong> {selectedOrder.user.email}
+                            <strong>Email:</strong>{" "}
+                            {selectedOrder.user.email}
                           </Text>
                         )}
                       </Stack>
@@ -561,7 +588,11 @@ function AdminOrdersList() {
                             {selectedOrder.shippingAddress?.addressLine1}
                             {selectedOrder.shippingAddress?.addressLine2 && (
                               <>
-                                , {selectedOrder.shippingAddress.addressLine2}
+                                ,{" "}
+                                {
+                                  selectedOrder.shippingAddress
+                                    .addressLine2
+                                }
                               </>
                             )}
                           </Text>
@@ -597,7 +628,9 @@ function AdminOrdersList() {
                       <Stack spacing={1}>
                         <Flex justify="space-between" fontSize="sm">
                           <Text>Items Total</Text>
-                          <Text>₹ {formatMoney(selectedOrder.itemsTotal)}</Text>
+                          <Text>
+                            ₹ {formatMoney(selectedOrder.itemsTotal)}
+                          </Text>
                         </Flex>
 
                         <Flex justify="space-between" fontSize="sm">
@@ -614,7 +647,9 @@ function AdminOrdersList() {
 
                         <Flex justify="space-between" fontSize="sm">
                           <Text>Shipping Fee</Text>
-                          <Text>₹ {formatMoney(selectedOrder.shippingFee)}</Text>
+                          <Text>
+                            ₹ {formatMoney(selectedOrder.shippingFee)}
+                          </Text>
                         </Flex>
 
                         <Divider my={2} />
@@ -625,7 +660,9 @@ function AdminOrdersList() {
                           fontWeight="700"
                         >
                           <Text>Grand Total</Text>
-                          <Text>₹ {formatMoney(selectedOrder.grandTotal)}</Text>
+                          <Text>
+                            ₹ {formatMoney(selectedOrder.grandTotal)}
+                          </Text>
                         </Flex>
                       </Stack>
 
@@ -680,50 +717,58 @@ function AdminOrdersList() {
                         </Tr>
                       </Thead>
                       <Tbody>
-  {selectedOrder.items?.map((item) => (
-    <Tr key={item._id || item.product}>
-      <Td>
-        <Text fontSize="sm" fontWeight="500">
-          {item.name}
-        </Text>
-        <Text fontSize="xs" color="gray.500">
-          ID: {item.product}
-        </Text>
-      </Td>
+                        {selectedOrder.items?.map((item) => (
+                          <Tr key={item._id || item.product}>
+                            <Td>
+                              <Text fontSize="sm" fontWeight="500">
+                                {item.name}
+                              </Text>
+                              <Text fontSize="xs" color="gray.500">
+                                ID: {item.product}
+                              </Text>
+                            </Td>
 
-      {/* 🔴 Color as a dot, not code */}
-      <Td>
-        {item.color ? (
-          <HStack spacing={2}>
-            <Box
-              w="18px"
-              h="18px"
-              borderRadius="full"
-              borderWidth="1px"
-              borderColor="gray.200"
-              bg={item.color}
-            />
-          </HStack>
-        ) : (
-          <Text fontSize="sm">—</Text>
-        )}
-      </Td>
+                            {/* Color dot */}
+                            <Td>
+                              {item.color ? (
+                                <HStack spacing={2}>
+                                  <Box
+                                    w="18px"
+                                    h="18px"
+                                    borderRadius="full"
+                                    borderWidth="1px"
+                                    borderColor="gray.200"
+                                    bg={item.color}
+                                  />
+                                </HStack>
+                              ) : (
+                                <Text fontSize="sm">—</Text>
+                              )}
+                            </Td>
 
-      <Td>
-        <Text fontSize="sm">{item.size || "—"}</Text>
-      </Td>
-      <Td isNumeric>
-        <Text fontSize="sm">{item.quantity}</Text>
-      </Td>
-      <Td isNumeric>
-        <Text fontSize="sm">
-          ₹ {formatMoney(item.lineTotal || item.salePrice || 0)}
-        </Text>
-      </Td>
-    </Tr>
-  ))}
-</Tbody>
+                            <Td>
+                              <Text fontSize="sm">
+                                {item.size || "—"}
+                              </Text>
+                            </Td>
 
+                            <Td isNumeric>
+                              <Text fontSize="sm">
+                                {item.quantity}
+                              </Text>
+                            </Td>
+
+                            <Td isNumeric>
+                              <Text fontSize="sm">
+                                ₹{" "}
+                                {formatMoney(
+                                  item.lineTotal || item.salePrice || 0
+                                )}
+                              </Text>
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
                     </Table>
                   </Box>
                 </Box>

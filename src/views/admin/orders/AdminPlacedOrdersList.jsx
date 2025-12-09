@@ -32,8 +32,7 @@ import { FiEye } from "react-icons/fi";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const API_BASE_URL =
-  process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
+const baseUrl = process.env.REACT_APP_APIURL || 'http://localhost:8000/v1';
 
 const statusColors = {
   PLACED: "yellow",
@@ -69,7 +68,7 @@ function AdminPlacedOrdersList() {
       if (!authToken) return;
       setLoading(true);
 
-      const res = await axios.get(`${API_BASE_URL}/orders/admin/list`, {
+      const res = await axios.get(`${baseUrl}/orders/admin/list`, {
         params: {
           status: "PLACED", // 👈 sirf PLACED orders
           page,
@@ -108,7 +107,7 @@ function AdminPlacedOrdersList() {
       setUpdatingId(orderId);
 
       await axios.patch(
-        `${API_BASE_URL}/orders/admin/${orderId}/status`,
+        `${baseUrl}/orders/admin/${orderId}/status`,
         { status: newStatus },
         {
           headers: {
