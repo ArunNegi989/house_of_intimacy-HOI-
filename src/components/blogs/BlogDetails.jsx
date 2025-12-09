@@ -145,7 +145,7 @@ export function BlogDetails() {
 
           <div className="row">
             {/* ========== MAIN BLOG CONTENT ========== */}
-            <div className={`col-lg-8 ${Style.leftCol}`}>
+            <div className={`col-lg-7 ${Style.leftCol}`}>
               <article className={Style.blogCard}>
                 {/* Decorative halo */}
                 <div className={Style.blogHalo} />
@@ -300,12 +300,12 @@ export function BlogDetails() {
                       <h3 className={Style.blogheading2}>Gallery</h3>
                       <div className="row g-3">
                         {blog.galleryImages.map((img, idx) => (
-                          <div className="col-md-4 col-6" key={idx}>
+                          <div className="col-md-6 col-12" key={idx}>
                             <div className={Style.galleryItem}>
                               <img
                                 src={`${apiRoot}${img}`}
                                 alt={`Gallery ${idx + 1}`}
-                                className="img-fluid w-100"
+                                className={Style.galleryImg}
                               />
                             </div>
                           </div>
@@ -317,7 +317,7 @@ export function BlogDetails() {
             </div>
 
             {/* ========== SIDEBAR – RECENT BLOGS ========== */}
-            <div className={`col-lg-4 ${Style.rightCol}`}>
+            <div className={`col-lg-5 ${Style.rightCol}`}>
               <aside className={Style.recentblogswrapper}>
                 <div className={Style.recentblogsbox}>
                   <h3 className={Style.sidebartitle}>Recent Blogs</h3>
@@ -344,28 +344,40 @@ export function BlogDetails() {
 
                     return (
                       <React.Fragment key={item._id}>
-                        <div className={Style.recentblogitem}>
-                          <div className={Style.recentThumb}>
-                            <img
-                              src={recentImg}
-                              alt={item.mainHeading}
-                              className="img-fluid"
-                            />
+                        <Link
+                          to={`/blog/${item.slug}`}
+                          className={Style.recentblogitemLink}
+                        >
+                          <div className={Style.recentblogitem}>
+                            <div className={Style.recentThumb}>
+                              <img
+                                src={recentImg}
+                                alt={item.mainHeading}
+                                className="img-fluid"
+                              />
+                            </div>
+                            <div className={Style.recentContent}>
+  <h5 className={Style.recentblogtitle}>
+    {item.mainHeading}
+  </h5>
+
+  {/* 👇 FIRST PARAGRAPH FROM body2 */}
+  {item.body2 && (
+    <p className={Style.recentPara}>
+      {item.body2.replace(/<[^>]+>/g, "").substring(0, 100)}...
+    </p>
+  )}
+
+  {recentDateStr && (
+    <small className={Style.recentDate}>
+      <i className="bi bi-calendar me-1"></i>
+      {recentDateStr}
+    </small>
+  )}
+</div>
+
                           </div>
-                          <div className={Style.recentContent}>
-                            <h5 className={Style.recentblogtitle}>
-                              <Link to={`/blog/${item.slug}`}>
-                                {item.mainHeading}
-                              </Link>
-                            </h5>
-                            {recentDateStr && (
-                              <small className={Style.recentDate}>
-                                <i className="bi bi-calendar me-1"></i>
-                                {recentDateStr}
-                              </small>
-                            )}
-                          </div>
-                        </div>
+                        </Link>
                         <hr className={Style.BlogHr} />
                       </React.Fragment>
                     );

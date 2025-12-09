@@ -4,9 +4,11 @@
 
 .homePadding {
   padding: 80px 0 70px;
-  background: radial-gradient(circle at top left,
+  background: radial-gradient(
+      circle at top left,
       rgba(214, 51, 132, 0.15),
-      transparent 55%),
+      transparent 55%
+    ),
     linear-gradient(135deg, #fff5fb 0%, #ffffff 40%, #ffeaf5 100%);
 }
 
@@ -105,9 +107,11 @@
   right: -80px;
   width: 220px;
   height: 220px;
-  background: radial-gradient(circle,
-      rgba(214, 51, 132, 0.16),
-      transparent 60%);
+  background: radial-gradient(
+    circle,
+    rgba(214, 51, 132, 0.16),
+    transparent 60%
+  );
   pointer-events: none;
 }
 
@@ -116,7 +120,7 @@
 .HeadHome {
   position: relative;
   z-index: 1;
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: 'Playfair Display', Georgia, serif;
   font-size: 32px;
   font-weight: 700;
   color: #111111;
@@ -128,7 +132,7 @@
 }
 
 .HeadHome::after {
-  content: "";
+  content: '';
   display: block;
   width: 72px;
   height: 3px;
@@ -230,7 +234,9 @@
   background: #ffffff;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease,
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
     background-color 0.2s ease;
 }
 
@@ -264,13 +270,15 @@
 }
 
 .featureImageWrapper::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: auto 0 0 0;
   height: 35%;
-  background: linear-gradient(to top,
-      rgba(0, 0, 0, 0.35),
-      transparent);
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.35),
+    transparent
+  );
   pointer-events: none;
 }
 
@@ -278,7 +286,9 @@
   width: 100%;
   display: block;
   transform: scale(1.01);
-  transition: transform 0.5s ease, filter 0.5s ease;
+  transition:
+    transform 0.5s ease,
+    filter 0.5s ease;
 }
 
 .featureImageWrapper:hover .featureImage {
@@ -300,7 +310,7 @@
 }
 
 .blogheading2::before {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   bottom: -6px;
@@ -345,6 +355,20 @@
   border-radius: 14px;
   overflow: hidden;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.1);
+  /* 🔹 Bigger/taller gallery cards */
+  aspect-ratio: 4 / 3;
+}
+
+.galleryImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.galleryItem:hover .galleryImg {
+  transform: scale(1.04);
 }
 
 /* ===============================
@@ -357,23 +381,36 @@
 }
 
 .recentblogsbox {
-  background: radial-gradient(circle at top left,
+  background: radial-gradient(
+      circle at top left,
       rgba(214, 51, 132, 0.12),
-      transparent 55%),
+      transparent 55%
+    ),
     #ffeeec;
   padding: 1.9rem;
   border-radius: 18px;
   box-shadow: 0 14px 40px rgba(0, 0, 0, 0.08);
-  border: 2px solid #d63384;
 }
 
 .sidebartitle {
   font-size: 23px;
   font-weight: 700;
   color: #1b1b1b;
-  border-bottom: 3px solid #d63384;
+  border-bottom: 2px solid #d63384;
   padding-bottom: 0.6rem;
   margin-bottom: 1.1rem;
+}
+
+/* Make the whole card clickable */
+
+.recentblogitemLink {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.recentblogitemLink:hover .recentblogtitle {
+  color: #d63384;
 }
 
 /* Recent Blog Items – horizontal card style */
@@ -383,7 +420,9 @@
   gap: 12px;
   align-items: flex-start;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease,
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
     background-color 0.3s ease;
   padding: 10px 8px;
   border-radius: 12px;
@@ -430,10 +469,6 @@
   color: inherit;
 }
 
-.recentblogtitle a:hover {
-  color: #d63384;
-}
-
 .recentDate {
   font-size: 0.8rem;
   color: #777777;
@@ -445,9 +480,15 @@
 
 .BlogHr {
   border: none;
-  border-bottom: 1px dashed rgba(0, 0, 0, 0.08);
   margin: 10px 0 14px;
 }
+.recentPara {
+  font-size: 13px;
+  color: #666;
+  margin: 4px 0 6px;
+  line-height: 1.4;
+}
+
 
 .backToList {
   margin-top: 10px;
@@ -469,9 +510,11 @@
    =============================== */
 
 .Conclusion {
-  background: radial-gradient(circle at top,
+  background: radial-gradient(
+      circle at top,
       rgba(214, 51, 132, 0.12),
-      transparent 55%),
+      transparent 55%
+    ),
     #fff9fc;
   padding: 40px 0 70px;
 }
@@ -490,15 +533,17 @@
 }
 
 .conclusionCard::before {
-  content: "";
+  content: '';
   position: absolute;
   bottom: -80px;
   right: -60px;
   width: 180px;
   height: 180px;
-  background: radial-gradient(circle,
-      rgba(214, 51, 132, 0.18),
-      transparent 70%);
+  background: radial-gradient(
+    circle,
+    rgba(214, 51, 132, 0.18),
+    transparent 70%
+  );
   pointer-events: none;
 }
 
@@ -516,7 +561,7 @@
 }
 
 .conclusionTitle {
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: 'Playfair Display', Georgia, serif;
   font-size: 1.8rem;
   font-weight: 700;
   color: #1b1b1b;
