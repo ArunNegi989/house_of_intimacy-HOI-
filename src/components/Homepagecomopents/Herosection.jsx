@@ -1,6 +1,10 @@
 import React from 'react';
 import '../../assets/styles/about.module.css';
-import Banner1 from '../../assets/images/HomeBanner/Banner1.webp';
+import Banner1 from '../../assets/images/Bannaer 01_V01.png';
+import Banner2 from '../../assets/images/Bannaer 02_V01.png';
+import Banner3 from '../../assets/images/Bannaer 03_V01.png';
+import Banner4 from '../../assets/images/Bannaer 04_V01.png';
+
 
 export default function Herosection() {
   return (
@@ -40,13 +44,13 @@ export default function Herosection() {
             <img src={Banner1} className="d-block w-100" alt="Banner" />
           </div>
           <div className="carousel-item">
-            <img src={Banner1} className="d-block w-100" alt="Banner" />
+            <img src={Banner2} className="d-block w-100" alt="Banner" />
           </div>
           <div className="carousel-item">
-            <img src={Banner1} className="d-block w-100" alt="Banner" />
+            <img src={Banner3} className="d-block w-100" alt="Banner" />
           </div>
           <div className="carousel-item">
-            <img src={Banner1} className="d-block w-100" alt="Banner" />
+            <img src={Banner4} className="d-block w-100" alt="Banner" />
           </div>
         </div>
 
