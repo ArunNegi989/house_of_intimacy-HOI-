@@ -82,13 +82,12 @@ function ProductDetail() {
   const [pinMessage, setPinMessage] = useState('');
   const [pinError, setPinError] = useState(false);
 
-  // ⭐ NEW: COD allowed (Dehradun pincode check)
   const [isDehradunPincode, setIsDehradunPincode] = useState(null);
 
   const [selectedColor, setSelectedColor] = useState(null);
   const [selectedSize, setSelectedSize] = useState(null);
   const [sizeError, setSizeError] = useState(false);
-  const [colorError, setColorError] = useState(false); // ⭐ NEW
+  const [colorError, setColorError] = useState(false);
 
   const [wishlist, setWishlist] = useState(false);
 
@@ -97,8 +96,94 @@ function ProductDetail() {
 
   const [activeAccordion, setActiveAccordion] = useState('description');
 
-  // ⭐ NEW: modal state for Size Guide
   const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
+
+  // ⭐⭐ Color variants (same product different colors)
+  const [colorVariants, setColorVariants] = useState([]);
+  const [loadingVariants, setLoadingVariants] = useState(false);
+
+  // ---------- FETCH COLOR VARIANTS ----------
+ const fetchColorVariants = async (currentProduct) => {
+  if (!currentProduct) return;
+
+  try {
+    setLoadingVariants(true);
+
+    // ⭐⭐ EXTRACT BASE PRODUCT CODE
+    const baseCode = currentProduct.productCode
+      ? currentProduct.productCode.split('-').slice(0, -1).join('-')
+      : null;
+
+    if (!baseCode) {
+      console.warn('⚠️ No product code found, skipping variants');
+      setColorVariants([]);
+      return;
+    }
+
+    const params = new URLSearchParams();
+    
+    // ⭐ Match by BASE product code (same design, different colors)
+    params.append('productCode', baseCode);
+    params.append('limit', '50');
+
+    const res = await fetch(`${baseUrl}/products?${params.toString()}`);
+    const data = await res.json();
+
+    console.log('🎨 Color Variants Response:', data);
+
+    if (data.data && Array.isArray(data.data)) {
+      const variants = data.data.filter(
+        (p) => String(p._id) !== String(currentProduct._id)
+      );
+
+      const colorMap = new Map();
+
+      // Add current product's colors
+      if (Array.isArray(currentProduct.colors)) {
+        currentProduct.colors.forEach((color) => {
+          if (color && !colorMap.has(color)) {
+            colorMap.set(color, {
+              color,
+              productId: currentProduct._id,
+              productCode: currentProduct.productCode,
+              isCurrentProduct: true,
+            });
+          }
+        });
+      }
+
+      // Add variant colors (SAME BASE CODE ONLY)
+      variants.forEach((variant) => {
+        if (Array.isArray(variant.colors)) {
+          variant.colors.forEach((color) => {
+            if (color && !colorMap.has(color)) {
+              colorMap.set(color, {
+                color,
+                productId: variant._id,
+                productCode: variant.productCode,
+                isCurrentProduct: false,
+              });
+            }
+          });
+        }
+      });
+
+      const uniqueVariants = Array.from(colorMap.values());
+      console.log('🎨 Unique Color Variants:', uniqueVariants);
+      setColorVariants(uniqueVariants);
+      
+      // Auto-select first color
+      if (Array.isArray(currentProduct.colors) && currentProduct.colors.length > 0) {
+        setSelectedColor(currentProduct.colors[0]);
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching color variants:', error);
+    setColorVariants([]);
+  } finally {
+    setLoadingVariants(false);
+  }
+};
 
   // ---------- FETCH PRODUCT ----------
   useEffect(() => {
@@ -109,19 +194,23 @@ function ProductDetail() {
         setSelectedColor(null);
         setSelectedSize(null);
         setSizeError(false);
-        setColorError(false); // ⭐ reset on product change
+        setColorError(false);
         setPin('');
         setPinMessage('');
         setPinError(false);
         setIsDehradunPincode(null);
         setActionMessage('');
         setQty(1);
+        setColorVariants([]);
 
         const res = await fetch(`${baseUrl}/products/${id}`);
         const data = await res.json();
 
         console.log('PRODUCT DATA 👉', data);
         setProduct(data);
+
+        // Fetch color variants for this product (includes auto-select)
+        await fetchColorVariants(data);
 
         const gallery = Array.isArray(data.galleryImages)
           ? data.galleryImages
@@ -205,9 +294,20 @@ function ProductDetail() {
     setSizeError(false);
   };
 
-  const handleColorSelect = (color) => {
-    setSelectedColor(color);
-    setColorError(false); // ⭐ clear color error on select
+  // ⭐⭐ UNIFIED: Handle color variant click - select AND navigate
+  const handleColorVariantClick = (variant) => {
+    if (variant.isCurrentProduct) {
+      // Same product, just select the color
+      if (product.colors.includes(variant.color)) {
+        setSelectedColor(variant.color);
+        setColorError(false);
+        console.log('🎨 Selected color (current product):', variant.color);
+      }
+    } else {
+      // Different product - navigate to it (auto-select will happen on load)
+      console.log('🎨 Switching to product:', variant.productId, 'with color:', variant.color);
+      navigate(`/product/${variant.productId}`);
+    }
   };
 
   const handleWishlistToggle = () => {
@@ -226,7 +326,6 @@ function ProductDetail() {
     });
   };
 
-  // ⭐ UPDATED: call backend /v1/shipping/check-pincode/:pin
   const handleCheckPin = async () => {
     setPinMessage('');
     setPinError(false);
@@ -247,7 +346,6 @@ function ProductDetail() {
       );
       const data = await res.json();
 
-      // data = { pincode, codAllowed, message }
       setIsDehradunPincode(data.codAllowed);
 
       if (!data.codAllowed) {
@@ -370,7 +468,6 @@ function ProductDetail() {
       return;
     }
 
-    // 1) Ensure this product is in cart with current options
     const alreadyInCart = cartItems.some(
       (item) =>
         item.productId === product._id &&
@@ -395,9 +492,22 @@ function ProductDetail() {
       console.log('BUY NOW 👉 item already in bag, going to checkout');
     }
 
-    // 2) Go to checkout page
     navigate('/checkout');
   };
+
+  const handleShareClick = async () => {
+  try {
+    await navigator.clipboard.writeText(window.location.href);
+
+    setActionMessage('Product link copied to clipboard 🔗');
+    setTimeout(() => setActionMessage(''), 2000);
+  } catch (err) {
+    console.error('Copy failed', err);
+    setActionMessage('Failed to copy link');
+    setTimeout(() => setActionMessage(''), 2000);
+  }
+};
+
 
   const metaFields = [
     { label: 'Fabric', value: product.fabric },
@@ -409,10 +519,9 @@ function ProductDetail() {
     { label: 'Closure', value: product.closureType },
     { label: 'Pattern', value: product.pattern },
     { label: 'Occasion', value: product.occasion },
-    { label: 'Care', value: product.careInstructions }, // ✅ fixed
+    { label: 'Care', value: product.careInstructions },
   ].filter((item) => !!item.value);
 
-  // ⭐ Features from backend or fallback
   const featureList =
     Array.isArray(product.features) && product.features.length > 0
       ? product.features
@@ -424,7 +533,6 @@ function ProductDetail() {
           'Extended side lace detailing for a sensual coverage',
         ];
 
-  // ⭐ Shipping & Returns from backend or fallback
   const shippingList =
     Array.isArray(product.shippingAndReturns) &&
     product.shippingAndReturns.length > 0
@@ -530,15 +638,14 @@ function ProductDetail() {
                   <FiHeart />
                 )}
               </button>
-              <button
-                className={styles.iconBtn}
-                onClick={() =>
-                  navigator.clipboard.writeText(window.location.href)
-                }
-                title="Copy product link"
-              >
-                <FiShare2 />
-              </button>
+             <button
+  className={styles.iconBtn}
+  onClick={handleShareClick}
+  title="Copy product link"
+>
+  <FiShare2 />
+</button>
+
             </div>
           </div>
 
@@ -579,12 +686,14 @@ function ProductDetail() {
             )}
           </div>
 
-          {/* COLORS */}
-          {hasColors && (
+          {/* ⭐⭐ UNIFIED COLOR SECTION - Only "Available Colors" (combines both current + variants) */}
+          {colorVariants.length > 0 && (
             <div className={styles.section} id="color-section">
               <div className={styles.sectionLabelRow}>
                 <div>
-                  <span className={styles.sectionLabel}>Color</span>
+                  <span className={styles.sectionLabel}>
+                    Available Colors
+                  </span>
                   {selectedColor && (
                     <span className={styles.sectionSubLabel}>
                       {' '}
@@ -596,27 +705,44 @@ function ProductDetail() {
                       &nbsp;— Please select a color
                     </span>
                   )}
+                  {loadingVariants && (
+                    <span className={styles.sectionSubLabel}>
+                      {' '}
+                      — Loading...
+                    </span>
+                  )}
                 </div>
               </div>
 
               <div className={styles.colorDots}>
-                {product.colors.map((c, idx) => {
-                  const colorValue = String(c).trim();
-                  const bg = decodeColor(colorValue);
-                  const isActive = selectedColor === colorValue;
+                {colorVariants.map((variant, idx) => {
+                  const bg = decodeColor(variant.color);
+                  const isActive = selectedColor === variant.color;
 
                   return (
                     <button
                       key={idx}
                       className={`${styles.colorDot} ${
                         isActive ? styles.colorDotActive : ''
+                      } ${
+                        variant.isCurrentProduct
+                          ? styles.colorDotCurrentProduct
+                          : styles.colorDotOtherProduct
                       }`}
-                      title={colorValue}
+                      title={`${variant.color}${
+                        variant.isCurrentProduct ? '' : ' (switch product)'
+                      }`}
                       style={{ backgroundColor: bg }}
-                      onClick={() => handleColorSelect(colorValue)}
+                      onClick={() => handleColorVariantClick(variant)}
                     />
                   );
                 })}
+              </div>
+              
+              <div className={styles.colorVariantHint}>
+                {colorVariants.some(v => !v.isCurrentProduct) 
+                  ? 'Click to select or switch to different product color'
+                  : 'Select your preferred color'}
               </div>
             </div>
           )}

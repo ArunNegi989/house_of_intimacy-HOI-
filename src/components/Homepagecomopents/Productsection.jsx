@@ -1,42 +1,55 @@
-import React from "react";
-import Slider from "react-slick";
-import img5 from "../../assets/images/5.jpg";
-import img17 from "../../assets/images/17.jpg";
-import img19 from "../../assets/images/19.jpg";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import Slider from 'react-slick';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import prodFallback from '../../assets/images/17.jpg';
 
-const sampleData = {
-  New: [
-    { id: 1, brand: "AquaFit", title: "Island Escape Bikini",priceOld: "$299.00", price: "$189.00", img: img5 },
-    { id: 2, brand: "SwimStyle", title: "Seaside Sensation Monokini",priceOld: "$299.00", price: "$119.00", img: img5 },
-    { id: 3, brand: "SwimStyle", title: "Seaside Sensation Monokini", priceOld: "$299.00", price: "$119.00", img: img17 },
-    { id: 4, brand: "WaveWear", title: "Sand Dune One-piece Tankini", priceOld: "$299.00", price: "$112.00", img: img19 },
-    { id: 5, brand: "SwimStyle", title: "Wave Rider Rash Guard Bikini", price: "$79.00", img: img5 },
-    { id: 6, brand: "SwimStyle", title: "Tropicana Monokini", priceOld: "$299.00", price: "$89.00", img: img17 },
-  ],
-  Trendy: [
-    { id: 7, brand: "WaveWear", title: "Sand Dune One-piece Tankini", priceOld: "$299.00", price: "$112.00", img: img19 },
-    { id: 8, brand: "SwimStyle", title: "Wave Rider Rash Guard Bikini", priceOld: "$299.00", price: "$79.00", img: img5 },
-    { id: 9, brand: "SwimStyle", title: "Tropicana Monokini", priceOld: "$299.00", price: "$89.00", img: img17 },
-    { id: 10, brand: "Coastal Clothing", title: "Sunkissed Sands", priceOld: "$299.00", price: "$127.00", priceOld: "$160.00", img: img19 },
-    { id: 11, brand: "Coastal Clothing", title: "Surfside Sunset Monokini", priceOld: "$299.00", price: "$229.00", img: img5 },
-  ],
-  Sale: [
-    { id: 12, brand: "SeaSplash", title: "Tidal Temptation Bikini", priceOld: "$149.00", price: "$112.00", img: img19 },
-    { id: 13, brand: "AquaFit", title: "Island Escape Bikini", priceOld: "$299.00", price: "$189.00", img: img19 },
-    { id: 14, brand: "SwimStyle", title: "Seaside Sensation Monokini", priceOld: "$299.00", price: "$119.00", img: img5 },
-    { id: 15, brand: "SwimStyle", title: "Seaside Sensation Monokini", priceOld: "$299.00", price: "$119.00", img: img17 },
-    { id: 16, brand: "WaveWear", title: "Sand Dune One-piece Tankini", priceOld: "$299.00", price: "$112.00", img: img19 },
-    { id: 17, brand: "SwimStyle", title: "Wave Rider Rash Guard Bikini", priceOld: "$299.00", price: "$79.00", img: img5 },
-  ],
-};
+const baseUrl = process.env.REACT_APP_APIURL;
+const apiRoot = baseUrl.replace(/\/v1$/, '');
+
+const sections = [
+  { name: 'New', type: 'new-arrival', align: 'left' },
+  { name: 'Trendy', type: 'trendy', align: 'right' },
+  { name: 'Sale', type: 'sale', align: 'left' },
+];
 
 export default function ProductSection() {
-  const sections = [
-    { name: "New", align: "left" },
-    { name: "Trendy", align: "right" },
-    { name: "Sale", align: "left" },
-  ];
+  const navigate = useNavigate();
+  const [products, setProducts] = useState({
+    New: [],
+    Trendy: [],
+    Sale: [],
+  });
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const requests = sections.map((section) =>
+          axios.get(
+            `${baseUrl}/products?type=${section.type}&status=active&limit=8`,
+          ),
+        );
+
+        const responses = await Promise.all(requests);
+
+        const updatedProducts = {};
+        sections.forEach((section, index) => {
+          updatedProducts[section.name] = responses[index].data.data;
+        });
+
+        setProducts(updatedProducts);
+      } catch (err) {
+        console.error('Error fetching products', err);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+  const getImageUrl = (path) => {
+    if (!path) return prodFallback;
+    if (path.startsWith('http')) return path;
+    return `${apiRoot}${path}`;
+  };
 
   const sliderSettings = {
     infinite: true,
@@ -45,19 +58,19 @@ export default function ProductSection() {
     slidesToScroll: 1,
     autoplay: true,
     autoplaySpeed: 0,
-    cssEase: "linear",
+    cssEase: 'linear',
     responsive: [
       {
         breakpoint: 1536,
-        settings: { slidesToShow: 4 }
+        settings: { slidesToShow: 4 },
       },
-       {
+      {
         breakpoint: 991,
-        settings: { slidesToShow: 2 }
+        settings: { slidesToShow: 2 },
       },
       {
         breakpoint: 768,
-        settings: { slidesToShow: 1 }
+        settings: { slidesToShow: 1 },
       },
     ],
   };
@@ -125,7 +138,7 @@ export default function ProductSection() {
         .product-image img {
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-fit: contain;
           transition: 0.5s;
         }
         .product-card:hover .product-image img {
@@ -313,42 +326,55 @@ font-size: 36px;
 
       <section className="product-section container-fluid">
         {sections.map((section) => (
-          <div key={section.name} className={`section-row align-${section.align}`}>
+          <div
+            key={section.name}
+            className={`section-row align-${section.align}`}
+          >
             <div className="title-wrapper">
               <h3 className="column-title">{section.name}</h3>
-              <a href="#" className="view-all-link">View All →</a>
+              <Link href="#" className="view-all-link">
+                View All →
+              </Link>
             </div>
 
-            <div style={{ width: "100%", paddingLeft: 20 }}>
+            <div style={{ width: '100%', paddingLeft: 20 }}>
               <Slider {...sliderSettings}>
-                {sampleData[section.name].map((item) => {
-                  const discount =
-                    item.priceOld &&
-                    Math.round(
-                      ((parseFloat(item.priceOld.replace("$", "")) -
-                        parseFloat(item.price.replace("$", ""))) /
-                        parseFloat(item.priceOld.replace("$", ""))) *
-                        100
-                    );
+                {products[section.name]?.map((item) => {
+                  const mrp = item.price?.mrp || 0;
+                  const sale = item.price?.sale || 0;
+                  const discount = item.price?.discountPercent || 0;
 
                   return (
-                    <div key={item.id}>
-                      <article className="product-card">
+                    <div key={item._id}>
+                      <article
+                        className="product-card"
+                        onClick={() => navigate(`/product/${item._id}`)}
+                      >
                         <div className="product-image">
-                          <img src={item.img} alt={item.title} />
-                          {section.name === "Sale" && (
+                          <img
+                            src={getImageUrl(item.mainImage)}
+                            alt={item.name}
+                          />
+
+                          {section.name === 'Sale' && (
                             <div className="sale-badge">Sale</div>
                           )}
                         </div>
 
                         <div className="product-info">
                           <div className="product-brand">{item.brand}</div>
-                          <div className="product-title">{item.title}</div>
+                          <div className="product-title">{item.name}</div>
 
                           <div className="product-price">
-                            {item.priceOld && <span className="price-old">{item.priceOld}</span>}
-                            <span className="price-current">{item.price}</span>
-                            {discount && <span className="discount-percent">-{discount}%</span>}
+                            {mrp > sale && (
+                              <span className="price-old">₹{mrp}</span>
+                            )}
+                            <span className="price-current">₹{sale}</span>
+                            {discount > 0 && (
+                              <span className="discount-percent">
+                                -{discount}%
+                              </span>
+                            )}
                           </div>
                         </div>
                       </article>

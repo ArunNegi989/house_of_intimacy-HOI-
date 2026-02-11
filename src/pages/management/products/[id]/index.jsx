@@ -69,6 +69,7 @@ const EditProducts = () => {
     { label: 'XXL', stock: 0, selected: false },
     { label: '3XL', stock: 0, selected: false },
   ]);
+  const typeWatch = watch('type') || 'regular';
 
   const [imagePreview, setImagePreview] = useState(null);
 
@@ -186,6 +187,7 @@ const EditProducts = () => {
         // BASIC INFO
         setValue('productCode', p.productCode || '');
         setValue('name', p.name || '');
+        setValue('type', p.type || 'regular');
         setValue('slug', p.slug || '');
         setValue('brand', p.brand || '');
         setValue('gender', p.gender || '');
@@ -367,6 +369,7 @@ const EditProducts = () => {
 
     // BASIC INFO
     formData.append('name', data.name || '');
+    formData.append('type', data.type || 'regular');
     formData.append('slug', data.slug || '');
     formData.append('brand', data.brand || '');
     formData.append('gender', data.gender || '');
@@ -587,6 +590,16 @@ const EditProducts = () => {
                 </FormControl>
 
                 <FormControl>
+                  <FormLabel>Product Type</FormLabel>
+                  <Select {...register('type')} defaultValue="regular">
+                    <option value="regular">Regular</option>
+                    <option value="new-arrival">New Arrival</option>
+                    <option value="trendy">Trendy</option>
+                    <option value="sale">Sale</option>
+                  </Select>
+                </FormControl>
+
+                <FormControl>
                   <FormLabel>Slug (URL)</FormLabel>
                   <Input
                     placeholder="jockey-cotton-bikini-brief-black"
@@ -620,7 +633,7 @@ const EditProducts = () => {
                     {...register('category')}
                     placeholder="Select category"
                   >
-                     <option>Sports Bra</option>
+                    <option>Sports Bra</option>
                     <option>Bra</option>
                     <option>Panty</option>
                     <option>Brief</option>
@@ -1375,6 +1388,7 @@ const EditProducts = () => {
                   </Flex>
                 )}
 
+                {/* ✅ FEATURED BADGE */}
                 {isFeaturedWatch && (
                   <Badge
                     position="absolute"
@@ -1387,6 +1401,28 @@ const EditProducts = () => {
                     fontSize="0.6rem"
                   >
                     Featured
+                  </Badge>
+                )}
+
+                {/* ✅ NEW TYPE BADGE */}
+                {typeWatch !== 'regular' && (
+                  <Badge
+                    position="absolute"
+                    top={3}
+                    right={3}
+                    colorScheme={
+                      typeWatch === 'sale'
+                        ? 'red'
+                        : typeWatch === 'new-arrival'
+                          ? 'green'
+                          : 'purple'
+                    }
+                    borderRadius="full"
+                    px={2}
+                    py={1}
+                    fontSize="0.6rem"
+                  >
+                    {typeWatch.replace('-', ' ').toUpperCase()}
                   </Badge>
                 )}
               </Box>

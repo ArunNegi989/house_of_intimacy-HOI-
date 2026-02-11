@@ -24,6 +24,35 @@ const PRODUCTS_ENDPOINT = `${baseUrl}/products/brand/${encodeURIComponent(
   BRAND_NAME
 )}`;
 
+// ⭐⭐ Color mapping - same as ProductDetail.jsx
+const COLOR_MAP = {
+  Black: '#000000',
+  Purple: '#800080',
+  White: '#ffffff',
+  Red: '#ef4444',
+  Blue: '#3b82f6',
+  Green: '#22c55e',
+  Nude: '#F5D0C5',
+  Pink: '#ec4899',
+  Yellow: '#facc15',
+};
+
+const decodeColor = (value) => {
+  if (!value) return '#e5e5e5';
+
+  const str = String(value).trim();
+  const hexRegex = /^#([0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})$/;
+  if (hexRegex.test(str)) return str;
+
+  const lower = str.toLowerCase();
+  const matchedKey = Object.keys(COLOR_MAP).find(
+    (k) => k.toLowerCase() === lower,
+  );
+  if (matchedKey) return COLOR_MAP[matchedKey];
+
+  return str || '#e5e5e5';
+};
+
 // helpers
 const getImageUrl = (path) => {
   if (!path) return prodFallback;
@@ -70,6 +99,7 @@ const NewArrival = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [allProducts, setAllProducts] = useState([]); // ⭐ Store all products for variant lookup
 
   const navigate = useNavigate();
   const sidebar = useContext(SidebarContext);
@@ -92,12 +122,60 @@ const NewArrival = () => {
     ],
   };
 
+  // ⭐⭐ Function to get color variants for a product
+  const getColorVariants = (currentProduct, allProductsList) => {
+    if (!currentProduct || !allProductsList.length) return [];
+
+    // Find similar products (same category, brand, subcategory)
+    const variants = allProductsList.filter(
+      (p) => 
+        String(p._id) !== String(currentProduct._id) &&
+        p.category === currentProduct.category &&
+        p.brand === currentProduct.brand &&
+        (!currentProduct.subcategory || p.subcategory === currentProduct.subcategory)
+    );
+
+    const colorMap = new Map();
+
+    // Add current product's colors
+    if (Array.isArray(currentProduct.colors)) {
+      currentProduct.colors.forEach((color) => {
+        if (color && !colorMap.has(color)) {
+          colorMap.set(color, {
+            color,
+            productId: currentProduct._id,
+            isCurrentProduct: true,
+          });
+        }
+      });
+    }
+
+    // Add variant colors
+    variants.forEach((variant) => {
+      if (Array.isArray(variant.colors)) {
+        variant.colors.forEach((color) => {
+          if (color && !colorMap.has(color)) {
+            colorMap.set(color, {
+              color,
+              productId: variant._id,
+              isCurrentProduct: false,
+            });
+          }
+        });
+      }
+    });
+
+    return Array.from(colorMap.values());
+  };
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const res = await axios.get(PRODUCTS_ENDPOINT);
         const backendProducts = res.data?.data || [];
+
+        setAllProducts(backendProducts); // ⭐ Store all products
 
         const mapped = backendProducts.map((prod) => {
           const mrp = prod.price?.mrp || 0;
@@ -121,6 +199,8 @@ const NewArrival = () => {
             brand: prod.brand || BRAND_NAME,
             name: prod.name,
             description: prod.description || '',
+            category: prod.category,
+            subcategory: prod.subcategory,
 
             // 🔑 PRICE OBJECT (safe everywhere)
             price: {
@@ -140,7 +220,6 @@ const NewArrival = () => {
 
             colors: colorsArray,
             sizes: prod.sizes || [],
-            moreColors: colorsArray.length > 3 ? colorsArray.length - 3 : 0,
             stock: totalStock,
             gender: prod.gender || prod.genderType || 'Unisex',
           };
@@ -157,6 +236,13 @@ const NewArrival = () => {
 
     fetchProducts();
   }, []);
+
+  // ⭐⭐ Handle color variant click
+  const handleColorVariantClick = (e, variant) => {
+    e.stopPropagation();
+    console.log('🎨 Switching to product:', variant.productId, 'with color:', variant.color);
+    navigate(`/product/${variant.productId}`);
+  };
 
   return (
     <section className={styles.section}>
@@ -198,6 +284,9 @@ const NewArrival = () => {
                   const unitPrice = getUnitPrice(item);
                   const discount = getDiscountPercent(item.mrp, unitPrice);
                   const isInWishlist = wishlistItems.includes(item.id);
+
+                  // ⭐⭐ Get all color variants for this product
+                  const colorVariants = getColorVariants(item, allProducts);
 
                   return (
                     <div key={item.id} className={styles.slideOuter}>
@@ -267,18 +356,37 @@ const NewArrival = () => {
                           </div>
 
                           <div className={styles.bottomRow}>
+                            {/* ⭐⭐ UPDATED: Show all color variants */}
                             <div className={styles.colorRow}>
-                              {item.colors.slice(0, 3).map((c, i) => (
-                                <span
-                                  key={i}
-                                  className={styles.colorDot}
-                                  style={{ backgroundColor: c }}
-                                />
-                              ))}
-                              {item.moreColors > 0 && (
-                                <span className={styles.moreColors}>
-                                  +{item.moreColors}
-                                </span>
+                              {colorVariants.length > 0 ? (
+                                colorVariants.map((variant, i) => {
+                                  const bg = decodeColor(variant.color);
+                                  return (
+                                    <span
+                                      key={i}
+                                      className={`${styles.colorDot} ${
+                                        variant.isCurrentProduct 
+                                          ? styles.colorDotCurrentProduct 
+                                          : styles.colorDotOtherProduct
+                                      }`}
+                                      style={{ backgroundColor: bg }}
+                                      title={`${variant.color}${
+                                        variant.isCurrentProduct ? '' : ' (different product)'
+                                      }`}
+                                      onClick={(e) => handleColorVariantClick(e, variant)}
+                                    />
+                                  );
+                                })
+                              ) : (
+                                // Fallback: show current product colors only
+                                item.colors.slice(0, 3).map((c, i) => (
+                                  <span
+                                    key={i}
+                                    className={styles.colorDot}
+                                    style={{ backgroundColor: decodeColor(c) }}
+                                    title={c}
+                                  />
+                                ))
                               )}
                             </div>
 

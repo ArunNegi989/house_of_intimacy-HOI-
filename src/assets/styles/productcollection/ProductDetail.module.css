@@ -1111,3 +1111,117 @@
     transform: translateY(0);
   }
 }
+
+/* Add these styles to your ProductDetail.module.css file */
+
+/* ⭐ COLOR VARIANTS SECTION */
+.colorVariantHint {
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Color dot for current product colors */
+.colorDotCurrentProduct {
+  position: relative;
+}
+
+.colorDotCurrentProduct::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: #8b5cf6;
+  border-radius: 50%;
+}
+
+/* Color dot for other product variants */
+.colorDotOtherProduct {
+  position: relative;
+  border: 2px solid transparent;
+}
+
+.colorDotOtherProduct:hover {
+  border-color: #8b5cf6;
+  transform: scale(1.1);
+  transition: all 0.2s ease;
+}
+
+.colorDotOtherProduct::before {
+  content: '↻';
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: #8b5cf6;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.colorDotOtherProduct:hover::before {
+  opacity: 1;
+}
+
+/* Enhance existing color dot styles */
+.colorDot {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid #e5e7eb;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.colorDot:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+}
+
+.colorDotActive {
+  border-color: #8b5cf6;
+  border-width: 3px;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.colorDots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+/* Loading state for variants */
+.variantsLoading {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #e5e7eb;
+  border-top-color: #8b5cf6;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .colorDot {
+    width: 36px;
+    height: 36px;
+  }
+
+  .colorVariantHint {
+    font-size: 0.7rem;
+  }
+}

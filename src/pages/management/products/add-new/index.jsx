@@ -99,6 +99,8 @@ const AddProducts = () => {
 
   const mainImageRegister = register('mainImage');
 
+  const typeWatch = watch('type') || 'regular';
+
   // 👉 Add current color to selected list
   const handleAddColor = () => {
     setSelectedColors((prev) => {
@@ -217,6 +219,7 @@ const AddProducts = () => {
     // BASIC INFO
     formData.append('productCode', data.productCode || '');
     formData.append('name', data.name || '');
+    formData.append('type', data.type || 'regular');
     formData.append('slug', data.slug || '');
     formData.append('brand', data.brand || '');
     formData.append('gender', data.gender || '');
@@ -398,20 +401,20 @@ const AddProducts = () => {
               </Text>
 
               <SimpleGrid columns={[1, 2]} gap={4}>
-              <FormControl isRequired isInvalid={errors.productCode}>
-  <FormLabel>Product Code</FormLabel>
-  <Input
-    placeholder="PC-HOI-0001"
-    {...register('productCode', {
-      required: 'Product Code is required',
-    })}
-  />
-  {errors.productCode && (
-    <Text fontSize="xs" color="red.400">
-      {errors.productCode.message}
-    </Text>
-  )}
-</FormControl>
+                <FormControl isRequired isInvalid={errors.productCode}>
+                  <FormLabel>Product Code</FormLabel>
+                  <Input
+                    placeholder="PC-HOI-0001"
+                    {...register('productCode', {
+                      required: 'Product Code is required',
+                    })}
+                  />
+                  {errors.productCode && (
+                    <Text fontSize="xs" color="red.400">
+                      {errors.productCode.message}
+                    </Text>
+                  )}
+                </FormControl>
 
                 <FormControl isRequired isInvalid={errors.name}>
                   <FormLabel>Product Name</FormLabel>
@@ -424,6 +427,16 @@ const AddProducts = () => {
                       {errors.name.message}
                     </Text>
                   )}
+                </FormControl>
+
+                <FormControl>
+                  <FormLabel>Product Type</FormLabel>
+                  <Select {...register('type')} defaultValue="regular">
+                    <option value="regular">Regular</option>
+                    <option value="new-arrival">New Arrival</option>
+                    <option value="trendy">Trendy</option>
+                    <option value="sale">Sale</option>
+                  </Select>
                 </FormControl>
 
                 <FormControl>
@@ -460,7 +473,7 @@ const AddProducts = () => {
                     {...register('category')}
                     placeholder="Select category"
                   >
-                  <option>Sports Bra</option>
+                    <option>Sports Bra</option>
                     <option>Bra</option>
                     <option>Panty</option>
                     <option>Brief</option>
@@ -1210,6 +1223,7 @@ const AddProducts = () => {
                   </Flex>
                 )}
 
+                {/* ✅ EXISTING FEATURED BADGE */}
                 {isFeaturedWatch && (
                   <Badge
                     position="absolute"
@@ -1222,6 +1236,28 @@ const AddProducts = () => {
                     fontSize="0.6rem"
                   >
                     Featured
+                  </Badge>
+                )}
+
+                {/* ✅ ADD THIS TYPE BADGE HERE */}
+                {typeWatch !== 'regular' && (
+                  <Badge
+                    position="absolute"
+                    top={3}
+                    right={3}
+                    colorScheme={
+                      typeWatch === 'sale'
+                        ? 'red'
+                        : typeWatch === 'new-arrival'
+                          ? 'green'
+                          : 'purple'
+                    }
+                    borderRadius="full"
+                    px={2}
+                    py={1}
+                    fontSize="0.6rem"
+                  >
+                    {typeWatch.replace('-', ' ').toUpperCase()}
                   </Badge>
                 )}
               </Box>
