@@ -476,6 +476,7 @@ const AddProducts = () => {
                     <option>Sports Bra</option>
                     <option>Bra</option>
                     <option>Panty</option>
+                    <option>Bra-Panty-Set</option>
                     <option>Brief</option>
                     <option>Boxer</option>
                     <option>Nightwear</option>
