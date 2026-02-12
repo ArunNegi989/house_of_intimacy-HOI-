@@ -95,6 +95,19 @@ const PrevArrow = ({ style, onClick }) => (
   </button>
 );
 
+const getBaseCode = (code) => {
+  if (!code) return null;
+
+  const parts = code.split('-');
+
+  if (parts.length >= 2) {
+    return `${parts[0]}-${parts[1]}`;
+  }
+
+  return code;
+};
+
+
 const NewArrival = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -123,50 +136,40 @@ const NewArrival = () => {
   };
 
   // ⭐⭐ Function to get color variants for a product
+  // FIX: allProductsList must be the RAW backend data (with productCode field)
   const getColorVariants = (currentProduct, allProductsList) => {
-    if (!currentProduct || !allProductsList.length) return [];
+  if (!currentProduct?.productCode) return [];
 
-    // Find similar products (same category, brand, subcategory)
-    const variants = allProductsList.filter(
-      (p) => 
-        String(p._id) !== String(currentProduct._id) &&
-        p.category === currentProduct.category &&
-        p.brand === currentProduct.brand &&
-        (!currentProduct.subcategory || p.subcategory === currentProduct.subcategory)
-    );
+  const baseCode = getBaseCode(currentProduct.productCode);
 
-    const colorMap = new Map();
+  const sameBaseProducts = allProductsList.filter((p) => {
+    if (!p.productCode) return false;
 
-    // Add current product's colors
-    if (Array.isArray(currentProduct.colors)) {
-      currentProduct.colors.forEach((color) => {
+    const pBase = getBaseCode(p.productCode);
+
+    return pBase === baseCode;
+  });
+
+  const colorMap = new Map();
+
+  sameBaseProducts.forEach((product) => {
+    if (Array.isArray(product.colors)) {
+      product.colors.forEach((color) => {
         if (color && !colorMap.has(color)) {
           colorMap.set(color, {
             color,
-            productId: currentProduct._id,
-            isCurrentProduct: true,
+            productId: product._id,
+            isCurrentProduct:
+              String(product._id) === String(currentProduct._id),
           });
         }
       });
     }
+  });
 
-    // Add variant colors
-    variants.forEach((variant) => {
-      if (Array.isArray(variant.colors)) {
-        variant.colors.forEach((color) => {
-          if (color && !colorMap.has(color)) {
-            colorMap.set(color, {
-              color,
-              productId: variant._id,
-              isCurrentProduct: false,
-            });
-          }
-        });
-      }
-    });
+  return Array.from(colorMap.values());
+};
 
-    return Array.from(colorMap.values());
-  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -175,7 +178,7 @@ const NewArrival = () => {
         const res = await axios.get(PRODUCTS_ENDPOINT);
         const backendProducts = res.data?.data || [];
 
-        setAllProducts(backendProducts); // ⭐ Store all products
+        setAllProducts(backendProducts); // ⭐ Store RAW backend products (has productCode)
 
         const mapped = backendProducts.map((prod) => {
           const mrp = prod.price?.mrp || 0;
@@ -201,6 +204,9 @@ const NewArrival = () => {
             description: prod.description || '',
             category: prod.category,
             subcategory: prod.subcategory,
+
+            // ✅ FIX: productCode add kiya — getColorVariants ke liye ZARURI hai
+            productCode: prod.productCode || null,
 
             // 🔑 PRICE OBJECT (safe everywhere)
             price: {
@@ -285,7 +291,8 @@ const NewArrival = () => {
                   const discount = getDiscountPercent(item.mrp, unitPrice);
                   const isInWishlist = wishlistItems.includes(item.id);
 
-                  // ⭐⭐ Get all color variants for this product
+                  // ⭐⭐ Get all color variants using RAW allProducts data
+                  // item mein productCode hai (fix ke baad), allProducts mein bhi hai
                   const colorVariants = getColorVariants(item, allProducts);
 
                   return (
@@ -356,7 +363,7 @@ const NewArrival = () => {
                           </div>
 
                           <div className={styles.bottomRow}>
-                            {/* ⭐⭐ UPDATED: Show all color variants */}
+                            {/* ⭐⭐ UPDATED: Show all color variants across same base-code products */}
                             <div className={styles.colorRow}>
                               {colorVariants.length > 0 ? (
                                 colorVariants.map((variant, i) => {
@@ -365,8 +372,8 @@ const NewArrival = () => {
                                     <span
                                       key={i}
                                       className={`${styles.colorDot} ${
-                                        variant.isCurrentProduct 
-                                          ? styles.colorDotCurrentProduct 
+                                        variant.isCurrentProduct
+                                          ? styles.colorDotCurrentProduct
                                           : styles.colorDotOtherProduct
                                       }`}
                                       style={{ backgroundColor: bg }}
@@ -405,7 +412,7 @@ const NewArrival = () => {
                     </div>
                   );
                 })}
-              </Slider>
+            </Slider>
             )}
           </div>
         </div>

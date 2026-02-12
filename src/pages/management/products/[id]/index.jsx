@@ -369,6 +369,7 @@ const EditProducts = () => {
 
     // BASIC INFO
     formData.append('name', data.name || '');
+    formData.append('productCode', data.productCode || '');
     formData.append('type', data.type || 'regular');
     formData.append('slug', data.slug || '');
     formData.append('brand', data.brand || '');

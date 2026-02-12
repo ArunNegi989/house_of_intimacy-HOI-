@@ -57,6 +57,18 @@ const decodeColor = (value) => {
   return str || '#e5e5e5';
 };
 
+// ✅ SAME getBaseCode as NewArrival — first 2 parts of productCode
+// e.g. "HOI-BRA-001-BLK" → "HOI-BRA"
+// e.g. "VAM-001-RED"      → "VAM-001"
+const getBaseCode = (code) => {
+  if (!code) return null;
+  const parts = code.split('-');
+  if (parts.length >= 2) {
+    return `${parts[0]}-${parts[1]}`;
+  }
+  return code;
+};
+
 function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -103,87 +115,91 @@ function ProductDetail() {
   const [loadingVariants, setLoadingVariants] = useState(false);
 
   // ---------- FETCH COLOR VARIANTS ----------
- const fetchColorVariants = async (currentProduct) => {
-  if (!currentProduct) return;
+  // ✅ UPDATED: same getBaseCode logic as NewArrival
+  const fetchColorVariants = async (currentProduct) => {
+    if (!currentProduct) return;
 
-  try {
-    setLoadingVariants(true);
+    try {
+      setLoadingVariants(true);
 
-    // ⭐⭐ EXTRACT BASE PRODUCT CODE
-    const baseCode = currentProduct.productCode
-      ? currentProduct.productCode.split('-').slice(0, -1).join('-')
-      : null;
+      // ✅ Use same getBaseCode as NewArrival
+      const baseCode = getBaseCode(currentProduct.productCode);
 
-    if (!baseCode) {
-      console.warn('⚠️ No product code found, skipping variants');
-      setColorVariants([]);
-      return;
-    }
-
-    const params = new URLSearchParams();
-    
-    // ⭐ Match by BASE product code (same design, different colors)
-    params.append('productCode', baseCode);
-    params.append('limit', '50');
-
-    const res = await fetch(`${baseUrl}/products?${params.toString()}`);
-    const data = await res.json();
-
-    console.log('🎨 Color Variants Response:', data);
-
-    if (data.data && Array.isArray(data.data)) {
-      const variants = data.data.filter(
-        (p) => String(p._id) !== String(currentProduct._id)
-      );
-
-      const colorMap = new Map();
-
-      // Add current product's colors
-      if (Array.isArray(currentProduct.colors)) {
-        currentProduct.colors.forEach((color) => {
-          if (color && !colorMap.has(color)) {
-            colorMap.set(color, {
-              color,
-              productId: currentProduct._id,
-              productCode: currentProduct.productCode,
-              isCurrentProduct: true,
-            });
-          }
-        });
+      if (!baseCode) {
+        console.warn('⚠️ No product code found, skipping variants');
+        setColorVariants([]);
+        return;
       }
 
-      // Add variant colors (SAME BASE CODE ONLY)
-      variants.forEach((variant) => {
-        if (Array.isArray(variant.colors)) {
-          variant.colors.forEach((color) => {
+      const params = new URLSearchParams();
+
+      // ✅ Match by BASE product code (same as NewArrival logic)
+      params.append('productCode', baseCode);
+      params.append('limit', '50');
+
+      const res = await fetch(`${baseUrl}/products?${params.toString()}`);
+      const data = await res.json();
+
+      console.log('🎨 Color Variants Response:', data);
+
+      if (data.data && Array.isArray(data.data)) {
+        // ✅ Filter using same getBaseCode — both sides match correctly
+        const variants = data.data.filter((p) => {
+          if (!p.productCode) return false;
+          return (
+            getBaseCode(p.productCode) === baseCode &&
+            String(p._id) !== String(currentProduct._id)
+          );
+        });
+
+        const colorMap = new Map();
+
+        // Add current product's colors
+        if (Array.isArray(currentProduct.colors)) {
+          currentProduct.colors.forEach((color) => {
             if (color && !colorMap.has(color)) {
               colorMap.set(color, {
                 color,
-                productId: variant._id,
-                productCode: variant.productCode,
-                isCurrentProduct: false,
+                productId: currentProduct._id,
+                productCode: currentProduct.productCode,
+                isCurrentProduct: true,
               });
             }
           });
         }
-      });
 
-      const uniqueVariants = Array.from(colorMap.values());
-      console.log('🎨 Unique Color Variants:', uniqueVariants);
-      setColorVariants(uniqueVariants);
-      
-      // Auto-select first color
-      if (Array.isArray(currentProduct.colors) && currentProduct.colors.length > 0) {
-        setSelectedColor(currentProduct.colors[0]);
+        // Add variant colors (SAME BASE CODE ONLY)
+        variants.forEach((variant) => {
+          if (Array.isArray(variant.colors)) {
+            variant.colors.forEach((color) => {
+              if (color && !colorMap.has(color)) {
+                colorMap.set(color, {
+                  color,
+                  productId: variant._id,
+                  productCode: variant.productCode,
+                  isCurrentProduct: false,
+                });
+              }
+            });
+          }
+        });
+
+        const uniqueVariants = Array.from(colorMap.values());
+        console.log('🎨 Unique Color Variants:', uniqueVariants);
+        setColorVariants(uniqueVariants);
+
+        // Auto-select first color of current product
+        if (Array.isArray(currentProduct.colors) && currentProduct.colors.length > 0) {
+          setSelectedColor(currentProduct.colors[0]);
+        }
       }
+    } catch (error) {
+      console.error('Error fetching color variants:', error);
+      setColorVariants([]);
+    } finally {
+      setLoadingVariants(false);
     }
-  } catch (error) {
-    console.error('Error fetching color variants:', error);
-    setColorVariants([]);
-  } finally {
-    setLoadingVariants(false);
-  }
-};
+  };
 
   // ---------- FETCH PRODUCT ----------
   useEffect(() => {
@@ -223,9 +239,7 @@ function ProductDetail() {
 
         if (data.brand) {
           const relRes = await fetch(
-            `${baseUrl}/products/brand/${encodeURIComponent(
-              data.brand,
-            )}`,
+            `${baseUrl}/products/brand/${encodeURIComponent(data.brand)}`,
           );
           const relData = await relRes.json();
           const filtered = relData.filter((p) => String(p._id) !== String(id));
@@ -496,18 +510,16 @@ function ProductDetail() {
   };
 
   const handleShareClick = async () => {
-  try {
-    await navigator.clipboard.writeText(window.location.href);
-
-    setActionMessage('Product link copied to clipboard 🔗');
-    setTimeout(() => setActionMessage(''), 2000);
-  } catch (err) {
-    console.error('Copy failed', err);
-    setActionMessage('Failed to copy link');
-    setTimeout(() => setActionMessage(''), 2000);
-  }
-};
-
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setActionMessage('Product link copied to clipboard 🔗');
+      setTimeout(() => setActionMessage(''), 2000);
+    } catch (err) {
+      console.error('Copy failed', err);
+      setActionMessage('Failed to copy link');
+      setTimeout(() => setActionMessage(''), 2000);
+    }
+  };
 
   const metaFields = [
     { label: 'Fabric', value: product.fabric },
@@ -638,14 +650,13 @@ function ProductDetail() {
                   <FiHeart />
                 )}
               </button>
-             <button
-  className={styles.iconBtn}
-  onClick={handleShareClick}
-  title="Copy product link"
->
-  <FiShare2 />
-</button>
-
+              <button
+                className={styles.iconBtn}
+                onClick={handleShareClick}
+                title="Copy product link"
+              >
+                <FiShare2 />
+              </button>
             </div>
           </div>
 
@@ -686,7 +697,7 @@ function ProductDetail() {
             )}
           </div>
 
-          {/* ⭐⭐ UNIFIED COLOR SECTION - Only "Available Colors" (combines both current + variants) */}
+          {/* ⭐⭐ UNIFIED COLOR SECTION */}
           {colorVariants.length > 0 && (
             <div className={styles.section} id="color-section">
               <div className={styles.sectionLabelRow}>
@@ -738,9 +749,9 @@ function ProductDetail() {
                   );
                 })}
               </div>
-              
+
               <div className={styles.colorVariantHint}>
-                {colorVariants.some(v => !v.isCurrentProduct) 
+                {colorVariants.some((v) => !v.isCurrentProduct)
                   ? 'Click to select or switch to different product color'
                   : 'Select your preferred color'}
               </div>
