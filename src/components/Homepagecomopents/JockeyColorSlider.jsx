@@ -95,7 +95,7 @@ function PrevArrow({ onClick }) {
 }
 
 const JockeyColorSlider = () => {
-  const [activeGender, setActiveGender] = useState("men");
+  const [activeGender, setActiveGender] = useState("women");
   const [activeColorIndex, setActiveColorIndex] = useState(0);
   const [allProducts, setAllProducts] = useState([]);
   const sliderRef = useRef(null);
@@ -198,6 +198,19 @@ const JockeyColorSlider = () => {
           <h2 className={styles.title}>SLIDE INTO THE COLORS OF HOI</h2>
 
           <div className={styles.tabs}>
+             <button
+              type="button"
+              className={`${styles.tabBtn} ${
+                activeGender === "women" ? styles.tabActive : ""
+              }`}
+              onClick={() => {
+                setActiveGender("women");
+                setActiveColorIndex(0);
+                if (sliderRef.current) sliderRef.current.slickGoTo(0);
+              }}
+            >
+              Women
+            </button>
             <button
               type="button"
               className={`${styles.tabBtn} ${
@@ -211,19 +224,7 @@ const JockeyColorSlider = () => {
             >
               Men
             </button>
-            <button
-              type="button"
-              className={`${styles.tabBtn} ${
-                activeGender === "women" ? styles.tabActive : ""
-              }`}
-              onClick={() => {
-                setActiveGender("women");
-                setActiveColorIndex(0);
-                if (sliderRef.current) sliderRef.current.slickGoTo(0);
-              }}
-            >
-              Women
-            </button>
+           
           </div>
         </div>
 

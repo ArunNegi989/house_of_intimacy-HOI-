@@ -1,391 +1,1061 @@
+/* ===========================
+   FOOTER - EXACT SCREENSHOT DESIGN
+   =========================== */
 .footer {
-  background: #fbdaed;
-  padding-top: 40px;
-  font-family: "Inter", sans-serif;
-}
-
-.newsletterSection button {
-  border: 1px solid !important;
-  background: linear-gradient(135deg, #e91e63 0%, #d63384 100%) !important;
-  color: #fff !important;
-}
-.spanList{
-  font-weight: 600;
-  color: #000;
-}
-/* Logo */
-.logo {
-  height: 170px;
-  object-fit: contain;
-  width: 50%;
-}
-
-.desc {
-  text-decoration: none;
-  color: #222;
-  font-size: 16px;
-  font-weight: 300;
-  text-transform: uppercase;
-  padding-bottom: 4px;
-  border-bottom: 2px solid transparent;
-  transition: color 0.2s ease, border-color 0.2s ease;
-}
-
-/* Headings */
-.heading {
-  font-size: 25px;
-  margin-bottom: 15px;
-  text-transform: uppercase;
-  font-weight: 600;
-  color: #222;
-  padding-top: 40px;
-}
-
-/* List */
-.list {
-  list-style: none;
-  padding: 0;
-}
-
-.list li {
-  text-decoration: none;
-  color: #222;
-  font-size: 16px;
-  font-weight: 300;
-  text-transform: uppercase;
-  padding-bottom: 4px;
-  border-bottom: 2px solid transparent;
-  transition: color 0.2s ease, border-color 0.2s ease;
-}
-
-.list li a {
+  background: linear-gradient(180deg, #fef5f9 0%, #fde8f3 100%);
+  padding: 50px 0 20px;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: #333;
-  text-decoration: none;
 }
 
-.list li a:hover {
-  text-decoration: underline;
-  color: #000;
+.mainContent {
+  margin-bottom: 30px;
 }
 
-/* Newsletter section */
-.newsletterSection {
+/* ===========================
+   BRAND SECTION
+   =========================== */
+.brandSection {
   text-align: center;
-  border-top: 3px solid #e91e63;
-  border-bottom: 1px solid #e2e2e2;
-  margin-top: 20px;
 }
 
-.newsletterSection input {
-  border: 1px solid #e91e63;
+.logo {
+  height: 140px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
+  margin-bottom: 15px;
 }
 
-.newsletterSection input {
-  border-radius: 4px !important;
-}
-
-.newsletterSection button {
-  border-radius: 4px !important;
-}
-
-/* Bottom */
-.bottomText {
-  margin: 0;
-  color: #666;
+.tagline {
+  color: #555;
   font-size: 14px;
-}
-
-.bottomLink {
-  color: #666;
-  margin-left: 15px;
-  font-size: 14px;
-  text-decoration: none;
-}
-
-.bottomLink:hover {
-  text-decoration: underline;
-  color: #000;
-}
-
-/* Responsive */
- @media (min-width: 1921px) and (max-width: 2561px) {
-}
-@media (min-width: 1536px) and (max-width: 1920px) {
-
-}
-@media (max-width: 1479.98px) {
-   .dropdownMenu{
-     padding: 10px 0 !important;
-    min-width: 168px !important;
-   }
-   .nestedDropdownMenu {
-      min-width: 155px !important;
-   }
-
-  }
-@media (max-width: 1426.98px) {
-   
-  }
-  @media (max-width: 1294.98px) {
-   .Footer_dropdownMenu__wbDBA {
-        padding: 5px 0 !important;
-        min-width: 145px !important;
-   }
-   .categoryTitle {
-  padding: 10px 10px 10px 10px !important;
-   }
-   .dropdownMenu li::before {
-  left: 5px;
-  margin: 0 5px;
-   }
-    .nestedDropdownMenu {
-      min-width: 130px !important;
-   }
-   .nestedDropdownMenu li a {
-  padding: 8px 5px 8px 20px !important;
-}
-  }
-  @media (max-width: 1250.98px){
-    
-  }
-  @media (max-width: 1226.98px){
-  
-  }
-  @media (max-width: 1105.98px) {
-     .Footer_dropdownMenu__wbDBA {
-        min-width: 130px !important;
-   }
-  }
-  @media (max-width: 1055.98px) {
-  
-}
- @media (max-width: 991.98px) {
-  
-}
-  @media (max-width: 931.98px) {
-  
-}
-@media(max-width: 820.98px){
-   
-}
-@media (max-width: 768px) {
-  .desc {
-    padding-right: 20px;
-   
-  }
-  .logo {
-    height: 155px;
-     width: 100% !important;
-  }
-
-  .newsletterSection input {
-    width: 100%;
-  }
-
-  .newsletterSection .input-group {
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .newsletterSection button {
-    width: 100%;
-  }
-
-  .bottomText {
-    text-align: center;
-    margin-bottom: 10px;
-  }
-}
-
-@media (max-width: 499px) {
-  .logo {
-    height: 150px;
-    width: 100%;
-  }
-
-  .list li {
-    font-size: 14px !important;
-  }
-
-  .heading {
-    font-size: 20px;
-  }
-
-  .footer {
-    padding-top: 10px !important;
-  }
-}
-
-/* List */
-.list {
-  list-style: none;
-  padding: 0;
-}
-
-.list li {
-  text-decoration: none;
-  color: #222;
-  font-size: 16px;
-  font-weight: 300;
-  text-transform: uppercase;
-  padding-bottom: 4px;
-  border-bottom: 2px solid transparent;
-  transition: color 0.2s ease, border-color 0.2s ease;
-}
-
-.list li a {
-  color: #333;
-  text-decoration: none;
-}
-
-.list li a:hover {
-  text-decoration: underline;
-  color: #000;
-}
-
-/* Dropdown styles */
-.dropdownItem {
-  position: relative;
-  cursor: pointer;
-  margin-bottom: 8px;
-}
-
-.dropdownMenu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background: linear-gradient(135deg, #fff 0%, #fef5f9 100%);
-  border: 2px solid #e91e63;
-  border-radius: 12px;
-  padding: 15px 0;
-  min-width: 220px;
-  list-style: none;
-  box-shadow: 0 8px 20px rgba(233, 30, 99, 0.15);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(-15px) scale(0.95);
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  z-index: 1000;
-}
-
-.dropdownItem:hover .dropdownMenu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0) scale(1);
-}
-
-.dropdownMenu li {
-  padding: 0;
-  border-bottom: none;
-  text-transform: none;
-  font-size: 14px;
-  list-style: none;
-  position: relative;
-  margin: 0;
-}
-
-.dropdownMenu li::before {
-  content: "→";
-  position: absolute;
-  left: 15px;
-  color: #e91e63;
-  opacity: 0;
-  transform: translateX(-10px);
-  transition: all 0.3s ease;
-}
-
-.dropdownMenu li:hover::before {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.dropdownMenu li a {
-  display: block;
-  color: #444;
-  padding: 10px 20px 10px 40px;
-  transition: all 0.3s ease;
-  border-radius: 8px;
-  margin: 0 10px;
   font-weight: 400;
+  line-height: 1.5;
+  margin: 0 0 20px;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.dropdownMenu li a:hover {
-  color: #e91e63;
-  background: rgba(233, 30, 99, 0.08);
-  text-decoration: none;
-  transform: translateX(5px);
+/* Social Links */
+.socialLinks {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 
-/* Nested dropdown styles */
-.nestedDropdownItem {
-  position: relative;
-}
-
-.nestedDropdownItem::before {
-  content: "▸";
-  left: auto;
-  right: 20px;
-}
-
-.categoryTitle {
-  display: block;
-  color: #e91e63;
-  padding: 10px 40px 10px 40px;
-  font-weight: 600;
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  cursor: pointer;
-  border-radius: 8px;
-  margin: 0 10px;
-  transition: all 0.3s ease;
-}
-
-.nestedDropdownItem:hover .categoryTitle {
-  background: rgba(233, 30, 99, 0.1);
-}
-
-.nestedDropdownMenu {
-  position: absolute;
-  top: 0;
-  left: 100%;
-  background: linear-gradient(135deg, #fff 0%, #fef5f9 100%);
+.socialIcon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
   border: 2px solid #e91e63;
-  border-radius: 12px;
-  padding: 10px 0;
-  min-width: 175px;
-  list-style: none;
-  box-shadow: 0 8px 20px rgba(233, 30, 99, 0.15);
-  opacity: 0;
-  visibility: hidden;
-  transform: translateX(-15px) scale(0.95);
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  z-index: 1001;
-  margin-left: 5px;
+  border-radius: 50%;
+  font-size: 18px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(233, 30, 99, 0.15);
 }
 
-.nestedDropdownItem:hover .nestedDropdownMenu {
-  opacity: 1;
-  visibility: visible;
-  transform: translateX(0) scale(1);
+.socialIcon:hover {
+  background: #e91e63;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
 }
 
-.nestedDropdownMenu li {
-  padding: 0;
-  margin: 0;
+.socialIcon:hover {
+  filter: brightness(0) invert(1);
 }
 
-.nestedDropdownMenu li::before {
-  content: "•";
-  position: absolute;
-  left: 15px;
-  color: #e91e63;
-  opacity: 1;
-  transform: translateX(0);
+/* ===========================
+   SECTION TITLES
+   =========================== */
+.sectionTitle {
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  letter-spacing: 0.5px;
+}
+
+.sectionTitle .icon {
   font-size: 18px;
 }
 
-.nestedDropdownMenu li a {
-  padding: 8px 20px 8px 35px;
+/* ===========================
+   CONTACT INFO
+   =========================== */
+.contactInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.infoItem .label {
+  font-weight: 700;
+  color: #e91e63;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.infoItem a {
+  color: #555;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.infoItem a:hover {
+  color: #e91e63;
+}
+
+.hourLine {
+  display: block;
   font-size: 13px;
+  color: #666;
+  line-height: 1.6;
+}
+
+/* ===========================
+   LINK LIST
+   =========================== */
+.linkList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.linkList li {
+  line-height: 1.4;
+}
+
+.linkList a {
+  color: #555;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+  display: inline-block;
+}
+
+.linkList a:hover {
+  color: #e91e63;
+  transform: translateX(3px);
+}
+
+/* ===========================
+   SHOP LIST
+   =========================== */
+.shopList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.shopList li {
+  line-height: 1.4;
+}
+
+.shopList a {
+  color: #555;
+  text-decoration: none;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.5);
+  border: 1px solid rgba(233, 30, 99, 0.2);
+  transition: all 0.3s ease;
+  display: inline-block;
+  min-width: 150px;
+  text-align: left;
+}
+
+.shopList a:hover {
+  background: #fff;
+  border-color: #e91e63;
+  color: #e91e63;
+  transform: translateX(3px);
+}
+
+/* ===========================
+   NEWSLETTER CARD
+   =========================== */
+.newsletterCard {
+  background: #fff;
+  border: 2px solid #e91e63;
+  border-radius: 16px;
+  padding: 30px;
+  margin: 30px 0;
+  box-shadow: 0 4px 20px rgba(233, 30, 99, 0.1);
+}
+
+.newsletterHeader {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+.discountBadge {
+  background: linear-gradient(135deg, #e91e63 0%, #d63384 100%);
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+  white-space: nowrap;
+}
+
+.newsletterTitle {
+  font-size: 24px;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.newsletterSubtitle {
+  color: #666;
+  font-size: 14px;
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.newsletterForm {
+  display: grid;
+  gap: 10px;
+  max-width: 600px;
+}
+
+.emailInput {
+  flex: 1;
+  border: 2px solid #e91e63;
+  outline: none;
+  padding: 14px 20px;
+  font-size: 14px;
+  border-radius: 50px;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.emailInput:focus {
+  border-color: #d63384;
+  box-shadow: 0 0 0 4px rgba(233, 30, 99, 0.1);
+}
+
+.emailInput::placeholder {
+  color: #999;
+}
+
+.subscribeBtn {
+  background: linear-gradient(135deg, #e91e63 0%, #d63384 100%);
+  color: #fff;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 50px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.3);
+  white-space: nowrap;
+}
+
+.subscribeBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(233, 30, 99, 0.4);
+}
+
+/* ===========================
+   TRUST BADGES
+   =========================== */
+.trustBadges {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 25px 0;
+  border-top: 1px solid rgba(233, 30, 99, 0.15);
+  border-bottom: 1px solid rgba(233, 30, 99, 0.15);
+}
+
+.badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+  padding: 10px 20px;
+  background: #fff;
+  border-radius: 25px;
+  border: 1px solid rgba(233, 30, 99, 0.2);
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.badge span:first-child {
+  font-size: 16px;
+}
+
+.badge:hover {
+  border-color: #e91e63;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(233, 30, 99, 0.2);
+}
+
+/* ===========================
+   FOOTER BOTTOM
+   =========================== */
+.footerBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0 0;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.copyright {
+  margin: 0;
+  color: #666;
+  font-size: 13px;
+}
+
+.bottomLinks {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bottomLinks a {
+  color: #666;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.bottomLinks a:hover {
+  color: #e91e63;
+}
+
+.bottomLinks span {
+  color: #ccc;
+}
+
+/* ===========================
+   RESPONSIVE BREAKPOINTS
+   =========================== */
+
+/* 4K Displays (2560px+) */
+@media (min-width: 2560px) {
+  .footer {
+    padding: 70px 0 30px;
+  }
+  
+  .logo {
+    height: 180px;
+    max-width: 250px;
+  }
+  
+  .tagline {
+    font-size: 18px;
+  }
+  
+  .socialIcon {
+    width: 50px;
+    height: 50px;
+    font-size: 22px;
+  }
+  
+  .sectionTitle {
+    font-size: 22px;
+    margin-bottom: 25px;
+  }
+  
+  .infoItem a,
+  .linkList a,
+  .shopList a {
+    font-size: 18px;
+  }
+  
+  .newsletterCard {
+    padding: 50px;
+  }
+  
+  .newsletterTitle {
+    font-size: 36px;
+  }
+  
+  .newsletterSubtitle {
+    font-size: 18px;
+  }
+  
+  .emailInput,
+  .subscribeBtn {
+    font-size: 18px;
+    padding: 18px 28px;
+  }
+  
+  .badge {
+    font-size: 16px;
+    padding: 12px 24px;
+  }
+}
+
+/* Large Desktop (1920px - 2559px) */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .footer {
+    padding: 60px 0 25px;
+  }
+  
+  .logo {
+    height: 160px;
+    max-width: 220px;
+  }
+  
+  .tagline {
+    font-size: 16px;
+  }
+  
+  .socialIcon {
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+  
+  .sectionTitle {
+    font-size: 18px;
+  }
+  
+  .newsletterCard {
+    padding: 35px;
+  }
+  
+  .newsletterTitle {
+    font-size: 28px;
+  }
+}
+
+/* Desktop (1480px - 1919px) */
+@media (min-width: 1480px) and (max-width: 1919px) {
+  .footer {
+    padding: 55px 0 22px;
+  }
+  
+  .logo {
+    height: 145px;
+    max-width: 210px;
+  }
+  
+  .newsletterCard {
+    padding: 32px;
+  }
+  
+  .newsletterTitle {
+    font-size: 26px;
+  }
+}
+
+/* Medium Desktop (1280px - 1479px) */
+@media (min-width: 1280px) and (max-width: 1479px) {
+  .footer {
+    padding: 50px 0 20px;
+  }
+  
+  .logo {
+    height: 140px;
+    max-width: 200px;
+  }
+  
+  .newsletterTitle {
+    font-size: 24px;
+  }
+}
+
+/* Laptop (1024px - 1279px) */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .footer {
+    padding: 45px 0 18px;
+  }
+  
+  .logo {
+    height: 130px;
+    max-width: 180px;
+  }
+  
+  .sectionTitle {
+    font-size: 15px;
+    margin-bottom: 18px;
+  }
+  
+  .infoItem a,
+  .linkList a,
+  .shopList a {
+    font-size: 13px;
+  }
+  
+  .newsletterCard {
+    padding: 28px;
+  }
+  
+  .newsletterTitle {
+    font-size: 22px;
+  }
+  
+  .newsletterSubtitle {
+    font-size: 13px;
+  }
+  
+  .emailInput,
+  .subscribeBtn {
+    padding: 12px 20px;
+    font-size: 13px;
+  }
+  
+  .badge {
+    font-size: 12px;
+    padding: 8px 16px;
+  }
+}
+
+/* Tablet Landscape (992px - 1023px) */
+@media (min-width: 992px) and (max-width: 1023px) {
+  .footer {
+    padding: 40px 0 18px;
+  }
+  
+  .logo {
+    height: 120px;
+    max-width: 170px;
+  }
+  
+  .newsletterCard {
+    padding: 25px;
+  }
+  
+  .newsletterTitle {
+    font-size: 20px;
+  }
+}
+
+/* Tablet Portrait (768px - 991px) */
+@media (max-width: 991px) {
+  .footer {
+    padding: 40px 0 16px;
+  }
+  
+  .mainContent {
+    margin-bottom: 25px;
+  }
+  
+  .logo {
+    height: 110px;
+    max-width: 160px;
+  }
+  
+  .tagline {
+    font-size: 13px;
+  }
+  
+  .socialIcon {
+    width: 38px;
+    height: 38px;
+    font-size: 17px;
+  }
+  
+  .sectionTitle {
+    font-size: 15px;
+    margin-bottom: 16px;
+  }
+  
+  .infoItem a,
+  .linkList a {
+    font-size: 13px;
+  }
+  
+  .shopList a {
+    font-size: 13px;
+    padding: 5px 10px;
+    min-width: 130px;
+  }
+  
+  .newsletterCard {
+    padding: 22px;
+  }
+  
+  .newsletterTitle {
+    font-size: 19px;
+  }
+  
+  .newsletterSubtitle {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  
+  .discountBadge {
+    font-size: 14px;
+    padding: 6px 16px;
+  }
+  
+  .emailInput {
+    padding: 11px 18px;
+    font-size: 13px;
+  }
+  
+  .subscribeBtn {
+    padding: 11px 24px;
+    font-size: 13px;
+  }
+  
+  .trustBadges {
+    gap: 15px;
+    padding: 20px 0;
+  }
+  
+  .badge {
+    font-size: 12px;
+    padding: 8px 14px;
+  }
+  
+  .badge span:first-child {
+    font-size: 15px;
+  }
+}
+
+/* Mobile Landscape (576px - 767px) */
+@media (max-width: 767px) {
+  .footer {
+    padding: 35px 0 15px;
+  }
+  
+  .mainContent {
+    margin-bottom: 20px;
+  }
+  
+  .logo {
+    height: 100px;
+    max-width: 140px;
+  }
+  
+  .tagline {
+    font-size: 12px;
+    margin-bottom: 15px;
+  }
+  
+  .socialLinks {
+    gap: 8px;
+  }
+  
+  .socialIcon {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+  
+  .sectionTitle {
+    font-size: 14px;
+    margin-bottom: 14px;
+  }
+  
+  .sectionTitle .icon {
+    font-size: 16px;
+  }
+  
+  .infoItem .label {
+    font-size: 11px;
+  }
+  
+  .infoItem a,
+  .linkList a {
+    font-size: 12px;
+  }
+  
+  .hourLine {
+    font-size: 12px;
+  }
+  
+  .shopList a {
+    font-size: 12px;
+    padding: 5px 10px;
+    min-width: 120px;
+  }
+  
+  .newsletterCard {
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+  }
+  
+  .newsletterHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .discountBadge {
+    font-size: 13px;
+    padding: 6px 14px;
+  }
+  
+  .newsletterTitle {
+    font-size: 17px;
+  }
+  
+  .newsletterSubtitle {
+    font-size: 12px;
+    margin-bottom: 14px;
+  }
+  
+  .newsletterForm {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .emailInput {
+    width: 100%;
+    padding: 10px 16px;
+    font-size: 12px;
+  }
+  
+  .subscribeBtn {
+    width: 100%;
+    padding: 10px 20px;
+    font-size: 12px;
+  }
+  
+  .trustBadges {
+    gap: 10px;
+    padding: 18px 0;
+  }
+  
+  .badge {
+    font-size: 11px;
+    padding: 7px 12px;
+  }
+  
+  .badge span:first-child {
+    font-size: 14px;
+  }
+  
+  .footerBottom {
+    flex-direction: column;
+    text-align: center;
+    padding: 15px 0 0;
+    gap: 10px;
+  }
+  
+  .copyright,
+  .bottomLinks a {
+    font-size: 12px;
+  }
+}
+
+/* Mobile Portrait (480px - 575px) */
+@media (max-width: 575px) {
+  .footer {
+    padding: 30px 0 12px;
+  }
+  
+  .mainContent {
+    margin-bottom: 18px;
+  }
+  
+  .logo {
+    height: 90px;
+    max-width: 130px;
+  }
+  
+  .tagline {
+    font-size: 11px;
+  }
+  
+  .socialIcon {
+    width: 34px;
+    height: 34px;
+    font-size: 15px;
+  }
+  
+  .sectionTitle {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+  
+  .infoItem a,
+  .linkList a {
+    font-size: 11px;
+  }
+  
+  .shopList a {
+    font-size: 11px;
+    padding: 4px 8px;
+    min-width: 110px;
+  }
+  
+  .newsletterCard {
+    padding: 16px;
+  }
+  
+  .newsletterTitle {
+    font-size: 15px;
+  }
+  
+  .newsletterSubtitle {
+    font-size: 11px;
+  }
+  
+  .trustBadges {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .badge {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+  }
+}
+
+/* Small Mobile (320px - 479px) */
+@media (max-width: 479px) {
+  .footer {
+    padding: 25px 0 10px;
+  }
+  
+  .mainContent {
+    margin-bottom: 15px;
+  }
+  
+  .logo {
+    height: 80px;
+    max-width: 120px;
+    margin-bottom: 10px;
+  }
+  
+  .tagline {
+    font-size: 10px;
+    margin-bottom: 12px;
+  }
+  
+  .socialLinks {
+    gap: 6px;
+  }
+  
+  .socialIcon {
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
+  }
+  
+  .sectionTitle {
+    font-size: 12px;
+    margin-bottom: 10px;
+    gap: 6px;
+  }
+  
+  .sectionTitle .icon {
+    font-size: 14px;
+  }
+  
+  .contactInfo {
+    gap: 10px;
+  }
+  
+  .infoItem .label {
+    font-size: 10px;
+  }
+  
+  .infoItem a {
+    font-size: 10px;
+  }
+  
+  .hourLine {
+    font-size: 10px;
+  }
+  
+  .linkList {
+    gap: 8px;
+  }
+  
+  .linkList a {
+    font-size: 10px;
+  }
+  
+  .shopList {
+    gap: 6px;
+  }
+  
+  .shopList a {
+    font-size: 10px;
+    padding: 4px 8px;
+    min-width: 100px;
+  }
+  
+  .newsletterCard {
+    padding: 14px;
+    border-radius: 10px;
+    margin: 15px 0;
+  }
+  
+  .newsletterHeader {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  
+  .discountBadge {
+    font-size: 11px;
+    padding: 4px 12px;
+  }
+  
+  .newsletterTitle {
+    font-size: 13px;
+  }
+  
+  .newsletterSubtitle {
+    font-size: 10px;
+    margin-bottom: 12px;
+  }
+  
+  .newsletterForm {
+    gap: 8px;
+  }
+  
+  .emailInput {
+    padding: 9px 14px;
+    font-size: 11px;
+  }
+  
+  .subscribeBtn {
+    padding: 9px 18px;
+    font-size: 11px;
+  }
+  
+  .trustBadges {
+    padding: 15px 0;
+    gap: 6px;
+  }
+  
+  .badge {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+  
+  .badge span:first-child {
+    font-size: 12px;
+  }
+  
+  .footerBottom {
+    padding: 12px 0 0;
+  }
+  
+  .copyright,
+  .bottomLinks a {
+    font-size: 10px;
+  }
+  
+  .bottomLinks {
+    gap: 8px;
+  }
+}
+
+/* Extra Small Mobile (below 375px) */
+@media (max-width: 374px) {
+  .footer {
+    padding: 22px 0 10px;
+  }
+  
+  .logo {
+    height: 70px;
+    max-width: 110px;
+  }
+  
+  .tagline {
+    font-size: 9px;
+  }
+  
+  .socialIcon {
+    width: 30px;
+    height: 30px;
+    font-size: 13px;
+  }
+  
+  .sectionTitle {
+    font-size: 11px;
+  }
+  
+  .infoItem a,
+  .linkList a,
+  .shopList a {
+    font-size: 9px;
+  }
+  
+  .newsletterCard {
+    padding: 12px;
+  }
+  
+  .discountBadge {
+    font-size: 10px;
+    padding: 3px 10px;
+  }
+  
+  .newsletterTitle {
+    font-size: 12px;
+  }
+  
+  .newsletterSubtitle {
+    font-size: 9px;
+  }
+  
+  .emailInput,
+  .subscribeBtn {
+    font-size: 10px;
+    padding: 8px 12px;
+  }
+  
+  .badge {
+    font-size: 9px;
+    padding: 5px 8px;
+  }
+}
+
+/* Ultra Compact (below 320px) */
+@media (max-width: 320px) {
+  .footer {
+    padding: 20px 0 8px;
+  }
+  
+  .logo {
+    height: 65px;
+    max-width: 100px;
+  }
+  
+  .newsletterCard {
+    padding: 10px;
+  }
 }
