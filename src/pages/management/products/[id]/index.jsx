@@ -193,6 +193,7 @@ const EditProducts = () => {
         setValue('gender', p.gender || '');
         setValue('category', p.category || '');
         setValue('subcategory', p.subcategory || '');
+        setValue('similarColor', p.similarColor || '');
         setValue('sku', p.sku || '');
         setValue('taxSlab', p.taxSlab || '');
 
@@ -376,6 +377,7 @@ const EditProducts = () => {
     formData.append('gender', data.gender || '');
     formData.append('category', data.category || '');
     formData.append('subcategory', data.subcategory || '');
+    formData.append('similarColor', data.similarColor || '');
     formData.append('sku', data.sku || '');
     formData.append('taxSlab', data.taxSlab || '');
 
@@ -671,6 +673,25 @@ const EditProducts = () => {
                     placeholder="Example: 12% GST / HSN code"
                   />
                 </FormControl>
+                <FormControl>
+  <FormLabel>Similar Color</FormLabel>
+  <Select
+    {...register('similarColor')}
+    placeholder="Select similar color"
+  >
+    <option value="black">Black</option>
+    <option value="grey">Grey</option>
+    <option value="navy">Navy</option>
+    <option value="blue">Blue</option>
+    <option value="teal">Teal</option>
+    <option value="green">Green</option>
+    <option value="orange">Orange</option>
+    <option value="red">Red</option>
+    <option value="pink">Pink</option>
+    <option value="yellow">Yellow</option>
+  </Select>
+</FormControl>
+
               </SimpleGrid>
 
               <Divider my={6} />

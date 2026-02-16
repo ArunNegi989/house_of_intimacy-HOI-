@@ -23,45 +23,45 @@ const COLORS = [
 ];
 
 // master color map
-const COLOR_MAP = {
-  black: "#000000",
-  grey: "#4B5563",
-  navy: "#1F2937",
-  blue: "#2563EB",
-  teal: "#14B8A6",
-  green: "#22C55E",
-  orange: "#F97316",
-  red: "#EF4444",
-  pink: "#EC4899",
-  yellow: "#FACC15",
-};
+// const COLOR_MAP = {
+//   black: "#000000",
+//   grey: "#4B5563",
+//   navy: "#1F2937",
+//   blue: "#2563EB",
+//   teal: "#14B8A6",
+//   green: "#22C55E",
+//   orange: "#F97316",
+//   red: "#EF4444",
+//   pink: "#EC4899",
+//   yellow: "#FACC15",
+// };
 
 // reverse map (hex → name)
-const HEX_TO_NAME = Object.fromEntries(
-  Object.entries(COLOR_MAP).map(([name, hex]) => [hex.toLowerCase(), name])
-);
+// const HEX_TO_NAME = Object.fromEntries(
+//   Object.entries(COLOR_MAP).map(([name, hex]) => [hex.toLowerCase(), name])
+// );
 
 // universal color normalizer
-function normalizeColor(val) {
-  if (!val) return null;
+// function normalizeColor(val) {
+//   if (!val) return null;
 
-  if (typeof val === "object") {
-    if (val.label) return String(val.label).toLowerCase();
-    if (val.name) return String(val.name).toLowerCase();
-  }
+//   if (typeof val === "object") {
+//     if (val.label) return String(val.label).toLowerCase();
+//     if (val.name) return String(val.name).toLowerCase();
+//   }
 
-  if (typeof val === "string" && val.startsWith("#")) {
-    const lowerHex = val.toLowerCase();
-    const mappedName = HEX_TO_NAME[lowerHex];
-    return mappedName ? mappedName.toLowerCase() : null;
-  }
+//   if (typeof val === "string" && val.startsWith("#")) {
+//     const lowerHex = val.toLowerCase();
+//     const mappedName = HEX_TO_NAME[lowerHex];
+//     return mappedName ? mappedName.toLowerCase() : null;
+//   }
 
-  if (typeof val === "string") {
-    return val.toLowerCase();
-  }
+//   if (typeof val === "string") {
+//     return val.toLowerCase();
+//   }
 
-  return null;
-}
+//   return null;
+// }
 
 // backend image helper
 const getImageUrl = (url) => {
@@ -134,16 +134,14 @@ const JockeyColorSlider = () => {
   });
 
   // ---- color filter ----
-  const filteredByColor = genderFilteredProducts.filter((p) => {
-    if (!p.colors || !Array.isArray(p.colors)) return false;
+ const filteredByColor = genderFilteredProducts.filter((p) => {
+  if (!p.similarColor) return false;
 
-    const wantedColor = activeColor.label.toLowerCase();
+  const wantedColor = activeColor.id.toLowerCase();
 
-    return p.colors.some((c) => {
-      const normalized = normalizeColor(c);
-      return normalized === wantedColor;
-    });
-  });
+  return p.similarColor.toLowerCase() === wantedColor;
+});
+
 
   // if no products in that color → show all gender products
   const productsToShow =

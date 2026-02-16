@@ -224,6 +224,7 @@ const AddProducts = () => {
     formData.append('brand', data.brand || '');
     formData.append('gender', data.gender || '');
     formData.append('category', data.category || '');
+    formData.append('similarColor', data.similarColor || '');
     formData.append('subcategory', data.subcategory || '');
     formData.append('sku', data.sku || '');
     formData.append('taxSlab', data.taxSlab || '');
@@ -270,6 +271,7 @@ const AddProducts = () => {
     formData.append('collections', JSON.stringify(collectionsArray));
     formData.append('features', JSON.stringify(featuresArray));
     formData.append('shippingAndReturns', JSON.stringify(shippingArray));
+
 
     formData.append(
       'seo',
@@ -510,6 +512,25 @@ const AddProducts = () => {
                     placeholder="Example: 12% GST / HSN code"
                   />
                 </FormControl>
+                <FormControl>
+  <FormLabel>Similar Color</FormLabel>
+  <Select
+    {...register('similarColor')}
+    placeholder="Select similar color"
+  >
+    <option value="black">Black</option>
+    <option value="grey">Grey</option>
+    <option value="navy">Navy</option>
+    <option value="blue">Blue</option>
+    <option value="teal">Teal</option>
+    <option value="green">Green</option>
+    <option value="orange">Orange</option>
+    <option value="red">Red</option>
+    <option value="pink">Pink</option>
+    <option value="yellow">Yellow</option>
+  </Select>
+</FormControl>
+
               </SimpleGrid>
 
               <Divider my={6} />
