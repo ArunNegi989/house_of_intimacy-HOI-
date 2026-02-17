@@ -230,6 +230,7 @@ const Products = () => {
                   <Th style={{ padding: '16px', color: 'white' }}>S No.</Th>
                   <Th style={{ padding: '16px', color: 'white' }}>Image</Th>
                   <Th style={{ padding: '16px', color: 'white' }}>Product</Th>
+                  <Th style={{ padding: '16px', color: 'white' }}>Product Code</Th>
                   <Th style={{ padding: '16px', color: 'white' }}>Category</Th>
                   <Th style={{ padding: '16px', color: 'white' }}>Brand</Th>
                   <Th style={{ padding: '16px', color: 'white' }}>Price</Th>
@@ -292,6 +293,11 @@ const Products = () => {
                       <Td style={{ padding: '14px' }}>
                         <Text fontWeight="600">{product.name}</Text>
                       </Td>
+                      {/* Product Code */}
+<Td style={{ padding: '14px' }}>
+  {product.productCode || product.code || '-'}
+</Td>
+
 
                       {/* Category */}
                       <Td style={{ padding: '14px' }}>

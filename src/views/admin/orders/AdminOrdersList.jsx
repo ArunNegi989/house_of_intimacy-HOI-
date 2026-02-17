@@ -224,6 +224,7 @@ function AdminOrdersList() {
                 <Tr>
                   <Th>Order</Th>
                   <Th>Customer</Th>
+                  <Th>Product Code</Th>
                   <Th isNumeric>Total</Th>
                   <Th>Status</Th>
                   <Th>Payment</Th>
@@ -266,8 +267,30 @@ function AdminOrdersList() {
                           {order.user?.email}
                         </Text>
                       </Td>
+                      <Td>
+  {order.items && order.items.length > 0 ? (
+    <Flex gap={1} wrap="wrap">
+      {order.items.map((item, index) => (
+        <Badge
+          key={index}
+          px={2}
+          py={1}
+          borderRadius="full"
+          colorScheme="purple"
+          fontSize="0.7rem"
+        >
+          {item.productCode || item.code || "—"}
+        </Badge>
+      ))}
+    </Flex>
+  ) : (
+    "—"
+  )}
+</Td>
+
 
                       <Td isNumeric>
+
                         <Text fontSize="sm">
                           ₹ {formatMoney(order.grandTotal)}
                         </Text>

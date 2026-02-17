@@ -31,6 +31,7 @@ import { RiEyeCloseLine } from "react-icons/ri";
 
 import axios from "axios";
 import { WishlistContext } from "../../../contexts/WishlistContext";
+import { CartContext } from "../../../contexts/CartContext"; // ← ADD
 
 const baseUrl = process.env.REACT_APP_APIURL || "http://localhost:8000/v1";
 
@@ -45,9 +46,9 @@ function SignIn() {
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
-  
-  // 🔥 Get wishlist context
+
   const { syncWithDatabase } = useContext(WishlistContext);
+  const { syncCartOnLogin } = useContext(CartContext); // ← ADD
 
   const {
     register,
@@ -70,16 +71,17 @@ function SignIn() {
         throw new Error("Invalid response from server");
       }
 
-      // ⚡ Keep me logged in → localStorage, otherwise sessionStorage
       const storage = values.rememberMe ? localStorage : sessionStorage;
-
       storage.setItem("authToken", token);
       storage.setItem("userRole", (user.role || "user").toLowerCase());
       storage.setItem("userName", user.name || "");
       storage.setItem("userEmail", user.email || "");
 
-      // 🔥 SYNC WISHLIST WITH DATABASE
-      await syncWithDatabase();
+      // 🔥 Wishlist + Cart dono sync karo ek saath
+      await Promise.all([
+        syncWithDatabase(),
+        syncCartOnLogin(), // ← ADD
+      ]);
 
       toast({
         title: "Login successful",
@@ -92,7 +94,6 @@ function SignIn() {
         isClosable: true,
       });
 
-      // 🧭 Redirect based on role + from state
       const role = (user.role || "").toLowerCase().trim();
       const from = location.state?.from;
 
@@ -166,7 +167,6 @@ function SignIn() {
           me="auto"
           mb={{ base: "20px", md: "auto" }}
         >
-          {/* Google Button (Optional) */}
           <Button
             fontSize="sm"
             mb="26px"
@@ -184,9 +184,7 @@ function SignIn() {
 
           <HSeparator mb="26px" />
 
-          {/* FORM */}
           <form onSubmit={handleSubmit(onSubmit)}>
-            {/* EMAIL */}
             <FormControl mb="24px" isInvalid={errors.email}>
               <FormLabel
                 display="flex"
@@ -216,7 +214,6 @@ function SignIn() {
               )}
             </FormControl>
 
-            {/* PASSWORD */}
             <FormControl mb="24px" isInvalid={errors.password}>
               <FormLabel
                 ms="4px"
@@ -255,7 +252,6 @@ function SignIn() {
               )}
             </FormControl>
 
-            {/* REMEMBER ME + FORGOT */}
             <Flex justifyContent="space-between" align="center" mb="24px">
               <Checkbox
                 colorScheme="brand"
@@ -276,7 +272,6 @@ function SignIn() {
               </NavLink>
             </Flex>
 
-            {/* SUBMIT BUTTON */}
             <Button
               type="submit"
               fontSize="sm"
@@ -291,7 +286,6 @@ function SignIn() {
             </Button>
           </form>
 
-          {/* REGISTER LINK */}
           <Flex justifyContent="center" align="center">
             <Text color={textColorDetails} fontSize="sm" me="4px">
               Not registered yet?
