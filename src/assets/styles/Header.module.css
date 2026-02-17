@@ -1,4 +1,9 @@
-/* Outer wrapper */
+/* =============================================
+   Header.module.css — Full Responsive
+   Breakpoints: 1400, 1200, 992, 768, 480, 360
+   ============================================= */
+
+/* ===== Outer wrapper ===== */
 .header {
   background: #ffffff;
   position: sticky;
@@ -6,6 +11,7 @@
   left: 0;
   right: 0;
   z-index: 999;
+  box-shadow: 0 1px 0 #f0f0f0;
 }
 
 /* ===== Top row ===== */
@@ -14,13 +20,11 @@
   padding: 14px 40px 10px;
   display: flex;
   justify-content: center;
-  /* logo centered */
   align-items: center;
   position: relative;
-  /* so absolute children align to this row */
 }
 
-/* Hamburger button (absolute on left) */
+/* Hamburger button */
 .menuBtn {
   position: absolute;
   left: 40px;
@@ -29,16 +33,26 @@
   font-size: 24px;
   cursor: pointer;
   display: none;
-  /* shown only on mobile */
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 6px;
+  color: #222;
+  transition: background 0.15s ease;
+}
+.menuBtn:hover {
+  background: #f5f5f5;
 }
 
-/* Logo center */
+/* Logo — now a <Link>, reset anchor styles */
 .logo {
   display: flex;
   align-items: center;
   justify-content: center;
   height: 70px;
   width: 300px;
+  text-decoration: none;
+  flex-shrink: 0;
 }
 
 .logoImg {
@@ -47,22 +61,7 @@
   object-fit: contain;
 }
 
-/* (only used if you keep text logo) */
-.logoWordmark {
-  font-family: "Times New Roman", Georgia, "Times New Roman", serif;
-  font-size: 32px;
-  letter-spacing: 0.06em;
-  line-height: 1;
-}
-
-.logoAccent {
-  color: #e34c4c;
-  margin-left: 2px;
-  font-size: 20px;
-  line-height: 1;
-}
-
-/* Icons (absolute on right) */
+/* Icons group */
 .iconGroup {
   position: absolute;
   right: 40px;
@@ -77,8 +76,17 @@
   cursor: pointer;
   font-size: 20px;
   position: relative;
+  padding: 4px;
+  color: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  transition: background 0.15s ease;
 }
-
+.iconBtn:hover {
+  background: #f5f5f5;
+}
 .iconBtn:focus-visible {
   outline: 2px solid #000;
   outline-offset: 2px;
@@ -88,15 +96,10 @@
   position: relative;
 }
 
-/* Heart badge */
-.iconHeart {
-  position: relative;
-}
-
 .badge {
   position: absolute;
-  top: -7px;
-  right: -9px;
+  top: -6px;
+  right: -8px;
   min-width: 16px;
   height: 16px;
   border-radius: 999px;
@@ -106,52 +109,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 0 3px;
 }
 
-/* bottom row wrapper */
-.bottomRow {
-  border-top: 1px solid #f3f3f3;
-  background: #ffffff;
-}
-
-/* Desktop nav */
-.navDesktop {
-  padding: 8px 26px 10px;
-  margin: 0 auto;
-  margin-top: 20px;
-}
-
-.navList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 30px;
-}
-
-.navItem {
-  position: relative;
-}
-
-.navLink {
-  text-decoration: none;
-  color: #222;
-  font-size: 16px;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.14em;
-  padding-bottom: 4px;
-  border-bottom: 2px solid transparent;
-  transition: color 0.2s ease, border-color 0.2s ease;
-}
-
-.navLink:hover {
-  color: #000;
-  border-color: #ee1493;
-}
-
+/* Wishlist — now a <Link>, reset anchor styles */
 .wishlistButton {
   position: relative;
   border: none;
@@ -161,6 +122,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
+  color: #222;
+  border-radius: 6px;
+  font-size: 20px;
+  transition: background 0.15s ease;
+}
+.wishlistButton:hover {
+  background: #f5f5f5;
 }
 
 .wishlistIcon {
@@ -179,34 +148,162 @@
   padding: 2px 5px;
 }
 
-/* ===== Mega menu (desktop) ===== */
+/* ===== Bottom nav row ===== */
+.bottomRow {
+  border-top: 1px solid #f3f3f3;
+  background: #ffffff;
+}
 
-.megaMenu {
+.navDesktop {
+  padding: 8px 26px 10px;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+.navList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.navItem {
+  position: relative;
+}
+
+/* ✅ navLink is now a <Link> — must reset anchor defaults */
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  text-decoration: none;
+  color: #222;
+  font-size: 15px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding-bottom: 4px;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+.navLink:hover {
+  color: #000;
+  border-color: #ee1493;
+}
+
+/* Small chevron next to BRAS/PANTIES labels */
+.navChevron {
+  font-size: 13px;
+  transition: transform 0.2s ease;
+}
+.navChevronOpen {
+  transform: rotate(180deg);
+}
+
+/* ===== User menu ===== */
+.userMenuWrapper {
+  position: relative;
+}
+
+.userBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid #e3e3e3;
+  background: #ffffff;
+  transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+  font-size: 14px;
+}
+.userBtn:hover {
+  background: #f7f7f7;
+  border-color: #d0d0d0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  transform: translateY(-1px);
+}
+
+.userNameText {
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: capitalize;
+  white-space: nowrap;
+  max-width: 100px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.userArrow {
+  font-size: 14px;
+  transition: transform 0.2s ease;
+}
+.userArrowOpen {
+  transform: rotate(180deg);
+}
+
+.userDropdown {
   position: absolute;
-  left: 50%;
-  top: 100%;
-  transform: translateX(-8%);
-  width: 90vw;
+  right: 0;
+  top: calc(100% + 8px);
+  background: #ffffff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  min-width: 170px;
+  z-index: 50;
+  padding: 6px 0;
+}
+
+/* ✅ userDropdownItem used for both <Link> and <button> */
+.userDropdownItem {
+  width: 100%;
+  padding: 8px 14px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+  display: block;
+  text-decoration: none;
+  color: #222;
+  transition: background 0.15s ease;
+}
+.userDropdownItem:hover {
+  background: #f5f5f5;
+}
+
+/* ===== Mega menu (desktop) ===== */
+.megaMenu {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: auto;
   background: #fff8f6;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.1);
-  padding: 40px 80px;
-  z-index: 30;
+  padding: 40px 60px;
+  z-index: 100;
 }
 
 .megaInner {
-  max-width: 1680px;
+  max-width: 1400px;
   margin: 0 auto;
   display: flex;
-  gap: 90px;
+  gap: 60px;
   align-items: start;
 }
 
 .megaColumn {
   min-width: 0;
+  flex: 1;
 }
 
 .megaTitle {
-  font-size: 14px;
+  font-size: 13px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   color: #b02959;
@@ -219,100 +316,170 @@
   margin: 0;
 }
 
+/* ✅ megaLink is now a <Link> */
 .megaLink {
   display: block;
-  font-size: 15px;
+  font-size: 14px;
   text-decoration: none;
   color: #222;
-  padding: 3px 0;
+  padding: 4px 0;
+  transition: color 0.15s ease;
 }
-
 .megaLink:hover {
   color: #b02959;
 }
 
-/* Right promo image */
 .megaPromo {
   background: #f4e3ea;
-  border-radius: 24px;
+  border-radius: 20px;
   padding: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
+  flex-shrink: 0;
+  width: 200px;
 }
 
 .megaPromoImg {
   width: 100%;
-  border-radius: 20px;
+  border-radius: 14px;
   object-fit: cover;
   margin-bottom: 12px;
 }
 
+/* ✅ promoBtn is now a <Link> */
 .promoBtn {
   border: none;
   background: #ffffff;
   border-radius: 999px;
   padding: 8px 20px;
-  font-size: 13px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.12em;
   cursor: pointer;
+  text-decoration: none;
+  color: #222;
+  display: inline-block;
+  transition: background 0.15s ease;
+}
+.promoBtn:hover {
+  background: #fbe3ec;
 }
 
-/* ===== Mobile nav (dropdown) ===== */
+/* ===== Mobile nav (slide-in drawer) ===== */
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 90;
+}
+
 .mobileNav {
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.25s ease;
-  border-bottom: 1px solid transparent;
+  position: fixed;
+  top: 0;
+  left: -100%;
+  width: min(340px, 90vw);
+  height: 100dvh;
   background: #ffffff;
-}
-
-/* when open */
-.mobileNavOpen {
-  max-height: 100vh;
-  /* or 80vh, or 1200px – just big enough */
-  border-bottom-color: #eee;
+  z-index: 95;
   overflow-y: auto;
-  /* ⭐ allows scrolling inside menu */
+  transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
 }
 
-.mobileNavList {
-  list-style: none;
-  margin: 0;
-  padding: 0 16px 10px;
+.mobileNavOpen {
+  left: 0;
 }
 
-.mobileNavItem+.mobileNavItem {
-  border-top: 1px solid #eee;
+/* Close icon in mobile nav top-right */
+.mobileNavHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px;
+  border-bottom: 1px solid #eee;
 }
 
-/* ===== Mobile actions row (inside dropdown) ===== */
+/* ===== Drawer header (logo + close) ===== */
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.drawerLogo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  height: 44px;
+  max-width: 160px;
+}
+
+.drawerLogoImg {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+}
+
+.drawerCloseBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: #f5f5f5;
+  border-radius: 50%;
+  font-size: 20px;
+  cursor: pointer;
+  color: #333;
+  flex-shrink: 0;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.drawerCloseBtn:hover {
+  background: #ffe4ec;
+  color: #b02959;
+  transform: rotate(90deg);
+}
+
+/* Mobile action buttons (top of drawer) */
 .mobileActions {
-  padding: 10px 16px 6px;
+  padding: 12px 14px 10px;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   border-bottom: 1px solid #eee;
   background: #fff;
 }
 
+/* ✅ mobileActionBtn used for both <button> and <Link> */
 .mobileActionBtn {
-  flex: 1 1 calc(50% - 10px);
+  flex: 1 1 calc(50% - 8px);
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 10px;
+  gap: 7px;
+  padding: 9px 12px;
   font-size: 13px;
   border-radius: 999px;
   border: 1px solid #eee;
   background: #ffffff;
   cursor: pointer;
+  text-decoration: none;
+  color: #222;
+  transition: background 0.15s ease;
 }
-
+.mobileActionBtn:hover {
+  background: #fdf1f5;
+}
 .mobileActionBtn svg {
   font-size: 16px;
+  flex-shrink: 0;
 }
 
 .mobileBadge {
@@ -326,48 +493,80 @@
   justify-content: center;
   background: #dc2626;
   color: #fff;
+  padding: 0 4px;
 }
 
-/* mobile nav link button for items */
+/* Category list */
+.mobileNavList {
+  list-style: none;
+  margin: 0;
+  padding: 0 14px 10px;
+  flex: 1;
+}
+
+.mobileNavItem + .mobileNavItem {
+  border-top: 1px solid #f0f0f0;
+}
+
+/* ✅ mobileNavLinkButton used for both <button> and <Link> */
 .mobileNavLinkButton {
   width: 100%;
   border: none;
   background: transparent;
-  padding: 10px 0;
+  padding: 12px 0;
   text-align: left;
-  font-size: 14px;
-  letter-spacing: 0.06em;
+  font-size: 13px;
+  letter-spacing: 0.07em;
   text-transform: uppercase;
   display: flex;
   align-items: center;
   justify-content: space-between;
   cursor: pointer;
+  text-decoration: none;
+  color: #222;
+  font-weight: 500;
 }
 
-/* chevron rotation */
 .mobileChevron {
   transition: transform 0.2s ease;
+  flex-shrink: 0;
 }
-
 .mobileChevronOpen {
   transform: rotate(180deg);
 }
 
-/* mobile mega content (subcategories) */
+/* Mobile mega accordion */
 .mobileMega {
-  padding: 6px 0 10px;
+  padding: 4px 0 12px 8px;
+  border-left: 2px solid #f4e3ea;
+  margin-left: 4px;
+  margin-bottom: 4px;
 }
 
-.mobileMegaColumn+.mobileMegaColumn {
-  margin-top: 6px;
+.mobileMegaViewAll {
+  display: inline-block;
+  font-size: 12px;
+  color: #b02959;
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 10px;
+  letter-spacing: 0.05em;
+}
+.mobileMegaViewAll:hover {
+  text-decoration: underline;
+}
+
+.mobileMegaColumn + .mobileMegaColumn {
+  margin-top: 8px;
 }
 
 .mobileMegaTitle {
-  font-size: 12px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #b02959;
-  margin-bottom: 4px;
+  margin-bottom: 5px;
+  font-weight: 600;
 }
 
 .mobileMegaList {
@@ -376,83 +575,44 @@
   padding: 0;
 }
 
+/* ✅ mobileSubLink is now a <Link> */
 .mobileSubLink {
+  display: block;
   width: 100%;
   text-align: left;
-  padding: 4px 0;
+  padding: 5px 0;
   border: none;
   background: transparent;
   font-size: 13px;
-  color: #222;
+  color: #333;
   cursor: pointer;
+  text-decoration: none;
+  transition: color 0.15s ease;
 }
-
 .mobileSubLink:hover {
   color: #b02959;
 }
 
-/* left-over class if you ever use plain <a> */
-.mobileNavLink {
-  display: block;
-  padding: 10px 0;
+/* Mobile footer links */
+.mobileFooterLinks {
+  display: flex;
+  gap: 16px;
+  padding: 14px 16px;
+  border-top: 1px solid #f0f0f0;
+  background: #fafafa;
+  margin-top: auto;
+}
+.mobileFooterLinks a {
+  font-size: 11px;
+  color: #888;
   text-decoration: none;
-  color: #222;
-  font-size: 14px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+}
+.mobileFooterLinks a:hover {
+  color: #b02959;
+  text-decoration: underline;
 }
 
-/* ===== Responsive ===== */
-@media (max-width: 992px) {
-  .topRow {
-    padding: 12px 16px 8px;
-  }
-
-  .menuBtn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .iconGroup {
-    right: 16px;
-    gap: 14px;
-  }
-
-  .navDesktop {
-    display: none;
-    /* hide desktop nav */
-  }
-
-  .bottomRow {
-    display: none;
-  }
-
-  /* hide mega menu on mobile */
-  .megaMenu {
-    display: none;
-  }
-}
-
-/* ✅ On small screens, hide right icons.
-   Only logo + hamburger remain in top bar */
-@media (max-width: 767px) {
-  .iconGroup {
-    display: none;
-  }
-}
-
-@media (max-width: 600px) {
-  .topRow {
-    padding: 10px 12px 6px;
-  }
-
-  .logoImg {
-    max-height: 38px;
-  }
-}
-
-/* === Auth modal (final) === */
+/* ===== Auth modal ===== */
 .authOverlay {
   position: fixed;
   inset: 0;
@@ -461,6 +621,7 @@
   align-items: center;
   justify-content: center;
   z-index: 9999;
+  padding: 16px;
 }
 
 .authModal {
@@ -469,15 +630,14 @@
   max-width: 720px;
   background: #ffffff;
   border-radius: 88px 0px 88px 0px;
-  padding: 0;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
   overflow: hidden;
 }
 
 .authCloseBtn {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 12px;
+  right: 12px;
   border: none;
   background: rgba(255, 255, 255, 0.9);
   border-radius: 999px;
@@ -487,15 +647,18 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  z-index: 10;
+  transition: background 0.15s ease;
+}
+.authCloseBtn:hover {
+  background: #f0f0f0;
 }
 
-/* two-column layout */
 .authContent {
   display: flex;
   min-height: 380px;
 }
 
-/* LEFT IMAGE PANEL */
 .authLeft {
   flex: 1;
   background: #ffe4ec;
@@ -503,17 +666,15 @@
   align-items: stretch;
   justify-content: center;
 }
-
 .authLeftImg {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* RIGHT PANEL */
 .authRight {
   flex: 1;
-  padding: 28px 26px 22px;
+  padding: 32px 28px 24px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -521,7 +682,7 @@
 
 .authLogo {
   font-family: "Times New Roman", Georgia, serif;
-  font-size: 28px;
+  font-size: 26px;
   letter-spacing: 0.08em;
   text-align: center;
   margin-bottom: 6px;
@@ -531,18 +692,16 @@
   font-size: 21px;
   font-weight: 600;
   margin-bottom: 4px;
-  align-items: center;
   text-align: center;
 }
 
 .authSubheading {
-  font-size: 18px;
+  font-size: 16px;
   color: #666;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
-/* BUTTONS ONLY */
 .authButtonGroup {
   display: flex;
   flex-direction: column;
@@ -560,10 +719,10 @@
   cursor: pointer;
   background: #61001f;
   color: #fff;
+  transition: opacity 0.15s ease;
 }
-
 .primaryBtn:hover {
-  opacity: 0.96;
+  opacity: 0.92;
 }
 
 .secondaryBtn {
@@ -576,125 +735,32 @@
   background: #ffffff;
   border: 2px solid #61001f;
   color: #61001f;
+  transition: background 0.15s ease;
 }
-
 .secondaryBtn:hover {
   background: #fbe3ec;
 }
 
-/* terms */
 .termsText {
-  margin-top: 4px;
+  margin-top: 6px;
   font-size: 11px;
   color: #777;
+  text-align: center;
+  line-height: 1.5;
 }
 
+/* ✅ termsLink is now a <Link> */
 .termsLink {
   color: #61001f;
   text-decoration: underline;
 }
 
-/* responsive: stack on small screens */
-@media (max-width: 640px) {
-  .authModal {
-    max-width: 95%;
-  }
-
-  .authContent {
-    flex-direction: column;
-  }
-
-  .authLeft {
-    display: none;
-  }
-
-  .authRight {
-    padding: 24px 18px 20px;
-  }
-
-  .authLogo,
-  .authHeading,
-  .authSubheading,
-  .termsText {
-    text-align: center;
-  }
-}
-
-/* wrapper around username button */
-.userMenuWrapper {
-  position: relative;
-}
-
-/* username button look */
-.userBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  border: 1px solid #e3e3e3;
-  background: #ffffff;
-  transition: background 0.2s ease, border-color 0.2s ease,
-    box-shadow 0.2s ease, transform 0.1s ease;
-}
-
-/* hover effect on user button */
-.userBtn:hover {
-  background: #f7f7f7;
-  border-color: #d0d0d0;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-  transform: translateY(-1px);
-}
-
-/* full name text */
-.userNameText {
-  font-size: 14px;
-  font-weight: 500;
-  text-transform: capitalize;
-  white-space: nowrap;
-}
-
-/* arrow on the right */
-.userArrow {
-  font-size: 14px;
-}
-
-/* dropdown panel */
-.userDropdown {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 8px);
-  background: #ffffff;
-  border: 1px solid #eee;
-  border-radius: 8px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-  min-width: 170px;
-  z-index: 50;
-  padding: 6px 0;
-}
-
-/* each item in dropdown */
-.userDropdownItem {
-  width: 100%;
-  padding: 8px 14px;
-  background: transparent;
-  border: none;
-  text-align: left;
-  font-size: 14px;
-  cursor: pointer;
-}
-
-.userDropdownItem:hover {
-  background: #f5f5f5;
-}
-
-/* ===== Logout modal (auth style) ===== */
-
+/* ===== Logout modal ===== */
 .logoutModal {
   position: relative;
   background: #ffffff;
   border-radius: 24px;
-  padding: 24px 24px 20px;
+  padding: 28px 24px 22px;
   max-width: 420px;
   width: 90%;
   margin: 0 auto;
@@ -730,8 +796,8 @@
 .logoutText {
   font-size: 14px;
   color: #555;
-  margin-bottom: 20px;
-  line-height: 1.5;
+  margin-bottom: 22px;
+  line-height: 1.55;
 }
 
 .logoutActions {
@@ -742,40 +808,241 @@
 
 .logoutYesBtn,
 .logoutNoBtn {
-  padding: 8px 16px;
+  padding: 9px 18px;
   font-size: 14px;
   border-radius: 999px;
   border: none;
   cursor: pointer;
-  min-width: 120px;
+  min-width: 130px;
+  font-weight: 500;
+  transition: opacity 0.15s ease, background 0.15s ease;
 }
 
 .logoutYesBtn {
   background: #000;
   color: #fff;
 }
-
 .logoutYesBtn:hover {
-  opacity: 0.9;
+  opacity: 0.85;
 }
 
 .logoutNoBtn {
   background: #f5f5f5;
   color: #333;
 }
-
 .logoutNoBtn:hover {
   background: #e4e4e4;
 }
 
 @keyframes logoutPopIn {
   from {
-    transform: translateY(10px) scale(0.97);
+    transform: translateY(12px) scale(0.96);
     opacity: 0;
   }
-
   to {
-    transform: translateY(0px) scale(1);
+    transform: translateY(0) scale(1);
     opacity: 1;
+  }
+}
+
+/* =============================================
+   RESPONSIVE BREAKPOINTS
+   ============================================= */
+
+/* ── 1400px: tighten nav gaps ── */
+@media (max-width: 1400px) {
+  .navList {
+    gap: 22px;
+  }
+  .navLink {
+    font-size: 13px;
+    letter-spacing: 0.09em;
+  }
+  .megaMenu {
+    padding: 32px 40px;
+  }
+  .megaInner {
+    gap: 40px;
+  }
+}
+
+/* ── 1200px: tighter desktop layout ── */
+@media (max-width: 1200px) {
+  .topRow {
+    padding: 12px 24px 10px;
+  }
+  .iconGroup {
+    right: 24px;
+    gap: 14px;
+  }
+  .navList {
+    gap: 16px;
+  }
+  .navLink {
+    font-size: 12px;
+    letter-spacing: 0.07em;
+  }
+  .megaInner {
+    gap: 30px;
+  }
+  .megaPromo {
+    width: 160px;
+  }
+}
+
+/* ── 992px: switch to mobile layout ── */
+@media (max-width: 992px) {
+  .topRow {
+    padding: 12px 16px 8px;
+  }
+
+  .menuBtn {
+    display: inline-flex;
+    left: 16px;
+  }
+
+  /* Show icon group again (was hidden on 767 below, now controlled per-icon) */
+  .iconGroup {
+    right: 16px;
+    gap: 12px;
+    display: flex;
+  }
+
+  .bottomRow {
+    display: none;
+  }
+
+  .megaMenu {
+    display: none;
+  }
+}
+
+/* ── 768px: compact top bar, hide some icons ── */
+@media (max-width: 768px) {
+  .topRow {
+    padding: 10px 14px 8px;
+  }
+
+  .logo {
+    height: 52px;
+    width: 220px;
+  }
+
+  /* Hide non-essential icons — keep just bag & hamburger visible */
+  .iconGroup {
+    gap: 10px;
+  }
+
+  /* Hide search on mobile top bar (it's in the drawer) */
+  .iconGroup > button[aria-label="Search"],
+  .iconGroup > button[aria-label="Account"] {
+    display: none;
+  }
+
+  .wishlistButton {
+    display: none;
+  }
+
+  .userMenuWrapper {
+    display: none;
+  }
+}
+
+/* ── 480px: phones ── */
+@media (max-width: 480px) {
+  .topRow {
+    padding: 8px 12px 6px;
+  }
+
+  .logo {
+    height: 44px;
+    width: 180px;
+  }
+
+  .menuBtn {
+    left: 12px;
+    font-size: 22px;
+  }
+
+  .iconGroup {
+    right: 12px;
+  }
+
+  .mobileNav {
+    width: 100vw; /* full width on small phones */
+  }
+
+  .mobileActions {
+    gap: 6px;
+  }
+
+  .mobileActionBtn {
+    flex: 1 1 calc(50% - 6px);
+    font-size: 12px;
+    padding: 8px 10px;
+  }
+
+  .authModal {
+    border-radius: 32px 0 32px 0;
+  }
+
+  .logoutActions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .logoutYesBtn,
+  .logoutNoBtn {
+    width: 100%;
+    max-width: 280px;
+  }
+}
+
+/* ── 360px: very small phones ── */
+@media (max-width: 360px) {
+  .logo {
+    height: 38px;
+    width: 150px;
+  }
+
+  .mobileActionBtn {
+    flex: 1 1 100%;
+  }
+
+  .authRight {
+    padding: 20px 14px 18px;
+  }
+
+  .authLogo {
+    font-size: 20px;
+  }
+
+  .authHeading {
+    font-size: 18px;
+  }
+
+  .primaryBtn,
+  .secondaryBtn {
+    font-size: 13px;
+    padding: 11px 14px;
+  }
+}
+
+/* ── Auth modal — stack on small screens ── */
+@media (max-width: 640px) {
+  .authModal {
+    max-width: 95%;
+  }
+
+  .authContent {
+    flex-direction: column;
+  }
+
+  .authLeft {
+    display: none;
+  }
+
+  .authRight {
+    padding: 24px 18px 20px;
   }
 }

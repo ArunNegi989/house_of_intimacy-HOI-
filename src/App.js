@@ -54,6 +54,7 @@ import { AllBlogs } from 'components/blogs/AllBlogs';
 import { SidebarProvider } from 'contexts/SidebarContext';
 import QuickAddDrawer from 'components/cart/QuickAddDrawer';
 import EditProfile from 'views/account/EditProfile/EditProfile';
+import VamikaSpecialPage from 'components/Navigationpage/vamikaspecial';
 export default function Main() {
   const [currentTheme, setCurrentTheme] = useState(initialTheme);
   const location = useLocation();
@@ -99,6 +100,7 @@ export default function Main() {
                   <Route path="/faq" element={<FAQ />} />
                   <Route path="/refund-policy" element={<RefundPolicy />} />
                   <Route path="/account/orders" element={<MyOrders />} />
+                
                   <Route
                     path="/account/orders/:orderId"
                     element={<OrderDetails />}
@@ -172,6 +174,7 @@ export default function Main() {
                   <Route path="/nightwear" element={<NightwearListing />} />
                   {/* HOME PAGE (public) */}
                   <Route path="/" element={<Home />} />
+                   
                   <Route path="/about-us" element={<Aboutus />} />
                   <Route path="/ContactUs" element={<ContactUs />} />
                   <Route path="/products" element={<AllProducts />} />
@@ -180,6 +183,10 @@ export default function Main() {
                     path="/reset-password/:token"
                     element={<ResetPassword />}
                   />
+
+
+                */----------------header links------------------*/
+                 <Route path="/vamika-special" element={<VamikaSpecialPage />} />
                 </Routes>
               </div>
               <QuickAddDrawer />
