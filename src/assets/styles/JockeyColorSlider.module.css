@@ -12,7 +12,6 @@
   padding: 0 40px;
 }
 
-/* Top row */
 .topRow {
   display: flex;
   align-items: center;
@@ -30,7 +29,7 @@
 .tabs {
   display: inline-flex;
   padding: 4px;
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0,0,0,0.4);
   border-radius: 999px;
   gap: 4px;
 }
@@ -44,10 +43,10 @@
   background: transparent;
   color: #c7c9d5;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: background 0.2s, color 0.2s;
 }
-.tabBtn:hover { background: rgba(255, 255, 255, 0.08); }
-.tabActive { background: #ffffff; color: #111827; }
+.tabBtn:hover { background: rgba(255,255,255,0.08); }
+.tabActive    { background: #ffffff; color: #111827; }
 
 /* Slider */
 .sliderWrapper {
@@ -55,9 +54,8 @@
   overflow: hidden;
 }
 
+/* Direct global — no :global() wrapper needed */
 .sliderWrapper :global(.slick-slide) { padding: 0 12px; }
-.sliderWrapper :global(.slick-track) { display: flex !important; }
-.sliderWrapper :global(.slick-slide > div) { height: 100%; }
 
 .cardOuter {
   display: flex;
@@ -94,34 +92,22 @@
 
 .cardInfo {
   margin-top: 16px;
-  max-width: 270px;
+  width: 100%;
   text-align: center;
 }
 
-.cardName {
-  font-size: 18px;
-  color: #f9fafb;
-  margin-bottom: 4px;
-  font-weight: 600;
-}
-
-.cardSubtitle {
-  font-size: 16px;
-  color: #ffffff;
-  font-weight: 600;
-}
+.cardName     { font-size: 18px; color: #f9fafb; margin-bottom: 4px; font-weight: 600; }
+.cardSubtitle { font-size: 16px; color: #ffffff; font-weight: 600; }
 
 /* Gender badge */
 .genderBadge {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 10px; right: 10px;
   padding: 4px 10px;
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 11px; font-weight: 600;
   text-transform: uppercase;
   border-radius: 999px;
-  background: rgba(0, 0, 0, 0.75);
+  background: rgba(0,0,0,0.75);
   color: #fff;
   letter-spacing: 0.06em;
 }
@@ -132,21 +118,18 @@
   top: 50%;
   z-index: 2;
   transform: translateY(-50%);
-  width: 38px;
-  height: 38px;
+  width: 38px; height: 38px;
   border-radius: 999px;
   border: none;
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255,255,255,0.12);
   color: #ffffff;
   font-size: 18px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   backdrop-filter: blur(10px);
-  transition: background 0.2s ease;
+  transition: background 0.2s;
 }
-.arrowBtn:hover { background: rgba(255, 255, 255, 0.24); }
+.arrowBtn:hover { background: rgba(255,255,255,0.24); }
 .arrowLeft  { left: -50px; }
 .arrowRight { right: -50px; }
 
@@ -169,8 +152,7 @@
   top: -34px;
   transform: translateX(-50%);
   padding: 4px 14px;
-  font-size: 12px;
-  font-weight: 500;
+  font-size: 12px; font-weight: 500;
   background: #ffffff;
   color: #111827;
   border-radius: 999px;
@@ -216,52 +198,49 @@
    ===================== */
 
 @media (max-width: 1280px) {
-  .title { font-size: 30px; }
+  .title    { font-size: 30px; }
   .arrowLeft  { left: -20px; }
   .arrowRight { right: -20px; }
 }
 
 @media (max-width: 1024px) {
-  .inner { padding: 0 24px; }
-  .title { font-size: 26px; }
-  .arrowLeft  { left: 0px; }
-  .arrowRight { right: 0px; }
-  .card { min-height: 320px; }
-  .cardName { font-size: 16px; }
+  .inner      { padding: 0 24px; }
+  .title      { font-size: 26px; }
+  .arrowLeft  { left: 0; }
+  .arrowRight { right: 0; }
+  .card       { min-height: 320px; }
+  .cardName   { font-size: 16px; }
 }
 
 @media (max-width: 900px) {
-  .section { padding: 40px 0 60px; }
-  .inner { padding: 0 20px; }
-  .topRow {
-    flex-direction: column;
-    gap: 16px;
-    margin-bottom: 28px;
-  }
-  .title { font-size: 22px; text-align: center; }
+  .section    { padding: 40px 0 60px; }
+  .inner      { padding: 0 20px; }
+  .topRow     { flex-direction: column; gap: 16px; margin-bottom: 28px; }
+  .title      { font-size: 22px; text-align: center; }
   .arrowLeft  { left: -8px; }
   .arrowRight { right: -8px; }
-  .card { min-height: 280px; }
+  .card       { min-height: 280px; }
   .sliderWrapper :global(.slick-slide) { padding: 0 6px; }
 }
 
 @media (max-width: 600px) {
-  .section { padding: 32px 0 48px; }
-  .inner { padding: 0 14px; }
-  .title { font-size: 18px; letter-spacing: 0.04em; }
-  .tabBtn { font-size: 15px; padding: 8px 18px; }
-  .card { min-height: 300px; border-radius: 18px; }
-  .cardName { font-size: 14px; }
+  .section    { padding: 32px 0 48px; }
+  .inner      { padding: 0 14px; }
+  .title      { font-size: 18px; letter-spacing: 0.04em; }
+  .tabBtn     { font-size: 15px; padding: 8px 18px; }
+  .card       { min-height: 300px; border-radius: 18px; }
+  .cardName   { font-size: 14px; }
   .cardSubtitle { font-size: 13px; }
-  .cardInfo { margin-top: 10px; }
+  .cardInfo   { margin-top: 10px; }
+  .arrowBtn   { width: 30px; height: 30px; font-size: 14px; }
   .arrowLeft  { left: -4px; }
   .arrowRight { right: -4px; }
-  .arrowBtn   { width: 30px; height: 30px; font-size: 14px; }
   .colorSliderWrapper { max-width: 90%; }
+  .sliderWrapper :global(.slick-slide) { padding: 0 4px; }
 }
 
 @media (max-width: 400px) {
-  .title { font-size: 15px; }
+  .title  { font-size: 15px; }
   .tabBtn { font-size: 13px; padding: 7px 14px; }
-  .card { min-height: 260px; }
+  .card   { min-height: 260px; }
 }

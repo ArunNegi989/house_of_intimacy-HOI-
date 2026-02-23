@@ -1,5 +1,3 @@
-/* src/assets/styles/ShopByCategory.module.css */
-
 .sectionWrapper {
   padding: 60px 16px;
   background-color: #fdf4f4;
@@ -22,7 +20,6 @@
   color: #fff;
 }
 
-/* Tabs row */
 .tabsRow {
   display: flex;
   justify-content: center;
@@ -45,7 +42,7 @@
   cursor: pointer;
   padding: 6px 10px;
   opacity: 0.7;
-  transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
+  transition: opacity 0.2s, transform 0.2s, color 0.2s;
 }
 .tabBtnActive { opacity: 1; color: #ffffff; transform: translateY(-2px); }
 .tabBtn:hover { opacity: 1; }
@@ -53,7 +50,7 @@
 .tabIcon {
   width: 42px; height: 42px;
   object-fit: contain;
-  transition: 0.3s ease;
+  transition: 0.3s;
   filter: brightness(0) saturate(100%) invert(22%) sepia(56%) saturate(4030%) hue-rotate(310deg) brightness(95%) contrast(90%);
 }
 .tabIconActive {
@@ -61,12 +58,22 @@
 }
 .tabLabel { font-weight: 500; }
 
-/* Slider wrapper */
-.sliderWrapper { margin-top: 10px; position: relative; }
+.sliderWrapper {
+  margin-top: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
 .cardsTrack { width: 100%; }
 
-:global(.slick-prev:before),
-:global(.slick-next:before) { display: none; }
+/* Slick overrides — scoped to this component */
+.sliderWrapper :global(.slick-prev:before),
+.sliderWrapper :global(.slick-next:before) { display: none; }
+
+.sliderWrapper :global(.slick-track) { display: flex !important; }
+.sliderWrapper :global(.slick-slide) { height: auto; padding: 0 10px; }
+.sliderWrapper :global(.slick-slide > div) { height: 100%; display: flex; flex-direction: column; }
+.sliderWrapper :global(.slick-arrow) { display: none !important; }
 
 /* Arrows */
 .navArrow {
@@ -74,13 +81,11 @@
   top: 50%;
   transform: translateY(-50%);
   border: none;
-  background-color: #ffffff;
+  background: #ffffff;
   width: 42px; height: 42px;
   border-radius: 999px;
   font-size: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex; align-items: center; justify-content: center;
   cursor: pointer;
   opacity: 0.9;
   z-index: 2;
@@ -93,15 +98,12 @@
 .card {
   height: 550px;
   background-color: palevioletred;
-  border-radius: 62px 0px 62px 0px;
+  border-radius: 62px 0 62px 0;
   overflow: hidden;
   display: flex !important;
   flex-direction: column;
   cursor: pointer;
 }
-
-:global(.slick-slide) { padding: 0 10px; }
-.cardsTrack { width: 100%; margin: 0 -10px; }
 
 .cardImageWrap { flex: 1; overflow: hidden; }
 .cardImage {
@@ -109,7 +111,7 @@
   object-fit: cover;
   object-position: top;
   display: block;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s;
 }
 .card:hover .cardImage { transform: scale(1.03); }
 
@@ -120,16 +122,15 @@
   font-size: 15px;
   letter-spacing: 0.07em;
   padding: 14px 18px;
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 20px;
   cursor: pointer;
   width: 100%;
-  display: flex;
 }
 .cardArrow { font-size: 14px; }
 
-/* Loading / Error / Empty */
 .loadingText, .errorText, .emptyText {
   text-align: center;
   padding: 40px;
@@ -137,19 +138,15 @@
   font-size: 14px;
 }
 
-/* View All */
 .viewAllWrap { margin-top: 28px; display: flex; justify-content: center; }
 .viewAllBtn {
   border-radius: 999px;
   padding: 10px 28px;
   border: none;
-  background-color: #ffffff;
-  font-size: 14px;
-  font-weight: 500;
+  background: #ffffff;
+  font-size: 14px; font-weight: 500;
   color: #5b0427;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
+  display: inline-flex; align-items: center; gap: 8px;
   cursor: pointer;
 }
 .viewAllBtn:hover { filter: brightness(0.97); }
@@ -179,40 +176,34 @@
 
 @media (max-width: 768px) {
   .sectionWrapper { padding: 40px 12px; }
-  .innerContainer {
-    border-radius: 40px 0 0 0;
-    padding: 28px 14px 24px;
-  }
+  .innerContainer { border-radius: 40px 0 0 0; padding: 28px 14px 24px; }
   .heading { font-size: 22px; margin-bottom: 24px; }
   .tabsRow { gap: 12px; }
-  .tabBtn { font-size: 11px; padding: 4px 8px; gap: 6px; }
+  .tabBtn  { font-size: 11px; padding: 4px 8px; gap: 6px; }
   .tabIcon { width: 34px; height: 34px; }
-  .card { height: 380px; border-radius: 36px 0 36px 0; }
+  .card    { height: 380px; border-radius: 36px 0 36px 0; }
   .cardLink { font-size: 13px; padding: 12px 14px; }
-  :global(.slick-slide) { padding: 0 6px; }
-  .cardsTrack { margin: 0 -6px; }
+  .sliderWrapper :global(.slick-slide) { padding: 0 6px; }
 }
 
 @media (max-width: 600px) {
   .sectionWrapper { padding: 32px 10px; }
-  .innerContainer {
-    border-radius: 28px 0 0 0;
-    padding: 24px 12px 20px;
-  }
+  .innerContainer { border-radius: 28px 0 0 0; padding: 24px 12px 20px; }
   .heading { font-size: 20px; margin-bottom: 20px; }
-  .tabsRow { gap: 8px; flex-wrap: nowrap; overflow-x: auto; justify-content: flex-start; padding-bottom: 4px; }
-  .tabBtn { flex-shrink: 0; font-size: 10px; padding: 4px 6px; }
+  .tabsRow { gap: 8px; flex-wrap: nowrap; overflow-x: auto; justify-content: center; padding-bottom: 4px; }
+  .tabBtn  { flex-shrink: 0; font-size: 10px; padding: 4px 6px; }
   .tabIcon { width: 28px; height: 28px; }
-  .card { height: 360px; border-radius: 28px 0 28px 0; margin: 0 4px; }
+  .card    { height: 360px; border-radius: 28px 0 28px 0; }
   .navArrow { width: 30px; height: 30px; font-size: 14px; }
-  .navPrev { left: 4px; }
-  .navNext { right: 4px; }
+  .navPrev  { left: 4px; }
+  .navNext  { right: 4px; }
   .viewAllBtn { font-size: 13px; padding: 9px 22px; }
+  .sliderWrapper :global(.slick-slide) { padding: 0 4px; }
 }
 
 @media (max-width: 400px) {
   .heading { font-size: 18px; }
-  .card { height: 320px; border-radius: 22px 0 22px 0; }
+  .card    { height: 320px; border-radius: 22px 0 22px 0; }
   .tabIcon { width: 24px; height: 24px; }
-  .tabBtn { font-size: 9px; }
+  .tabBtn  { font-size: 9px; }
 }
