@@ -176,7 +176,7 @@ export default function Main() {
                   <Route path="/" element={<Home />} />
                    
                   <Route path="/about-us" element={<Aboutus />} />
-                  <Route path="/ContactUs" element={<ContactUs />} />
+                  <Route path="/Contact-Us" element={<ContactUs />} />
                   <Route path="/products" element={<AllProducts />} />
                   <Route path="/forgot-password" element={<ForgotPassword />} />
                   <Route

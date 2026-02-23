@@ -1,9 +1,8 @@
-/* src/components/NewArrival/NewArrival.module.css */
+/* src/components/NewArrival/LingerieSection.module.css */
 
 .section {
   padding: 40px 40px 60px;
   background: #fff7ee;
-  /* light nude */
 }
 
 .inner {
@@ -23,13 +22,14 @@
 .contentRow {
   display: flex;
   align-items: stretch;
+  gap: 16px;
 }
 
 /* ---------- LEFT PANEL (fixed video) ---------- */
 .leftPanel {
-  flex: 0 0 32%;
-  max-width: 22%;
-  min-width: 260px;
+  flex: 0 0 28%;
+  max-width: 28%;
+  min-width: 220px;
 }
 
 .heroCard {
@@ -49,9 +49,11 @@
 .heroOverlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 10% 10%,
+  background: radial-gradient(
+      circle at 10% 10%,
       rgba(0, 0, 0, 0.18),
-      transparent 50%),
+      transparent 50%
+    ),
     linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent);
 }
 
@@ -69,6 +71,7 @@
   background: #5a002c;
   color: #ffffff;
   cursor: pointer;
+  white-space: nowrap;
   transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
@@ -85,6 +88,13 @@
   position: relative;
 }
 
+/* ---------- SLIDE OUTER ---------- */
+.slideOuter {
+  padding: 0 8px;
+  box-sizing: border-box;
+  height: 100%;
+}
+
 .productCard {
   position: relative;
   background: #ffffff;
@@ -94,12 +104,20 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.productCard:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .productImageWrap {
   width: 100%;
-  height: 332px;
+  height: 300px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 .productImage {
@@ -108,17 +126,17 @@
   object-fit: contain;
   display: block;
   object-position: top;
-  /* 👈 IMPORTANT: crop only from bottom */
 }
 
 .productBody {
   padding: 14px 18px 16px;
   display: flex;
   flex-direction: column;
+  flex: 1;
 }
 
 .brand {
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 700;
   letter-spacing: 0.2em;
   text-transform: uppercase;
@@ -126,18 +144,12 @@
 }
 
 .productName {
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.4;
   color: #2c2c2c;
   min-height: 14px;
   font-weight: 700;
-}
-
-
-.priceRow {
-  display: flex;
-  align-items: baseline;
-  margin-top: 6px;
+  margin-top: 2px;
 }
 
 .priceRow {
@@ -145,65 +157,40 @@
   align-items: center;
   gap: 8px;
   margin-top: 6px;
+  flex-wrap: wrap;
 }
 
 .currentPrice {
   font-weight: 600;
   font-size: 14px;
+  color: #1f1f1f;
 }
 
 .originalPrice {
   font-size: 13px;
   color: #999;
   text-decoration: line-through;
-  /* original price cut */
 }
 
 .discountTag {
   font-size: 12px;
   font-weight: 600;
   color: #d32f2f;
-  /* ya brand primary */
 }
 
-.mrpLabel {
-  font-size: 12px;
-  color: #888;
-  text-transform: uppercase;
-}
-
-.mrpValue {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1f1f1f;
-}
-
-/* bottom row inside card */
-.bottomRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* color swatches */
-.colorRow {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* stock + gender row */
+/* meta row */
 .metaRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 4px;
+  margin-top: 6px;
   margin-bottom: 6px;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .stockBadge {
-  font-size: 13px;
+  font-size: 11px;
   padding: 2px 8px;
   border-radius: 999px;
   border: 1px solid #e5e5e5;
@@ -233,12 +220,45 @@
   color: #555;
 }
 
+/* bottom row */
+.bottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+/* color swatches */
+.colorRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
 
 .colorDot {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   border: 1px solid rgba(0, 0, 0, 0.18);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  flex-shrink: 0;
+}
+
+.colorDot:hover {
+  transform: scale(1.2);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.colorDotCurrentProduct {
+  border: 2px solid #5a002c;
+  box-shadow: 0 0 0 1px #5a002c;
+}
+
+.colorDotOtherProduct {
+  opacity: 0.75;
 }
 
 .moreColors {
@@ -246,7 +266,7 @@
   color: #555;
 }
 
-/* wishlist + bag buttons */
+/* wishlist btn */
 .wishBtn {
   position: absolute;
   right: 14px;
@@ -260,6 +280,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
+  z-index: 2;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -268,11 +289,16 @@
   color: #b02e50;
 }
 
+.wishBtnActive {
+  background: rgba(255, 230, 235, 0.95);
+}
+
 .wishBtn:hover {
   transform: translateY(-1px);
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18);
 }
 
+/* cart btn */
 .cartBtn {
   border-radius: 50%;
   width: 34px;
@@ -283,6 +309,7 @@
   justify-content: center;
   background: #f5e7de;
   cursor: pointer;
+  flex-shrink: 0;
   transition: background 0.2s ease, transform 0.2s ease;
 }
 
@@ -296,41 +323,63 @@
   transform: translateY(-1px);
 }
 
-/* ---------- SLICK OVERRIDES (with :global) ---------- */
+/* info / error */
+.infoText {
+  text-align: center;
+  color: #888;
+  padding: 40px 0;
+}
+
+.errorText {
+  text-align: center;
+  color: #d32f2f;
+  padding: 40px 0;
+}
+
+/* ---------- SLICK OVERRIDES ---------- */
 .sliderWrapper :global(.slick-list) {
-  padding-right: 30px;
+  padding-right: 20px;
 }
 
 .sliderWrapper :global(.slick-track) {
-  display: flex;
+  display: flex !important;
 }
 
 .sliderWrapper :global(.slick-slide) {
   height: auto;
-
 }
 
-/* arrows */
+.sliderWrapper :global(.slick-slide > div) {
+  height: 100%;
+}
+
+/* hide default slick arrows */
+.sliderWrapper :global(.slick-arrow) {
+  display: none !important;
+}
+
+/* custom arrows */
 .arrowBtn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border: none;
   background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.14);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 16px;
   cursor: pointer;
   z-index: 5;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .prevArrow {
-  left: -12px;
+  left: -14px;
 }
 
 .nextArrow {
@@ -339,56 +388,289 @@
 
 .arrowBtn:hover {
   transform: translateY(-50%) translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
 }
 
-/* hide default slick arrows */
-.sliderWrapper :global(.slick-arrow) {
-  display: none !important;
+/* ==========================================================
+   RESPONSIVE BREAKPOINTS
+   ========================================================== */
+
+/* Large desktop (1280–1559px) */
+@media (max-width: 1559px) {
+  .leftPanel {
+    flex: 0 0 26%;
+    max-width: 26%;
+  }
 }
 
-/* ---------- RESPONSIVE ---------- */
+/* Medium desktop / laptop (993–1280px) */
+@media (max-width: 1280px) {
+  .section {
+    padding: 36px 28px 50px;
+  }
+
+  .leftPanel {
+    flex: 0 0 30%;
+    max-width: 30%;
+    min-width: 200px;
+  }
+
+  .heroCard {
+    height: 480px;
+  }
+
+  .productImageWrap {
+    height: 260px;
+  }
+}
+
+/* Tablet landscape (993px) — 2 slides visible */
 @media (max-width: 992px) {
   .section {
-    padding: 30px 16px 40px;
+    padding: 28px 20px 40px;
+  }
+
+  .title {
+    font-size: 26px;
+    margin-bottom: 20px;
   }
 
   .contentRow {
     flex-direction: column;
+    gap: 20px;
   }
 
-  .leftPanel,
-  .sliderWrapper {
+  .leftPanel {
+    flex: unset;
     max-width: 100%;
-    flex-basis: 100%;
+    min-width: unset;
+    width: 100%;
   }
 
   .heroCard {
-    height: 360px;
+    height: 320px;
+    border-radius: 28px 0 28px 0;
+  }
+
+  .sliderWrapper {
+    width: 100%;
+  }
+
+  .sliderWrapper :global(.slick-list) {
+    padding-right: 40px;
   }
 
   .prevArrow {
     left: 4px;
   }
+
+  .nextArrow {
+    right: 4px;
+  }
+
+  .productImageWrap {
+    height: 280px;
+  }
 }
 
+/* Tablet portrait (768px) — 1.5 slides visible */
+@media (max-width: 768px) {
+  .section {
+    padding: 24px 16px 36px;
+  }
+
+  .title {
+    font-size: 24px;
+    letter-spacing: 0.06em;
+    margin-bottom: 18px;
+  }
+
+  .heroCard {
+    height: 280px;
+  }
+
+  .sliderWrapper :global(.slick-list) {
+    padding-right: 60px; /* peek next card */
+  }
+
+  .slideOuter {
+    padding: 0 6px;
+  }
+
+  .productImageWrap {
+    height: 240px;
+  }
+
+  .productBody {
+    padding: 12px 14px 14px;
+  }
+
+  .productName {
+    font-size: 14px;
+  }
+
+  .brand {
+    font-size: 12px;
+  }
+
+  .currentPrice {
+    font-size: 13px;
+  }
+}
+
+/* Large mobile (481–600px) */
 @media (max-width: 600px) {
   .heroCard {
-    border-radius: 22px;
+    border-radius: 22px 0 22px 0;
+    height: 240px;
   }
 
   .productCard {
-    border-radius: 22px;
+    border-radius: 22px 0 22px 0;
+  }
+
+  .sliderWrapper :global(.slick-list) {
+    padding-right: 48px;
+  }
+
+  .productImageWrap {
+    height: 220px;
   }
 }
 
+/* Mobile (≤480px) — 1 full slide */
 @media (max-width: 480px) {
+  .section {
+    padding: 20px 12px 32px;
+  }
+
+  .title {
+    font-size: 22px;
+    margin-bottom: 14px;
+  }
+
+  .heroCard {
+    height: 220px;
+    border-radius: 18px 0 18px 0;
+  }
+
+  .heroBtn {
+    font-size: 13px;
+    padding: 9px 32px;
+    bottom: 18px;
+  }
+
   .sliderWrapper :global(.slick-list) {
     padding-right: 0;
+    /* no peek — single full-width card */
+  }
+
+  .slideOuter {
+    padding: 0 4px;
+  }
+
+  .productCard {
+    border-radius: 18px 0 18px 0;
+  }
+
+  .productImageWrap {
+    height: 260px; /* taller on small screen for portrait products */
+  }
+
+  .productBody {
+    padding: 10px 12px 12px;
+  }
+
+  .brand {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+  }
+
+  .productName {
+    font-size: 13px;
+  }
+
+  .currentPrice {
+    font-size: 13px;
+  }
+
+  .originalPrice {
+    font-size: 12px;
+  }
+
+  .discountTag {
+    font-size: 11px;
+  }
+
+  .stockBadge {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .genderTag {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+
+  .colorDot {
+    width: 16px;
+    height: 16px;
+  }
+
+  .wishBtn {
+    width: 28px;
+    height: 28px;
+    right: 10px;
+    top: 10px;
+  }
+
+  .wishBtn svg {
+    font-size: 15px;
+  }
+
+  .cartBtn {
+    width: 30px;
+    height: 30px;
+  }
+
+  .cartBtn svg {
+    font-size: 15px;
+  }
+
+  .arrowBtn {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
+  }
+
+  .prevArrow {
+    left: -6px;
+  }
+
+  .nextArrow {
+    right: -6px;
   }
 }
 
-@media (max-width: 768px) {
-  .sliderWrapper :global(.slick-list) {
-    padding-right: 0;
+/* Very small devices (≤360px) */
+@media (max-width: 360px) {
+  .section {
+    padding: 16px 10px 28px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .heroCard {
+    height: 200px;
+  }
+
+  .productImageWrap {
+    height: 230px;
+  }
+
+  .productName {
+    font-size: 12px;
   }
 }
