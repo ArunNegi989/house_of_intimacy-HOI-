@@ -1,63 +1,143 @@
-.HeadHomes {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 30px;
-  font-weight: 600;
-  color: black;
-  margin-bottom: 30px;
-  letter-spacing: 0.5px;
-  text-align: center;
-  border-bottom: 3px solid #d63384;
-  text-transform: uppercase;
+/* ============================================
+   VAMIKA – HOUSE OF INTIMACY
+   Review Section — Luxury Editorial Style
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap');
+
+/* ===== ROOT VARIABLES ===== */
+:root {
+  --rose-deep:    #8B1A3A;
+  --rose-mid:     #C0365A;
+  --rose-light:   #E8748A;
+  --blush:        #FAE8EC;
+  --cream:        #FDF6F0;
+  --ivory:        #FFFAF7;
+  --gold:         #C9A84C;
+  --gold-light:   #E8D5A0;
+  --charcoal:     #1C1C1C;
+  --soft-grey:    #6B6B6B;
+  --white:        #FFFFFF;
 }
 
-.HeadHome {
-  font-family: 'Playfair Display', Georgia, serif;
-  font-size: 30px;
-  font-weight: 600;
-  color: black;
-  margin-bottom: 30px;
-  letter-spacing: 0.5px;
-  text-align: center;
-  text-transform: uppercase;
-}
-
-.ParaHome {
-  font-family: 'Lato', 'Helvetica Neue', sans-serif;
-  font-size: 18px;
-  line-height: 1.9;
-  color: black;
-  margin-bottom: 20px;
-  max-width: 850px;
-  margin-right: auto;
-}
-
-.homePadding {
-  padding: 60px 40px;
-  background-color: #ffeeec;
-  background-image: url('../images/back1.png');
+/* ===== SECTION WRAPPER ===== */
+.sectionWrapper {
+  position: relative;
+  width: 100%;
   overflow: hidden;
+  padding: 90px 0 100px;
+  background: linear-gradient(150deg, #d24e77 0%, #6c2642 40%, #431023 70%, #1C0509 100%);
 }
 
-.HomePadding {
-  padding: 60px 40px;
-  background-color: #ffffff;
+/* Decorative noise/grain overlay */
+.sectionWrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(192, 54, 90, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 80% at 80% 30%, rgba(201, 168, 76, 0.08) 0%, transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
 }
 
-.HomeImg {
-  border: 3px solid #d63384;
+/* Thin gold top border */
+.sectionWrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  z-index: 1;
 }
 
-/* =========== SLIDER CONTAINER FIX =========== */
+/* ===== INNER CONTAINER ===== */
+.inner {
+  position: relative;
+  z-index: 2;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
 
+/* ===== HEADING BLOCK ===== */
+.headingBlock {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.eyebrow {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 14px;
+  display: block;
+  opacity: 0.9;
+}
+
+.mainHeading {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 52px;
+  font-weight: 300;
+  font-style: italic;
+  color: var(--ivory);
+  margin: 0 0 18px;
+  line-height: 1.15;
+  letter-spacing: 0.5px;
+}
+
+.mainHeading span {
+  color: var(--gold-light);
+  font-style: normal;
+  font-weight: 600;
+}
+
+.dividerLine {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 auto;
+}
+
+.dividerLine::before,
+.dividerLine::after {
+  content: '';
+  display: block;
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.6));
+}
+
+.dividerLine::after {
+  background: linear-gradient(90deg, rgba(201, 168, 76, 0.6), transparent);
+}
+
+.dividerDiamond {
+  width: 8px;
+  height: 8px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+/* ===== SLIDER WRAPPER ===== */
 .sliderWrapper {
   width: 100%;
   overflow: hidden;
 }
 
-/* Force slick to respect its own widths */
 .sliderWrapper :global(.slick-slider) {
   width: 100%;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .sliderWrapper :global(.slick-list) {
@@ -83,162 +163,294 @@
   align-items: stretch;
 }
 
-/* =========== REVIEWS =========== */
-
-.Reviews {
-  padding: 0 8px;
+/* ===== SLIDE PADDING ===== */
+.slideOuter {
+  padding: 10px 10px 20px;
   box-sizing: border-box;
   width: 100%;
+  display: flex !important;
 }
 
-.reviewcard {
-  height: auto;
-  min-height: 260px;
-  padding: 45px 20px 35px;
-  background: #fff;
-  border-radius: 10px;
-  text-align: center;
+/* ===== REVIEW CARD ===== */
+.reviewCard {
   position: relative;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  font-family: "Poppins", sans-serif;
+  background: linear-gradient(145deg, rgba(255,250,247,0.97) 0%, rgba(250,232,236,0.95) 100%);
+  border-radius: 2px;
+  padding: 48px 32px 36px;
   box-sizing: border-box;
-  width: 100% !important;
-  max-width: 100% !important;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  box-shadow:
+    0 1px 0 rgba(201,168,76,0.4),
+    0 0 0 1px rgba(201,168,76,0.15),
+    0 20px 50px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  overflow: hidden;
+  min-height: 260px;
 }
 
-.quoteleft {
+/* Gold top accent bar */
+.reviewCard::before {
+  content: '';
   position: absolute;
-  top: 14px;
-  left: 14px;
-  font-size: 24px;
-  color: #d4005e;
-  font-weight: bold;
-  line-height: 1;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--rose-deep), var(--gold), var(--rose-mid));
+  z-index: 1;
 }
 
-.quoteright {
+/* Subtle corner pattern */
+.reviewCard::after {
+  content: '';
   position: absolute;
-  bottom: 14px;
-  right: 14px;
-  font-size: 24px;
-  color: #d4005e;
-  font-weight: bold;
-  line-height: 1;
+  bottom: -20px;
+  right: -20px;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(192,54,90,0.08) 0%, transparent 70%);
+  z-index: 0;
 }
 
-.reviewtext {
-  font-size: 14px;
-  line-height: 1.7;
-  margin-bottom: 10px;
-  color: #333;
+.reviewCard:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 1px 0 rgba(201,168,76,0.5),
+    0 0 0 1px rgba(201,168,76,0.25),
+    0 30px 60px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+/* ===== QUOTE MARK (open) ===== */
+.quoteOpen {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 80px;
+  font-weight: 600;
+  line-height: 0.6;
+  color: var(--rose-mid);
+  opacity: 0.18;
+  position: absolute;
+  top: 22px;
+  left: 20px;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -4px;
+}
+
+/* ===== STARS ===== */
+.stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.star {
+  font-size: 13px;
+  color: var(--gold);
+  filter: drop-shadow(0 1px 2px rgba(201,168,76,0.3));
+}
+
+/* ===== REVIEW TEXT ===== */
+.reviewText {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 15.5px;
+  font-style: italic;
+  line-height: 1.85;
+  color: #2E1018;
+  margin: 0 0 20px;
+  flex: 1;
+  position: relative;
+  z-index: 1;
   hyphens: none;
   -webkit-hyphens: none;
-  -ms-hyphens: none;
   word-break: normal;
-  overflow-wrap: normal;
-  white-space: normal;
 }
 
-.author {
-  font-weight: 600;
-  color: #000;
-  font-size: 13px;
-  letter-spacing: 0.5px;
+/* ===== AUTHOR BLOCK ===== */
+.authorBlock {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
 }
 
-/* =========== RESPONSIVE =========== */
+.authorLine {
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--rose-mid), var(--gold));
+  flex-shrink: 0;
+}
 
+.authorName {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--rose-deep);
+}
+
+/* ===== BOTTOM DOTS (custom) ===== */
+.dotsWrapper {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 44px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(201,168,76,0.3);
+}
+
+.dotActive {
+  background: var(--gold);
+  width: 22px;
+  border-radius: 3px;
+  border-color: var(--gold);
+}
+
+/* ===== RESPONSIVE ===== */
+
+/* 1440px */
 @media (max-width: 1440px) {
-  .homePadding { padding: 55px 35px; }
-  .reviewcard { padding: 42px 18px 32px; }
+  .inner { padding: 0 36px; }
+  .mainHeading { font-size: 48px; }
 }
 
+/* 1280px */
 @media (max-width: 1280px) {
-  .homePadding { padding: 50px 30px; }
-  .reviewcard { padding: 40px 16px 30px; }
+  .inner { padding: 0 32px; }
+  .mainHeading { font-size: 46px; }
+  .reviewCard { padding: 44px 28px 32px; }
+  .reviewText { font-size: 15px; }
 }
 
+/* 1200px */
 @media (max-width: 1200px) {
-  .homePadding { padding: 50px 28px; }
-  .HeadHome { font-size: 28px; }
-  .reviewcard { padding: 38px 16px 28px; }
-  .reviewtext { font-size: 13px; }
+  .sectionWrapper { padding: 80px 0 90px; }
+  .inner { padding: 0 28px; }
+  .mainHeading { font-size: 44px; }
+  .headingBlock { margin-bottom: 52px; }
 }
 
+/* 1024px */
 @media (max-width: 1024px) {
-  .homePadding { padding: 45px 24px; }
-  .reviewcard { padding: 36px 15px 26px; }
+  .sectionWrapper { padding: 72px 0 84px; }
+  .inner { padding: 0 24px; }
+  .mainHeading { font-size: 42px; }
+  .reviewCard { padding: 42px 26px 30px; min-height: 240px; }
+  .reviewText { font-size: 15px; }
 }
 
+/* 992px */
 @media (max-width: 992px) {
-  .homePadding { padding: 45px 20px; }
-  .HeadHome { font-size: 26px; }
-  .reviewcard { min-height: 240px; }
+  .sectionWrapper { padding: 68px 0 80px; }
+  .mainHeading { font-size: 40px; }
+  .headingBlock { margin-bottom: 48px; }
+  .reviewCard { padding: 40px 24px 28px; }
 }
 
-/* ====== MOBILE ====== */
-
+/* 768px */
 @media (max-width: 768px) {
-  .homePadding { padding: 40px 15px; }
-  .HeadHome { font-size: 24px; margin-bottom: 18px; }
-  .Reviews { padding: 0 6px; }
-
-  .reviewcard {
+  .sectionWrapper { padding: 60px 0 72px; }
+  .inner { padding: 0 20px; }
+  .mainHeading { font-size: 36px; }
+  .eyebrow { font-size: 10px; letter-spacing: 3px; }
+  .headingBlock { margin-bottom: 40px; }
+  .slideOuter { padding: 8px 8px 18px; }
+  .reviewCard {
+    padding: 42px 24px 30px;
     min-height: auto;
-    padding: 40px 20px 30px;
   }
-
-  .reviewtext {
-    font-size: 14px;
-    line-height: 1.65;
-    hyphens: none;
-    -webkit-hyphens: none;
-    word-break: normal;
-    overflow-wrap: normal;
-  }
+  .reviewText { font-size: 15px; line-height: 1.8; }
+  .dotsWrapper { margin-top: 36px; }
 }
 
+/* 600px */
 @media (max-width: 600px) {
-  .homePadding { padding: 35px 12px; }
-  .HeadHome { font-size: 22px; }
-  .Reviews { padding: 0 8px; }
-  .reviewcard { padding: 38px 18px 28px; }
-  .reviewtext { font-size: 14px; }
+  .sectionWrapper { padding: 52px 0 64px; }
+  .inner { padding: 0 16px; }
+  .mainHeading { font-size: 32px; }
+  .dividerLine::before,
+  .dividerLine::after { width: 60px; }
+  .slideOuter { padding: 6px 6px 16px; }
+  .reviewCard { padding: 40px 22px 28px; }
+  .reviewText { font-size: 14.5px; }
+  .quoteOpen { font-size: 70px; }
 }
 
+/* 480px */
 @media (max-width: 480px) {
-  .homePadding { padding: 30px 10px; }
-  .reviewcard { padding: 36px 16px 28px; }
-  .reviewtext { font-size: 13.5px; }
+  .sectionWrapper { padding: 48px 0 58px; }
+  .inner { padding: 0 14px; }
+  .mainHeading { font-size: 30px; }
+  .headingBlock { margin-bottom: 36px; }
+  .reviewCard { padding: 38px 20px 26px; }
+  .reviewText { font-size: 14px; line-height: 1.78; }
+  .authorName { font-size: 10px; letter-spacing: 2px; }
 }
 
+/* 414px */
 @media (max-width: 414px) {
-  .homePadding { padding: 28px 10px; }
-  .HeadHome { font-size: 20px; }
-  .reviewcard { padding: 34px 15px 26px; }
-  .reviewtext { font-size: 13px; }
-  .author { font-size: 12px; }
-  .quoteleft, .quoteright { font-size: 20px; }
+  .sectionWrapper { padding: 44px 0 54px; }
+  .inner { padding: 0 12px; }
+  .mainHeading { font-size: 28px; }
+  .eyebrow { font-size: 9.5px; letter-spacing: 2.5px; }
+  .reviewCard { padding: 36px 18px 24px; }
+  .reviewText { font-size: 13.5px; }
+  .quoteOpen { font-size: 62px; top: 18px; left: 16px; }
+  .authorLine { width: 22px; }
+  .dotsWrapper { margin-top: 30px; gap: 6px; }
 }
 
+/* 375px */
 @media (max-width: 375px) {
-  .homePadding { padding: 25px 8px; }
-  .reviewcard { padding: 32px 14px 24px; }
-  .reviewtext { font-size: 13px; }
+  .sectionWrapper { padding: 40px 0 50px; }
+  .inner { padding: 0 10px; }
+  .mainHeading { font-size: 26px; }
+  .reviewCard { padding: 34px 16px 22px; }
+  .reviewText { font-size: 13px; }
 }
 
+/* 360px */
 @media (max-width: 360px) {
-  .homePadding { padding: 24px 6px; }
-  .HeadHome { font-size: 19px; }
-  .reviewcard { padding: 28px 12px 22px; }
-  .reviewtext { font-size: 12px; }
-  .quoteleft, .quoteright { font-size: 18px; }
+  .sectionWrapper { padding: 36px 0 46px; }
+  .inner { padding: 0 8px; }
+  .mainHeading { font-size: 25px; }
+  .reviewCard { padding: 32px 15px 22px; }
+  .reviewText { font-size: 12.5px; }
+  .authorName { font-size: 9.5px; }
+  .quoteOpen { font-size: 56px; }
 }
 
+/* 320px */
 @media (max-width: 320px) {
-  .homePadding { padding: 22px 5px; }
-  .HeadHome { font-size: 18px; }
-  .reviewcard { padding: 26px 11px 20px; }
-  .reviewtext { font-size: 11.5px; }
-  .quoteleft, .quoteright { font-size: 16px; }
+  .sectionWrapper { padding: 32px 0 42px; }
+  .inner { padding: 0 8px; }
+  .mainHeading { font-size: 23px; }
+  .eyebrow { font-size: 9px; letter-spacing: 2px; }
+  .reviewCard { padding: 30px 14px 20px; }
+  .reviewText { font-size: 12px; line-height: 1.72; }
+  .authorName { font-size: 9px; letter-spacing: 1.5px; }
+  .quoteOpen { font-size: 50px; }
+  .dividerLine::before,
+  .dividerLine::after { width: 40px; }
+  .dot { width: 5px; height: 5px; }
+  .dotActive { width: 16px; }
 }
