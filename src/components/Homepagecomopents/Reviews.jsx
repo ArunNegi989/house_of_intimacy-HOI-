@@ -17,68 +17,39 @@ export const Reviewssection = () => {
     dots: false,
 
     responsive: [
-      {
-        breakpoint: 1600,
-        settings: {
-          slidesToShow: 4,
-          centerPadding: '20px',
-        },
-      },
-      {
-        breakpoint: 1200,
-        settings: {
-          slidesToShow: 3,
-          centerPadding: '15px',
-        },
-      },
-      {
-        breakpoint: 992,
-        settings: {
-          slidesToShow: 2,
-          centerPadding: '15px',
-        },
-      },
-      {
-        breakpoint: 768,
-        settings: {
-          slidesToShow: 1,
-          centerPadding: '40px',
-          centerMode: true,
-        },
-      },
-      {
-        breakpoint: 576,
-        settings: {
-          slidesToShow: 1,
-          centerPadding: '25px',
-          centerMode: true,
-        },
-      },
-      {
-        breakpoint: 414,
-        settings: {
-          slidesToShow: 1,
-          centerPadding: '15px',
-          centerMode: true,
-        },
-      },
-      {
-        breakpoint: 375,
-        settings: {
-          slidesToShow: 1,
-          centerPadding: '10px',
-          centerMode: true,
-        },
-      },
-      {
-        breakpoint: 320,
-        settings: {
-          slidesToShow: 1,
-          centerPadding: '8px',
-          centerMode: true,
-        },
-      },
-    ],
+  {
+    breakpoint: 1600,
+    settings: {
+      slidesToShow: 4,
+    },
+  },
+  {
+    breakpoint: 1200,
+    settings: {
+      slidesToShow: 3,
+    },
+  },
+  {
+    breakpoint: 992,
+    settings: {
+      slidesToShow: 2,
+    },
+  },
+  {
+    breakpoint: 768,
+    settings: {
+      slidesToShow: 1,
+      centerMode: false,
+    },
+  },
+  {
+    breakpoint: 576,
+    settings: {
+      slidesToShow: 1,
+      centerMode: false,
+    },
+  }
+],
 
     afterChange: function (index) {
       console.log(`Slider Changed to: ${index + 1}`);
