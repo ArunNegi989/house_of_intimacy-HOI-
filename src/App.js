@@ -184,8 +184,7 @@ export default function Main() {
                     element={<ResetPassword />}
                   />
 
-
-                */----------------header links------------------*/
+{/* ----------------header links------------------ */}
                  <Route path="/vamika-special" element={<VamikaSpecialPage />} />
                 </Routes>
               </div>

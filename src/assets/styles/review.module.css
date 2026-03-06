@@ -1,8 +1,13 @@
-.homePadding {
-  padding: 60px 40px;
-  background-color: #ffeeec;
-  background-image: url('../images/back1.png');
-  overflow: hidden;
+.HeadHomes {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 30px;
+  font-weight: 600;
+  color: black;
+  margin-bottom: 30px;
+  letter-spacing: 0.5px;
+  text-align: center;
+  border-bottom: 3px solid #d63384;
+  text-transform: uppercase;
 }
 
 .HeadHome {
@@ -16,7 +21,34 @@
   text-transform: uppercase;
 }
 
-/* Card ke beech gap */
+.ParaHome {
+  font-family: 'Lato', 'Helvetica Neue', sans-serif;
+  font-size: 18px;
+  line-height: 1.9;
+  color: black;
+  margin-bottom: 20px;
+  max-width: 850px;
+  margin-right: auto;
+}
+
+.homePadding {
+  padding: 60px 40px;
+  background-color: #ffeeec;
+  background-image: url('../images/back1.png');
+  overflow: hidden;
+}
+
+.HomePadding {
+  padding: 60px 40px;
+  background-color: #ffffff;
+}
+
+.HomeImg {
+  border: 3px solid #d63384;
+}
+
+/* =========== REVIEWS =========== */
+
 .Reviews {
   padding: 0 8px;
   box-sizing: border-box;
@@ -33,9 +65,8 @@
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   font-family: "Poppins", sans-serif;
   box-sizing: border-box;
-  overflow: hidden;
-  word-break: break-word;      /* ← yeh fix karta hai text ka toot-na */
-  overflow-wrap: break-word;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 .quoteleft {
@@ -63,6 +94,9 @@
   line-height: 1.7;
   margin-bottom: 10px;
   color: #333;
+  hyphens: none;
+  word-break: normal;
+  overflow-wrap: normal;
 }
 
 .author {
@@ -72,78 +106,118 @@
   letter-spacing: 0.5px;
 }
 
-/* ===== RESPONSIVE ===== */
+/* =========== RESPONSIVE =========== */
+
+@media (max-width: 1600px) {
+  .reviewtext { font-size: 13.5px; }
+  .Reviews { padding: 0 8px; }
+}
+
+@media (max-width: 1440px) {
+  .homePadding { padding: 55px 35px; }
+  .reviewcard { padding: 42px 18px 32px; }
+}
 
 @media (max-width: 1400px) {
-  .reviewtext { font-size: 13.5px; }
+  .reviewtext { font-size: 13px; }
+}
+
+@media (max-width: 1280px) {
+  .homePadding { padding: 50px 30px; }
+  .reviewcard { padding: 40px 16px 30px; }
 }
 
 @media (max-width: 1200px) {
-  .homePadding { padding: 50px 30px; }
-  .reviewcard { padding: 40px 18px 30px; }
+  .homePadding { padding: 50px 28px; }
+  .HeadHome { font-size: 28px; }
+  .reviewcard { padding: 38px 16px 28px; }
+  .reviewtext { font-size: 13px; }
+}
+
+@media (max-width: 1024px) {
+  .homePadding { padding: 45px 24px; }
+  .reviewcard { padding: 36px 15px 26px; }
 }
 
 @media (max-width: 992px) {
   .homePadding { padding: 45px 20px; }
   .HeadHome { font-size: 26px; }
   .reviewtext { font-size: 13px; }
+  .reviewcard { min-height: 240px; }
 }
 
-/* ====== MOBILE FIXES ====== */
+@media (max-width: 900px) {
+  .homePadding { padding: 40px 18px; }
+}
+
+/* ====== MOBILE ====== */
+
 @media (max-width: 768px) {
-  .homePadding {
-    padding: 40px 15px;    /* side padding kam karo */
-    overflow: hidden;
-  }
-  .HeadHome { font-size: 22px; margin-bottom: 18px; }
-  .Reviews {
-    padding: 0 5px;
-  }
+  .homePadding { padding: 40px 15px; }
+  .HeadHome { font-size: 24px; margin-bottom: 18px; }
+  .Reviews { padding: 0 6px; }
+  
   .reviewcard {
     min-height: auto;
     padding: 40px 18px 30px;
-    width: 100% !important;    /* force full width */
-    max-width: 100% !important;
+    
   }
   .reviewtext {
     font-size: 14px;
     line-height: 1.6;
-    word-break: normal;       /* mobile pe normal word break */
+    hyphens: none;
+    word-break: normal;
     overflow-wrap: normal;
-    hyphens: none;            /* hyphenation band karo */
   }
 }
 
-@media (max-width: 576px) {
+@media (max-width: 600px) {
   .homePadding { padding: 35px 12px; }
-  .reviewcard { padding: 38px 16px 28px; }
+  .HeadHome { font-size: 22px; }
+  .Reviews { padding: 0 5px; }
+  .reviewcard { padding: 38px 18px 28px; }
   .reviewtext { font-size: 13.5px; }
 }
 
 @media (max-width: 480px) {
   .homePadding { padding: 30px 10px; }
+  .reviewcard { padding: 36px 16px 28px; }
   .reviewtext { font-size: 13px; }
 }
 
 @media (max-width: 414px) {
   .homePadding { padding: 28px 8px; }
   .HeadHome { font-size: 20px; }
-  .reviewcard { padding: 35px 15px 26px; }
+  .reviewcard { padding: 34px 15px 26px; }
   .reviewtext { font-size: 13px; }
   .author { font-size: 12px; }
   .quoteleft, .quoteright { font-size: 20px; }
 }
 
+@media (max-width: 390px) {
+  .homePadding { padding: 26px 7px; }
+  .reviewcard { padding: 32px 14px 24px; }
+  .reviewtext { font-size: 12.5px; }
+}
+
 @media (max-width: 375px) {
   .homePadding { padding: 25px 6px; }
-  .reviewcard { padding: 30px 14px 24px; }
+  .reviewcard { padding: 30px 13px 22px; }
   .reviewtext { font-size: 12.5px; }
+}
+
+@media (max-width: 360px) {
+  .homePadding { padding: 24px 6px; }
+  .HeadHome { font-size: 19px; }
+  .reviewcard { padding: 28px 12px 22px; }
+  .reviewtext { font-size: 12px; }
+  .quoteleft, .quoteright { font-size: 18px; }
 }
 
 @media (max-width: 320px) {
   .homePadding { padding: 22px 5px; }
   .HeadHome { font-size: 18px; }
-  .reviewcard { padding: 28px 12px 22px; }
-  .reviewtext { font-size: 12px; }
-  .quoteleft, .quoteright { font-size: 18px; }
+  .reviewcard { padding: 26px 11px 20px; }
+  .reviewtext { font-size: 11.5px; }
+  .quoteleft, .quoteright { font-size: 16px; }
 }
